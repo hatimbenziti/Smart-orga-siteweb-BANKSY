@@ -1,8 +1,8 @@
 backend:
   name: github
-  repo: hatim-benziti/smartorga # Remplacez par votre identifiant/depot GitHub (ex: utilisateur/smartorga)
+  repo: hatimbenziti/Smart-orga-siteweb-BANKSY
   branch: main
-  auth_endpoint: api/auth
+  site_domain: smartorga.ma
 
 # Mode local actif pour développement (via npx decap-server)
 local_backend: true
