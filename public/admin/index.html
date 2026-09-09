@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Orga - Dashboard Admin (Decap CMS)</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23388ec4' stroke-width='2'><polygon points='12 2 19 21 12 17 5 21 12 2'/></svg>" />
+  <style>
+    /* Styling for the Vercel helper bar when not yet authenticated */
+    #cms-helper-bar {
+      display: none;
+      background: #0f172a;
+      color: #94a3b8;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 12px;
+      padding: 8px 16px;
+      border-bottom: 1px solid #1e293b;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 99999;
+    }
+    #cms-helper-bar.visible {
+      display: flex;
+    }
+    #cms-helper-bar a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    #cms-helper-bar a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div id="cms-helper-bar">
+    <span>🚀 <strong>Smart Orga CMS (Vercel)</strong> : Connectez-vous avec GitHub pour éditer voyages, slider et galeries.</span>
+    <a href="/" target="_blank">← Retour au site public</a>
+  </div>
+
+  <!-- Decap CMS Core Script -->
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      var bar = document.getElementById('cms-helper-bar');
+      if (bar) bar.classList.add('visible');
+    });
+  </script>
+</body>
+</html>

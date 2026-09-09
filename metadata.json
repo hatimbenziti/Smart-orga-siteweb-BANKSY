@@ -1,0 +1,6 @@
+{
+  "name": "Smart Orga - Voyages Organisés au Maroc",
+  "description": "Agence de voyages organisés au Maroc : séjours de groupe dans le désert, villes impériales, randonnées de l'Atlas et plages.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

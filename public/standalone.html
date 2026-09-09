@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Orga - Voyages Organisés au Maroc</title>
+  <meta name="description" content="Agence de voyages organisés au Maroc : désert, montagnes, plages, villes impériales et aventures en groupe.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              50: '#f0f7fb',
+              100: '#e0eef7',
+              200: '#c2dded',
+              300: '#93c4df',
+              400: '#5da6cd',
+              500: '#388ec4',
+              600: '#2c78a9',
+              700: '#25618a',
+              800: '#225171',
+              900: '#1e445d',
+              950: '#122b3d',
+            },
+            brand: {
+              50: '#f0f7fb',
+              100: '#e0eef7',
+              500: '#388ec4',
+              600: '#2c78a9',
+              700: '#25618a',
+              900: '#1e445d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900">
+
+  <!-- TOP ANNOUNCEMENT BAR -->
+  <div class="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 hidden md:block border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-6">
+        <span class="text-emerald-400 font-medium flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          Départs Garantis de Casablanca & Rabat
+        </span>
+        <span>Maroc : Désert, Plages, Montagnes & Cités Impériales</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="https://wa.me/212690060366?text=Bonjour%20Smart%20Orga%20!" target="_blank" class="text-slate-200 hover:text-emerald-400 flex items-center gap-1.5">
+          <span>Assistance WhatsApp : <strong class="text-white">+212 690-060366</strong></span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER / NAVBAR -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-22 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#" class="flex items-center">
+        <img src="/assets/smart-orga.png" alt="Smart Orga" class="h-12 sm:h-15 md:h-16 w-auto object-contain">
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center space-x-2 text-sm font-semibold text-slate-700">
+        <a href="#sejours" class="px-4 py-2 hover:text-blue-600 rounded-lg hover:bg-slate-50 transition">Nos Séjours</a>
+        <a href="#avis" class="px-4 py-2 hover:text-blue-600 rounded-lg hover:bg-slate-50 transition">Avis Clients</a>
+        <a href="#instagram" class="px-4 py-2 hover:text-pink-600 rounded-lg hover:bg-slate-50 transition">Galerie Instagram</a>
+        <a href="#faq" class="px-4 py-2 hover:text-blue-600 rounded-lg hover:bg-slate-50 transition">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-[#F8FAFC] pt-8 pb-16 lg:pt-14 lg:pb-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <!-- Left Content -->
+        <div class="lg:col-span-7 space-y-7">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs sm:text-sm font-bold tracking-wide uppercase">
+            <span class="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
+            <span>• VOYAGEZ EN TOUTE QUIÉTUDE</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 tracking-tight leading-[1.15]">
+            Voyagez en groupe <br class="hidden sm:inline">
+            <span class="text-blue-600 inline-block">et Créez des souvenirs</span> avec Smart Orga
+          </h1>
+
+          <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl">
+            Découvrez des voyages organisés à travers le Maroc : désert, montagnes, plages, villes impériales et aventures inoubliables.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3.5 pt-1">
+            <a href="#sejours" class="px-7 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm sm:text-base shadow-md shadow-blue-500/25 transition">
+              Découvrir nos séjours
+            </a>
+            <button onclick="filterCategory('popular')" class="px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm sm:text-base shadow-xs transition">
+              ★ Voyages Populaires
+            </button>
+          </div>
+
+          <!-- Bottom tags -->
+          <div class="pt-2">
+            <span class="block text-xs uppercase font-bold text-slate-400 tracking-wider mb-2">Explorer par univers :</span>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="filterRegion('Désert & Dunes')" class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-slate-700 text-xs sm:text-sm font-semibold shadow-xs transition">
+                Désert & Dunes
+              </button>
+              <button onclick="filterRegion('Villes Impériales')" class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-slate-700 text-xs sm:text-sm font-semibold shadow-xs transition">
+                Villes Impériales
+              </button>
+              <button onclick="filterRegion('Nature & Randonnée')" class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-slate-700 text-xs sm:text-sm font-semibold shadow-xs transition">
+                Nature & Randonnée
+              </button>
+              <button onclick="filterRegion('Plages & Surf')" class="px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-slate-700 text-xs sm:text-sm font-semibold shadow-xs transition">
+                Plages & Surf
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Carousel -->
+        <div class="lg:col-span-5 relative">
+          <div class="relative rounded-3xl overflow-hidden shadow-xl aspect-[4/3] sm:aspect-[4/5] bg-slate-900 group">
+            <img id="carousel-img" src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80" alt="Maroc Paysage" class="w-full h-full object-cover transition-opacity duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/30 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+              <span id="carousel-tag" class="inline-block px-3 py-1 rounded-full bg-blue-500 text-xs font-bold uppercase mb-2">Désert Magique</span>
+              <h3 id="carousel-title" class="text-2xl font-bold">Merzouga & Erg Chebbi</h3>
+              <p id="carousel-desc" class="text-slate-200 text-xs sm:text-sm">Bivouac étoilé & balade en dromadaire</p>
+            </div>
+            <!-- Slider arrows -->
+            <button onclick="prevSlide()" class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center backdrop-blur-md">❮</button>
+            <button onclick="nextSlide()" class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/20 hover:bg-white/40 text-white flex items-center justify-center backdrop-blur-md">❯</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEARCH & FILTERS -->
+  <section id="sejours" class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div class="space-y-2">
+      <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Nos Séjours Organisés</span>
+      <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Préparez Vos Valises, On S'occupe de Tout</h2>
+      <p class="text-slate-600 text-sm sm:text-base">Départs garantis chaque week-end de Casablanca et Rabat.</p>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-5">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+        <!-- Keyword -->
+        <div class="md:col-span-5">
+          <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Recherche par mot-clé</label>
+          <input id="search-input" oninput="applyFilters()" type="text" placeholder="Ex : Cascades, Riad, Trek, Kitesurf..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <!-- Destination -->
+        <div class="md:col-span-4">
+          <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Destination</label>
+          <select id="destination-select" onchange="applyFilters()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="all">Toutes les destinations</option>
+            <option value="Merzouga">Merzouga & Sud Marocain</option>
+            <option value="Dakhla">Dakhla & Sahara Océanique</option>
+            <option value="Chefchaouen">Chefchaouen & Tanger</option>
+            <option value="Taghazout">Taghazout & Agadir</option>
+            <option value="Marrakech">Marrakech & Agafay</option>
+            <option value="Ouzoud">Cascades d'Ouzoud & Atlas</option>
+          </select>
+        </div>
+        <!-- Budget -->
+        <div class="md:col-span-3">
+          <div class="flex justify-between text-xs font-bold text-slate-500 uppercase mb-1">
+            <span>Budget Max</span>
+            <span id="price-display" class="text-blue-600 bg-blue-50 px-2 py-0.5 rounded">Illimité</span>
+          </div>
+          <input id="price-range" oninput="updatePrice(this.value)" type="range" min="800" max="5000" step="100" value="5000" class="w-full accent-blue-600">
+          <div class="flex justify-between text-[11px] text-slate-400 mt-1">
+            <span>800 DH</span>
+            <span>2 500 DH</span>
+            <span>5 000+ DH</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+        <div class="flex flex-wrap gap-2">
+          <button onclick="filterCategory('all')" class="cat-btn active px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 text-white" data-cat="all">Tous les Voyages</button>
+          <button onclick="filterCategory('popular')" class="cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-cat="popular">Les Plus Populaires</button>
+          <button onclick="filterCategory('weekly')" class="cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-cat="weekly">Départs Hebdomadaires</button>
+          <button onclick="filterCategory('upcoming')" class="cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-cat="upcoming">Voyages À Venir</button>
+        </div>
+        <div id="results-count" class="text-xs text-slate-500 font-medium">Affichage de tous les voyages</div>
+      </div>
+    </div>
+
+    <!-- TRIPS GRID -->
+    <div id="trips-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      <!-- Injected via JavaScript -->
+    </div>
+  </section>
+
+  <!-- REVIEWS SECTION -->
+  <section id="avis" class="py-16 bg-white border-t border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-xl mx-auto mb-12 space-y-2">
+        <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Avis Vérifiés</span>
+        <h2 class="text-3xl font-extrabold text-slate-900">Ce que disent nos voyageurs</h2>
+        <p class="text-sm text-slate-600">Note moyenne de 4.9/5 sur plus de 450 retours d'expérience.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+          <div class="text-amber-500 font-bold">★★★★★</div>
+          <p class="text-sm text-slate-700 italic">"Une organisation parfaite à Merzouga ! Le bivouac avec eau chaude et douches privées au milieu des dunes était magique."</p>
+          <div class="text-xs font-bold text-slate-900">Youssef El Amrani • Casablanca</div>
+        </div>
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+          <div class="text-amber-500 font-bold">★★★★★</div>
+          <p class="text-sm text-slate-700 italic">"Premier voyage en solo à Chefchaouen et Tanger. J'ai rencontré des amis super et l'ambiance du groupe était très chaleureuse."</p>
+          <div class="text-xs font-bold text-slate-900">Sara Benkirane • Rabat</div>
+        </div>
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+          <div class="text-amber-500 font-bold">★★★★★</div>
+          <p class="text-sm text-slate-700 italic">"Dakhla et la Dune Blanche avec dégustation d'huîtres face au lagon : inoubliable ! Le service client WhatsApp répondait immédiatement."</p>
+          <div class="text-xs font-bold text-slate-900">Mehdi & Salma • Marrakech</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ SECTION -->
+  <section id="faq" class="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+    <div class="text-center mb-10 space-y-2">
+      <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Foire Aux Questions</span>
+      <h2 class="text-3xl font-extrabold text-slate-900">Questions Fréquentes</h2>
+    </div>
+
+    <div class="space-y-3">
+      <details class="bg-white rounded-xl border border-slate-200 p-4 open:bg-slate-50 cursor-pointer">
+        <summary class="font-bold text-slate-900 text-sm">Comment réserver un voyage sur WhatsApp ?</summary>
+        <p class="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">Cliquez sur le bouton "Réserver sur WhatsApp" de votre voyage. Un message est automatiquement formulé avec le nom du séjour, la date et le nombre de personnes. Notre équipe valide la disponibilité et vous guide pour l'acompte.</p>
+      </details>
+      <details class="bg-white rounded-xl border border-slate-200 p-4 open:bg-slate-50 cursor-pointer">
+        <summary class="font-bold text-slate-900 text-sm">Quelles sont les villes de ramassage ?</summary>
+        <p class="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">Les départs sont assurés principalement depuis Casablanca (gare Casa Voyageurs) et Rabat (gare Rabat Ville). Pour le Nord ou le Sud, des arrêts à Kénitra, Tanger ou Marrakech sont prévus.</p>
+      </details>
+      <details class="bg-white rounded-xl border border-slate-200 p-4 open:bg-slate-50 cursor-pointer">
+        <summary class="font-bold text-slate-900 text-sm">Le transport touristique et le logement sont-ils inclus ?</summary>
+        <p class="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">Oui, 100% de nos packages incluent le transport aller-retour en autocar ou minibus touristique agréé, l'hébergement en hôtel ou bivouac de qualité et les repas prévus au programme.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM GALLERY SECTION (@smart_orga) -->
+  <section id="instagram" class="py-16 bg-slate-50 border-t border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 text-center">
+      <div class="space-y-2 max-w-2xl mx-auto">
+        <a href="https://www.instagram.com/smart_orga/" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-pink-600 hover:text-pink-700 tracking-wider uppercase">
+          <span>@SMART_ORGA • INSTAGRAM GALLERY</span>
+        </a>
+        <h2 class="text-3xl font-extrabold text-slate-900">Instants de Bonheur Capturés</h2>
+        <p class="text-sm text-slate-600">Suivez nos aventures régulières en temps réel sur Instagram @smart_orga.</p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <a href="https://www.instagram.com/smart_orga/" target="_blank" class="group relative aspect-square rounded-xl overflow-hidden shadow-xs block">
+          <img src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&h=600&q=80" alt="Merzouga" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-2 text-white text-[11px] font-medium">Merzouga, Sahara</div>
+        </a>
+        <a href="https://www.instagram.com/smart_orga/" target="_blank" class="group relative aspect-square rounded-xl overflow-hidden shadow-xs block">
+          <img src="https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=600&h=600&q=80" alt="Chefchaouen" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-2 text-white text-[11px] font-medium">Chefchaouen</div>
+        </a>
+        <a href="https://www.instagram.com/smart_orga/" target="_blank" class="group relative aspect-square rounded-xl overflow-hidden shadow-xs block">
+          <img src="https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=600&h=600&q=80" alt="Cascades d'Ouzoud" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-2 text-white text-[11px] font-medium">Cascades d'Ouzoud</div>
+        </a>
+        <a href="https://www.instagram.com/smart_orga/" target="_blank" class="group relative aspect-square rounded-xl overflow-hidden shadow-xs block">
+          <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&h=600&q=80" alt="Dakhla" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-2 text-white text-[11px] font-medium">Lagune de Dakhla</div>
+        </a>
+        <a href="https://www.instagram.com/smart_orga/" target="_blank" class="group relative aspect-square rounded-xl overflow-hidden shadow-xs block">
+          <img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?auto=format&fit=crop&w=600&h=600&q=80" alt="Aït Ben Haddou" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-2 text-white text-[11px] font-medium">Aït Ben Haddou</div>
+        </a>
+        <a href="https://www.instagram.com/smart_orga/" target="_blank" class="group relative aspect-square rounded-xl overflow-hidden shadow-xs block">
+          <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&h=600&q=80" alt="Taghazout" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-2 text-white text-[11px] font-medium">Taghazout & Vallée du Paradis</div>
+        </a>
+      </div>
+
+      <div class="pt-2">
+        <a href="https://www.instagram.com/smart_orga/" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 text-white font-bold text-sm shadow hover:scale-105 transition">
+          <span>Suivez-nous sur Instagram @smart_orga</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-white text-slate-600 py-12 border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 text-center space-y-4">
+      <div class="flex justify-center">
+        <img src="/assets/smart-orga.png" alt="Smart Orga" class="h-13 sm:h-16 w-auto object-contain">
+      </div>
+      <p class="text-xs sm:text-sm max-w-md mx-auto text-slate-500">Agence de voyages organisés au Maroc. Casablanca & Rabat. Départs chaque week-end.</p>
+      <div class="text-xs text-slate-600 space-y-1">
+        <div><strong>Adresse :</strong> Casablanca / Rabat, Maroc</div>
+        <div><strong>Support WhatsApp :</strong> +212 690-060366</div>
+        <div><strong>Email :</strong> smartorga.travel@gmail.com</div>
+      </div>
+      <div class="text-xs text-slate-400 pt-4 border-t border-slate-100">© 2026 Smart Orga. Tous droits réservés. Prêt pour Cloudflare Pages & GitHub Pages.</div>
+    </div>
+  </footer>
+
+  <!-- FLOATING WHATSAPP BUTTON -->
+  <a href="https://wa.me/212690060366?text=Bonjour%20Smart%20Orga%20!" target="_blank" class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-xl hover:scale-105 transition">
+    <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.35.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z"/></svg>
+  </a>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    const WHATSAPP_NUM = "212661234567";
+
+    const TRIPS = [
+      {
+        id: "merzouga",
+        title: "Magie du Désert de Merzouga & Gorges du Dadès",
+        destination: "Merzouga & Sud",
+        region: "Désert & Dunes",
+        duration: "3 jours / 2 nuits",
+        price: 1450,
+        image: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80",
+        nextDate: "Vendredi 18 Septembre",
+        weather: "27°C • Ensoleillé",
+        isPopular: true,
+        isWeekly: true,
+        highlights: ["Bivouac de luxe dans les dunes d'Erg Chebbi", "Balade dromadaire au coucher de soleil", "Feu de camp et musique Gnawa"]
+      },
+      {
+        id: "dakhla",
+        title: "Échappée Sauvage à Dakhla & Lagon Blanc",
+        destination: "Dakhla",
+        region: "Plages & Surf",
+        duration: "4 jours / 3 nuits",
+        price: 2950,
+        image: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=800&q=80",
+        nextDate: "Jeudi 24 Septembre",
+        weather: "24°C • Soleil & Brise",
+        isPopular: true,
+        isUpcoming: true,
+        highlights: ["Safari 4x4 vers la Dune Blanche", "Dégustation d'huîtres face au lagon", "Source thermale d'Asnaa"]
+      },
+      {
+        id: "chefchaouen",
+        title: "Chefchaouen la Perle Bleue & Cap Spartel Tanger",
+        destination: "Chefchaouen",
+        region: "Villes Impériales",
+        duration: "2 jours / 1 nuit",
+        price: 950,
+        image: "https://images.unsplash.com/photo-1558252277-246a06eb5535?auto=format&fit=crop&w=800&q=80",
+        nextDate: "Chaque Samedi",
+        weather: "22°C • Doux & Dégagé",
+        isPopular: true,
+        isWeekly: true,
+        highlights: ["Médina bleue de Chefchaouen", "Grottes d'Hercule & Cap Spartel", "Nuitée en Riad authentique"]
+      },
+      {
+        id: "taghazout",
+        title: "Taghazout Surf Vibes & Paradise Valley Agadir",
+        destination: "Taghazout",
+        region: "Plages & Surf",
+        duration: "3 jours / 2 nuits",
+        price: 1290,
+        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+        nextDate: "Vendredi 25 Septembre",
+        weather: "25°C • Soleil & Océan",
+        isPopular: true,
+        isWeekly: true,
+        highlights: ["Piscines naturelles de Paradise Valley", "Coucher de soleil sur l'océan", "Hôtel bord de mer avec piscine"]
+      },
+      {
+        id: "marrakech",
+        title: "Marrakech Impériale & Désert d'Agafay",
+        destination: "Marrakech",
+        region: "Villes Impériales",
+        duration: "2 jours / 1 nuit",
+        price: 1100,
+        image: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80",
+        nextDate: "Samedi 19 Septembre",
+        weather: "26°C • Ciel Azur",
+        isPopular: false,
+        isWeekly: true,
+        highlights: ["Dîner spectacle sous tente à Agafay", "Jardin Majorelle & Médina", "Piscine panoramique désert"]
+      },
+      {
+        id: "ouzoud",
+        title: "Cascades d'Ouzoud & Lac Bin El Ouidane",
+        destination: "Ouzoud",
+        region: "Nature & Randonnée",
+        duration: "2 jours / 1 nuit",
+        price: 890,
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+        nextDate: "Samedi 26 Septembre",
+        weather: "23°C • Fraîcheur & Soleil",
+        isPopular: true,
+        isWeekly: true,
+        highlights: ["Chutes d'eau de 110m & singes magots", "Tour en barque sous les cascades", "Balade en bateau sur le lac émeraude"]
+      }
+    ];
+
+    let currentCategory = 'all';
+    let currentRegion = 'all';
+
+    function buildWhatsAppUrl(tripTitle, duration, price) {
+      const msg = `Bonjour l'équipe Smart Orga 👋\nJe souhaite réserver le séjour suivant :\n📍 *${tripTitle}* (${duration})\n💰 Tarif : ${price} MAD / pers.\n👥 Nombre de voyageurs : 2 personnes\n📅 Date : Prochain départ\n\nPourriez-vous me confirmer les disponibilités ? Merci !`;
+      return `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(msg)}`;
+    }
+
+    function renderTrips() {
+      const search = document.getElementById('search-input').value.toLowerCase();
+      const dest = document.getElementById('destination-select').value;
+      const maxPrice = Number(document.getElementById('price-range').value);
+
+      const filtered = TRIPS.filter(t => {
+        if (search && !t.title.toLowerCase().includes(search) && !t.region.toLowerCase().includes(search)) return false;
+        if (dest !== 'all' && !t.destination.includes(dest)) return false;
+        if (currentRegion !== 'all' && t.region !== currentRegion) return false;
+        if (maxPrice < 5000 && t.price > maxPrice) return false;
+        if (currentCategory === 'popular' && !t.isPopular) return false;
+        if (currentCategory === 'weekly' && !t.isWeekly) return false;
+        if (currentCategory === 'upcoming' && !t.isUpcoming) return false;
+        return true;
+      });
+
+      const grid = document.getElementById('trips-grid');
+      document.getElementById('results-count').innerText = `${filtered.length} voyage(s) trouvé(s)`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-3 text-center py-12 text-slate-500">Aucun voyage ne correspond à votre recherche.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(trip => `
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-xs hover:shadow-lg transition flex flex-col justify-between">
+          <div class="relative aspect-[16/10] overflow-hidden">
+            <img src="${trip.image}" alt="${trip.title}" class="w-full h-full object-cover">
+            <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-blue-600/90 text-white text-xs font-bold">${trip.region}</span>
+            <span class="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg bg-slate-900/80 text-white text-xs font-semibold">${trip.duration}</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+            <div>
+              <div class="text-xs font-semibold text-slate-500 mb-1 flex items-center justify-between flex-wrap gap-1">
+                <span>📍 ${trip.destination} • Départ : ${trip.nextDate}</span>
+                <span class="text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/50 text-[11px] font-medium">☀️ ${trip.weather}</span>
+              </div>
+              <h3 class="font-bold text-slate-900 text-base leading-snug">${trip.title}</h3>
+              <ul class="mt-3 space-y-1 text-xs text-slate-600">
+                ${trip.highlights.map(h => `<li class="flex items-center gap-1.5"><span class="text-emerald-500">✓</span> ${h}</li>`).join('')}
+              </ul>
+            </div>
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+              <div>
+                <span class="text-2xl font-extrabold text-slate-900">${trip.price} <span class="text-xs font-normal">MAD/pers</span></span>
+              </div>
+              <a href="${buildWhatsAppUrl(trip.title, trip.duration, trip.price)}" target="_blank" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                <span>Réserver WhatsApp</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function applyFilters() { renderTrips(); }
+    function updatePrice(val) {
+      const num = Number(val);
+      document.getElementById('price-display').innerText = num >= 5000 ? 'Illimité' : `${num.toLocaleString()} DH`;
+      renderTrips();
+    }
+    function filterCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.className = "cat-btn active px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 text-white";
+        } else {
+          btn.className = "cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200";
+        }
+      });
+      renderTrips();
+    }
+    function filterRegion(reg) {
+      currentRegion = currentRegion === reg ? 'all' : reg;
+      renderTrips();
+      document.getElementById('sejours').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Hero carousel
+    const slides = [
+      { img: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80", tag: "Désert Magique", title: "Merzouga & Erg Chebbi", desc: "Bivouac étoilé & balade en dromadaire" },
+      { img: "https://images.unsplash.com/photo-1558252277-246a06eb5535?auto=format&fit=crop&w=1200&q=80", tag: "Perle Bleue", title: "Chefchaouen & Le Rif", desc: "Ruelles féeriques & coucher de soleil" },
+      { img: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=80", tag: "Sahara Océanique", title: "Dakhla & La Dune Blanche", desc: "Lagon turquoise & aventure 4x4 sauvage" }
+    ];
+    let currentSlide = 0;
+    function updateSlide() {
+      const s = slides[currentSlide];
+      document.getElementById('carousel-img').src = s.img;
+      document.getElementById('carousel-tag').innerText = s.tag;
+      document.getElementById('carousel-title').innerText = s.title;
+      document.getElementById('carousel-desc').innerText = s.desc;
+    }
+    function nextSlide() { currentSlide = (currentSlide + 1) % slides.length; updateSlide(); }
+    function prevSlide() { currentSlide = (currentSlide - 1 + slides.length) % slides.length; updateSlide(); }
+    setInterval(nextSlide, 4500);
+
+    function openSurMesureModal() {
+      const msg = "Bonjour Smart Orga ! Je souhaite organiser un séjour sur-mesure ou privatisé au Maroc pour un groupe. Pourriez-vous m'accompagner ?";
+      window.open(`https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // Initial render
+    renderTrips();
+  </script>
+</body>
+</html>

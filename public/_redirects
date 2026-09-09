@@ -1,0 +1,3 @@
+# Netlify and Cloudflare Pages redirects for SPA and Decap CMS
+/admin/*    /admin/index.html    200
+/*          /index.html          200
