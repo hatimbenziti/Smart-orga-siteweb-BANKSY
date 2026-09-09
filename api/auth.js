@@ -30,39 +30,35 @@ export default async function handler(req, res) {
       return res.status(400).send('Erreur lors de la récupération du token GitHub.');
     }
 
-    // 3. Envoyer le script HTML gérant la poignée de main postMessage avec la fenêtre parente (Decap CMS)
+    // 3. Envoyer immédiatement le message de succès via postMessage à Decap CMS dès le chargement
     const content = `
       <!DOCTYPE html>
       <html>
-      <head><title>Authentification en cours...</title></head>
+      <head><title>Authentification réussie</title></head>
       <body>
+        <p>Connexion en cours, veuillez patienter...</p>
         <script>
           (function() {
-            function recieveToken(e) {
-              console.log("Handshake Decap CMS reçu de :", e.origin);
-              
-              // Préparation de la réponse de succès
-              const data = ${JSON.stringify({
-                token: token,
-                provider: 'github'
-              })};
-              
-              const message = "authorization:github:success:" + JSON.stringify(data);
-              
-              // Envoie du message de succès à la fenêtre parent
-              window.opener.postMessage(message, e.origin);
-              
-              // Fermeture de la pop-up
-              window.close();
+            const token = ${JSON.stringify(token)};
+            const provider = 'github';
+            
+            // Format standard attendu par Decap CMS
+            const match = window.location.origin;
+            
+            function sendMessage() {
+              if (window.opener) {
+                // Envoi de l'événement de succès
+                window.opener.postMessage(
+                  'authorization:' + provider + ':success:' + JSON.stringify({ token: token, provider: provider }),
+                  '*'
+                );
+                setTimeout(function() {
+                  window.close();
+                }, 300);
+              }
             }
 
-            // Écoute du message initial envoyé par la fenêtre principale de Decap CMS
-            window.addEventListener("message", recieveToken, false);
-            
-            // Signale à la fenêtre principale que la pop-up est prête à transmettre le token
-            if (window.opener) {
-              window.opener.postMessage("authorizing:github", "*");
-            }
+            sendMessage();
           })();
         </script>
       </body>
