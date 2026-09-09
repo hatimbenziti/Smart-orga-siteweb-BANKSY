@@ -30,40 +30,39 @@ export default async function handler(req, res) {
       return res.status(400).send('Erreur lors de la récupération du token GitHub.');
     }
 
-    // 3. Protocole complet de poignée de main (handshake) attendu par Decap CMS
+    // 3. Transmission directe avec répétition rapide via postMessage
     const content = `
       <!DOCTYPE html>
       <html>
       <head><title>Authentification Decap CMS</title></head>
       <body>
-        <p>Connexion en cours, redirection vers le tableau de bord...</p>
+        <p>Connexion réussie ! Redirection en cours...</p>
         <script>
           (function() {
             const token = ${JSON.stringify(token)};
             const provider = 'github';
 
-            function receiveMessage(e) {
-              console.log("Handshake reçu de :", e.origin);
-              
-              // Envoie du token de succès à la fenêtre principale Decap CMS
-              window.opener.postMessage(
-                'authorization:' + provider + ':success:' + JSON.stringify({ token: token, provider: provider }),
-                e.origin
-              );
-              
-              window.removeEventListener("message", receiveMessage, false);
-              
-              setTimeout(function() {
-                window.close();
-              }, 200);
+            function send() {
+              if (window.opener) {
+                // Notifier le parent que l'autorisation est prête
+                window.opener.postMessage("authorizing:" + provider, "*");
+                
+                // Envoyer le token au parent
+                window.opener.postMessage(
+                  'authorization:' + provider + ':success:' + JSON.stringify({ token: token, provider: provider }),
+                  "*"
+                );
+              }
             }
 
-            window.addEventListener("message", receiveMessage, false);
+            // Envoi immédiat et répétition rapide pour garantir la réception par la fenêtre parente
+            send();
+            const interval = setInterval(send, 200);
 
-            // Étape 1 du handshake : Notifier le parent que la pop-up est prête à transmettre le token
-            if (window.opener) {
-              window.opener.postMessage("authorizing:" + provider, "*");
-            }
+            setTimeout(function() {
+              clearInterval(interval);
+              window.close();
+            }, 1000);
           })();
         </script>
       </body>
