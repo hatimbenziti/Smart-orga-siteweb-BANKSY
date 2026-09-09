@@ -32,31 +32,29 @@ export default async function handler(req, res) {
     const token = data.access_token;
     const provider = 'github';
 
-    // 3. Script d'échange postMessage standard Netlify/Decap CMS
+    // 3. Envoi direct du token et fermeture automatique
     const content = `
       <!DOCTYPE html>
       <html>
       <head><title>Authentification Decap CMS</title></head>
       <body>
-        <p>Authentification réussie. Fermeture...</p>
+        <p>Authentification réussie. Redirection...</p>
         <script>
           (function() {
-            function receiveMessage(e) {
-              console.log("Handshake reçu de l'origine :", e.origin);
-              
-              // Envoi de la réponse de succès à la fenêtre mère
-              window.opener.postMessage(
-                'authorization:${provider}:success:${JSON.stringify({ token: token, provider: provider })}',
-                e.origin
-              );
-            }
+            const token = ${JSON.stringify(token)};
+            const provider = 'github';
 
-            // Écoute de la confirmation de la fenêtre parente
-            window.addEventListener("message", receiveMessage, false);
-
-            // Signal initial d'ouverture de session envoyé au CMS
             if (window.opener) {
-              window.opener.postMessage("authorizing:${provider}", "*");
+              // Send authorization success directly to parent
+              window.opener.postMessage(
+                'authorization:' + provider + ':success:' + JSON.stringify({ token: token, provider: provider }),
+                '*'
+              );
+
+              // Auto-close pop-up
+              setTimeout(function() {
+                window.close();
+              }, 500);
             }
           })();
         </script>
