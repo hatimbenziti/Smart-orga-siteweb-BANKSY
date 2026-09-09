@@ -1,15 +1,15 @@
 export default async function handler(req, res) {
   const { code } = req.query;
 
-  // 1. Si aucun code n'est fourni, rediriger vers l'autorisation GitHub
+  // 1. Redirection vers GitHub si aucun code n'est fourni
   if (!code) {
     return res.redirect(
-      `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo`
+      `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo,user`
     );
   }
 
   try {
-    // 2. Échanger le code contre un jeton d'accès auprès de GitHub
+    // 2. Échange du code contre le token d'accès
     const response = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
       headers: {
@@ -24,45 +24,40 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    const token = data.access_token;
 
-    if (!token) {
-      return res.status(400).send('Erreur lors de la récupération du token GitHub.');
+    if (data.error || !data.access_token) {
+      return res.status(400).send(`Erreur GitHub: ${data.error_description || data.error}`);
     }
 
-    // 3. Transmission directe avec répétition rapide via postMessage
+    const token = data.access_token;
+    const provider = 'github';
+
+    // 3. Script d'échange postMessage standard Netlify/Decap CMS
     const content = `
       <!DOCTYPE html>
       <html>
       <head><title>Authentification Decap CMS</title></head>
       <body>
-        <p>Connexion réussie ! Redirection en cours...</p>
+        <p>Authentification réussie. Fermeture...</p>
         <script>
           (function() {
-            const token = ${JSON.stringify(token)};
-            const provider = 'github';
-
-            function send() {
-              if (window.opener) {
-                // Notifier le parent que l'autorisation est prête
-                window.opener.postMessage("authorizing:" + provider, "*");
-                
-                // Envoyer le token au parent
-                window.opener.postMessage(
-                  'authorization:' + provider + ':success:' + JSON.stringify({ token: token, provider: provider }),
-                  "*"
-                );
-              }
+            function receiveMessage(e) {
+              console.log("Handshake reçu de l'origine :", e.origin);
+              
+              // Envoi de la réponse de succès à la fenêtre mère
+              window.opener.postMessage(
+                'authorization:${provider}:success:${JSON.stringify({ token: token, provider: provider })}',
+                e.origin
+              );
             }
 
-            // Envoi immédiat et répétition rapide pour garantir la réception par la fenêtre parente
-            send();
-            const interval = setInterval(send, 200);
+            // Écoute de la confirmation de la fenêtre parente
+            window.addEventListener("message", receiveMessage, false);
 
-            setTimeout(function() {
-              clearInterval(interval);
-              window.close();
-            }, 1000);
+            // Signal initial d'ouverture de session envoyé au CMS
+            if (window.opener) {
+              window.opener.postMessage("authorizing:${provider}", "*");
+            }
           })();
         </script>
       </body>
@@ -72,7 +67,7 @@ export default async function handler(req, res) {
     res.setHeader('Content-Type', 'text/html');
     res.status(200).send(content);
   } catch (error) {
-    console.error('Erreur OAuth:', error);
-    res.status(500).send('Erreur interne du serveur lors de l\'authentification.');
+    console.error('Erreur Serveur:', error);
+    res.status(500).send('Erreur lors du traitement OAuth.');
   }
 }
