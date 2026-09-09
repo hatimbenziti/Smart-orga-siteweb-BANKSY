@@ -1,7 +1,6 @@
 export default async function handler(req, res) {
   const { code } = req.query;
 
-  // 1. Redirection vers GitHub si aucun code n'est fourni
   if (!code) {
     return res.redirect(
       `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo,user`
@@ -9,7 +8,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 2. Échange du code contre le token d'accès
     const response = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
       headers: {
@@ -30,31 +28,42 @@ export default async function handler(req, res) {
     }
 
     const token = data.access_token;
-    const provider = 'github';
 
-    // 3. Envoi direct du token et fermeture automatique
     const content = `
       <!DOCTYPE html>
       <html>
       <head><title>Authentification Decap CMS</title></head>
       <body>
-        <p>Authentification réussie. Redirection...</p>
+        <p>Connexion réussie, ouverture du tableau de bord...</p>
         <script>
           (function() {
             const token = ${JSON.stringify(token)};
             const provider = 'github';
 
-            if (window.opener) {
-              // Send authorization success directly to parent
+            function receiveMessage(e) {
+              console.log("Handshake reçu depuis :", e.origin);
+              
+              // Envoi du token au format JSON Netlify standard
               window.opener.postMessage(
-                'authorization:' + provider + ':success:' + JSON.stringify({ token: token, provider: provider }),
-                '*'
+                'authorization:' + provider + ':success:' + JSON.stringify({
+                  token: token,
+                  provider: provider
+                }),
+                e.origin
               );
 
-              // Auto-close pop-up
+              window.removeEventListener("message", receiveMessage, false);
+
               setTimeout(function() {
                 window.close();
-              }, 500);
+              }, 300);
+            }
+
+            window.addEventListener("message", receiveMessage, false);
+
+            // Signal initial obligatoire envoyé à la fenêtre principale
+            if (window.opener) {
+              window.opener.postMessage("authorizing:" + provider, "*");
             }
           })();
         </script>
@@ -65,7 +74,6 @@ export default async function handler(req, res) {
     res.setHeader('Content-Type', 'text/html');
     res.status(200).send(content);
   } catch (error) {
-    console.error('Erreur Serveur:', error);
-    res.status(500).send('Erreur lors du traitement OAuth.');
+    res.status(500).send('Erreur serveur lors de l\'authentification.');
   }
 }
