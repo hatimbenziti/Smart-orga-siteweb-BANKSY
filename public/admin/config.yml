@@ -2,7 +2,8 @@ backend:
   name: github
   repo: hatimbenziti/Smart-orga-siteweb-BANKSY
   branch: main
-  site_domain: smartorga.ma
+  base_url: https://smartorga.ma
+  auth_endpoint: api/auth
 
 # Mode local actif pour développement (via npx decap-server)
 local_backend: true
