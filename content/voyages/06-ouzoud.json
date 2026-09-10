@@ -1,0 +1,73 @@
+{
+  "id": "ouzoud-bin-el-ouidane",
+  "title": "Cascades d'Ouzoud & Lac Féerique de Bin El Ouidane",
+  "destination": "Moyen-Atlas & Azilal",
+  "region": "Nature & Randonnée",
+  "duration": "2 jours / 1 nuit",
+  "days": 2,
+  "nights": 1,
+  "price": 890,
+  "priceMAD": 890,
+  "originalPriceMAD": 1050,
+  "image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
+  "gallery": [
+    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+  ],
+  "highlights": [
+    "Randonnée le long des plus hautes chutes d'eau du Maroc (110 mètres)",
+    "Rencontre amicale avec les singes magots dans leur habitat sauvage",
+    "Tour en barque au pied des embruns de la cascade",
+    "Balade en bateau sur le lac émeraude de Bin El Ouidane"
+  ],
+  "points_forts": [
+    "Randonnée le long des plus hautes chutes d'eau du Maroc (110 mètres)",
+    "Rencontre amicale avec les singes magots dans leur habitat sauvage",
+    "Tour en barque au pied des embruns de la cascade",
+    "Balade en bateau sur le lac émeraude de Bin El Ouidane"
+  ],
+  "popular": true,
+  "isPopular": true,
+  "isWeekly": true,
+  "isUpcoming": false,
+  "category": "popular",
+  "order": 6,
+  "priority": 6,
+  "rating": 4.9,
+  "reviewCount": 180,
+  "departureCities": ["Casablanca", "Rabat", "Marrakech"],
+  "nextDate": "Samedi 26 Septembre",
+  "groupSize": "15 à 25 personnes",
+  "included": [
+    "Transport complet aller-retour climatisé",
+    "1 nuit en hôtel de montagne avec petit-déjeuner",
+    "Tour en barque traditionnelle à Ouzoud",
+    "Guide local certifié pour la randonnée"
+  ],
+  "notIncluded": [
+    "Déjeuners",
+    "Boissons"
+  ],
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Descente des cascades d'Ouzoud & Nuitée panoramique",
+      "description": "Départ le matin. Arrivée à Ouzoud, descente des gorges avec guide local, tour en radeau sous les cascades, observation des macaques berbères. Dîner tajine traditionnel et nuit en hôtel avec vue sur la vallée."
+    },
+    {
+      "day": 2,
+      "title": "Le majestueux Lac de Bin El Ouidane & Retour",
+      "description": "Excursion vers le lac de retenue aux eaux turquoises de Bin El Ouidane. Tour en bateau à moteur, pause déjeuner au bord de l'eau et retour relaxant."
+    }
+  ],
+  "weather": {
+    "temp": "23°C",
+    "condition": "Beau temps & Fraîcheur",
+    "conditionAr": "مشمس ومنعش",
+    "conditionEn": "Pleasant & Fresh",
+    "dailyForecast": [
+      { "day": 1, "temp": "22°C", "condition": "Fraîcheur des cascades", "conditionAr": "نسيم الشلالات المنعش", "conditionEn": "Waterfalls Freshness" },
+      { "day": 2, "temp": "24°C", "condition": "Lac calme & ensoleillé", "conditionAr": "بحيرة هادئة ومشمسة", "conditionEn": "Calm & Sunny Lake" }
+    ]
+  },
+  "body": "Évasion nature entre les impressionnantes cascades d'Ouzoud et les eaux calmes du lac de Bin El Ouidane."
+}

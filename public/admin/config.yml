@@ -29,13 +29,19 @@ collections:
       preview: true
     fields:
       - { label: "Titre du Séjour", name: "title", widget: "string" }
-      - { label: "Destination", name: "destination", widget: "select", options: ["Dakhla", "Agadir & Taghazout", "Chefchaouen", "Tanger & Nord", "Merzouga & Désert", "Marrakech & Atlas"] }
+      - { label: "Destination", name: "destination", widget: "string", default: "Merzouga & Sud Marocain" }
+      - { label: "Région / Thématique", name: "region", widget: "select", options: ["Désert & Dunes", "Villes Impériales", "Nature & Randonnée", "Plages & Surf"], default: "Désert & Dunes" }
       - { label: "Prix (MAD)", name: "price", widget: "number", value_type: "int" }
-      - { label: "Durée", name: "duration", widget: "string", default: "3 Jours / 2 Nuits" }
+      - { label: "Prix d'origine barré (MAD, optionnel)", name: "originalPriceMAD", widget: "number", value_type: "int", required: false }
+      - { label: "Durée", name: "duration", widget: "string", default: "3 jours / 2 nuits" }
       - { label: "Image Principale", name: "image", widget: "image" }
-      - { label: "Badge / Catégorie", name: "category", widget: "select", options: ["Tous les Voyages", "Les Plus Populaires", "Départs Hebdomadaires"], default: "Tous les Voyages" }
       - { label: "Points forts (Highlights)", name: "highlights", widget: "list", field: { label: "Point fort", name: "item", widget: "string" } }
-      - { label: "Description & Itinéraire", name: "body", widget: "markdown" }
+      - { label: "Voyage Populaire / Coup de cœur (popular)", name: "popular", widget: "boolean", default: true }
+      - { label: "Ordre / Priorité d'affichage (order)", name: "order", widget: "number", default: 1, value_type: "int" }
+      - { label: "Catégorie", name: "category", widget: "select", options: ["popular", "weekly", "upcoming", "all"], default: "popular" }
+      - { label: "Villes de départ (optionnel)", name: "departureCities", widget: "list", field: { label: "Ville", name: "city", widget: "string" }, required: false }
+      - { label: "Prochaine date de départ (optionnel)", name: "nextDate", widget: "string", required: false }
+      - { label: "Description & Itinéraire (Markdown)", name: "body", widget: "markdown", required: false }
 
   # 2. Collection : Images du Slider Hero (Accueil)
   - name: "slider"

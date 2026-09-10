@@ -12,13 +12,18 @@ import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { TripDetailsModal } from './components/TripDetailsModal';
 import { BookingModal } from './components/BookingModal';
 import { SurMesureModal } from './components/SurMesureModal';
-import { TRIPS_DATA } from './data/tripsData';
+import { loadCmsTrips } from './data/tripsData';
 import { Trip, FilterState } from './types';
 import { Compass, Sparkles, AlertCircle, RotateCcw, MessageCircle } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
 
 export default function App() {
   const { language, t } = useLanguage();
+
+  // Dynamic trips loaded from Decap CMS (content/voyages/*.json)
+  const trips = useMemo<Trip[]>(() => {
+    return loadCmsTrips();
+  }, []);
 
   // Modal states
   const [selectedTripForDetails, setSelectedTripForDetails] = useState<Trip | null>(null);
@@ -39,13 +44,13 @@ export default function App() {
   // Distinct destination list for dropdown
   const destinationsList = useMemo(() => {
     const set = new Set<string>();
-    TRIPS_DATA.forEach((t) => set.add(t.destination));
+    trips.forEach((t) => set.add(t.destination));
     return Array.from(set);
-  }, []);
+  }, [trips]);
 
   // Filtered trips
   const filteredTrips = useMemo(() => {
-    return TRIPS_DATA.filter((trip) => {
+    return trips.filter((trip) => {
       // 1. Keyword search
       if (filters.searchQuery.trim() !== '') {
         const q = filters.searchQuery.toLowerCase();

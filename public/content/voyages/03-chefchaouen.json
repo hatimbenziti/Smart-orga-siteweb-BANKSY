@@ -1,0 +1,75 @@
+{
+  "id": "chefchaouen-tanger-perle-bleue",
+  "title": "Chefchaouen la Perle Bleue & Cap Spartel Tanger",
+  "destination": "Chefchaouen & Tanger",
+  "region": "Villes Impériales",
+  "duration": "2 jours / 1 nuit",
+  "days": 2,
+  "nights": 1,
+  "price": 950,
+  "priceMAD": 950,
+  "originalPriceMAD": 1150,
+  "image": "https://images.unsplash.com/photo-1558252277-246a06eb5535?auto=format&fit=crop&w=1200&q=80",
+  "gallery": [
+    "https://images.unsplash.com/photo-1558252277-246a06eb5535?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=800&q=80"
+  ],
+  "highlights": [
+    "Flânerie magique dans les ruelles azurées de Chefchaouen",
+    "Coucher de soleil inoubliable depuis la Mosquée Espagnole",
+    "Visite des Grottes d'Hercule et du mythique Cap Spartel",
+    "Ambiance bohème de la Kasbah et du Petit Socco de Tanger"
+  ],
+  "points_forts": [
+    "Flânerie magique dans les ruelles azurées de Chefchaouen",
+    "Coucher de soleil inoubliable depuis la Mosquée Espagnole",
+    "Visite des Grottes d'Hercule et du mythique Cap Spartel",
+    "Ambiance bohème de la Kasbah et du Petit Socco de Tanger"
+  ],
+  "popular": true,
+  "isPopular": true,
+  "isWeekly": true,
+  "isUpcoming": false,
+  "category": "weekly",
+  "order": 3,
+  "priority": 3,
+  "rating": 4.8,
+  "reviewCount": 215,
+  "departureCities": ["Casablanca", "Rabat", "Kénitra"],
+  "nextDate": "Chaque Samedi matin",
+  "groupSize": "15 à 22 personnes",
+  "included": [
+    "Transport touristique aller-retour en minibus grand confort",
+    "1 nuitée en hôtel 4* ou Riad typique au centre de Chefchaouen",
+    "Petit-déjeuner buffet inclus",
+    "Guide local pour la visite de la médina bleue",
+    "Accompagnement et animation Smart Orga"
+  ],
+  "notIncluded": [
+    "Repas de midi et du soir (adresses locales recommandées)",
+    "Tickets d'entrée aux Grottes d'Hercule (environ 20 MAD)"
+  ],
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrivée à Chefchaouen, Ras El Maa & Kasbah",
+      "description": "Départ tôt de Casablanca/Rabat. Arrivée à Chefchaouen nichée entre les monts du Rif. Déjeuner rifain authentique, balade guidée vers la source Ras El Maa et montée au coucher du soleil à la Mosquée Bouzaafar."
+    },
+    {
+      "day": 2,
+      "title": "Tanger la Blanche, Grottes d'Hercule & Retour",
+      "description": "Départ matinal pour Tanger. Rencontre de l'Atlantique et de la Méditerranée au Cap Spartel, exploration des célèbres Grottes d'Hercule, temps libre dans la Médina et retour en soirée."
+    }
+  ],
+  "weather": {
+    "temp": "22°C",
+    "condition": "Doux & Ensoleillé",
+    "conditionAr": "معتدل ومشمس",
+    "conditionEn": "Mild & Sunny",
+    "dailyForecast": [
+      { "day": 1, "temp": "21°C", "condition": "Agréable pour flâner", "conditionAr": "جو رائع للمشي", "conditionEn": "Pleasant Stroll" },
+      { "day": 2, "temp": "23°C", "condition": "Ciel bleu & Brise du détroit", "conditionAr": "سماء صافية ونسيم عليل", "conditionEn": "Clear Straits Breeze" }
+    ]
+  },
+  "body": "Immersion totale dans les ruelles azurées de Chefchaouen et les falaises mythiques du Cap Spartel à Tanger."
+}

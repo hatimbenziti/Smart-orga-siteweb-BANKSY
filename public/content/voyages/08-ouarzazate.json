@@ -1,0 +1,80 @@
+{
+  "id": "ouarzazate-draa-kasbahs",
+  "title": "Route des Mille Kasbahs & Vallée du Draa",
+  "destination": "Ouarzazate & Zagora",
+  "region": "Désert & Dunes",
+  "duration": "3 jours / 2 nuits",
+  "days": 3,
+  "nights": 2,
+  "price": 1390,
+  "priceMAD": 1390,
+  "originalPriceMAD": 1600,
+  "image": "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80",
+  "gallery": [
+    "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80"
+  ],
+  "highlights": [
+    "Visite du Ksar emblématique d'Aït Ben Haddou classé UNESCO",
+    "Balade au cœur de la palmeraie millénaire de la Vallée du Draa",
+    "Atelier de poterie ancestrale à Tamegroute et bibliothèque coranique",
+    "Nuit sous tente bédouine dans les dunes de Zagora"
+  ],
+  "points_forts": [
+    "Visite du Ksar emblématique d'Aït Ben Haddou classé UNESCO",
+    "Balade au cœur de la palmeraie millénaire de la Vallée du Draa",
+    "Atelier de poterie ancestrale à Tamegroute et bibliothèque coranique",
+    "Nuit sous tente bédouine dans les dunes de Zagora"
+  ],
+  "popular": false,
+  "isPopular": false,
+  "isWeekly": false,
+  "isUpcoming": true,
+  "category": "upcoming",
+  "order": 8,
+  "priority": 8,
+  "rating": 4.8,
+  "reviewCount": 92,
+  "departureCities": ["Casablanca", "Rabat", "Marrakech"],
+  "nextDate": "Vendredi 9 Octobre",
+  "groupSize": "14 à 20 personnes",
+  "included": [
+    "Transport touristique tout confort",
+    "1 nuit en Riad à Ouarzazate en demi-pension",
+    "1 nuit en bivouac nomade à Zagora avec dîner et petit-déjeuner",
+    "Balade en dromadaires",
+    "Guide local certifié"
+  ],
+  "notIncluded": [
+    "Déjeuners libres",
+    "Achats de souvenirs"
+  ],
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Traversée du Tichka & Kasbah de Telouet",
+      "description": "Départ tôt, franchissement de l'Atlas, visite du palais du Glaoui à Telouet et du Ksar d'Aït Ben Haddou. Dîner et nuit dans un riad traditionnel à Ouarzazate."
+    },
+    {
+      "day": 2,
+      "title": "Palmeraie du Draa, Tamegroute & Bivouac à Zagora",
+      "description": "Traversée de l'immense ruban de palmiers du Draa, arrêt poterie artisanale à Tamegroute, caravane de dromadaires dans les dunes et nuitée étoilée."
+    },
+    {
+      "day": 3,
+      "title": "Visite d'Agdz & Retour via Marrakech",
+      "description": "Petit-déjeuner au lever du jour, remontée de la vallée avec arrêts photos et retour vers les villes de départ."
+    }
+  ],
+  "weather": {
+    "temp": "26°C",
+    "condition": "Ensoleillé & Ciel clair",
+    "conditionAr": "مشمس وصافٍ",
+    "conditionEn": "Sunny & Clear",
+    "dailyForecast": [
+      { "day": 1, "temp": "25°C", "condition": "Traversée de l'Atlas sous le soleil", "conditionAr": "عبور الأطلس تحت الشمس", "conditionEn": "Sunny Atlas Crossing" },
+      { "day": 2, "temp": "27°C", "condition": "Palmeraie & dunes ensoleillées", "conditionAr": "شمس دافئة بين الواحات", "conditionEn": "Warm Palm Oasis" },
+      { "day": 3, "temp": "26°C", "condition": "Ciel pur et dégagé", "conditionAr": "سماء نقية ومشرقة", "conditionEn": "Bright Clear Sky" }
+    ]
+  },
+  "body": "Traversée des palmeraies de la Vallée du Draa et forteresses de terre rouge d'Aït Ben Haddou."
+}

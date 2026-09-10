@@ -1,0 +1,84 @@
+{
+  "id": "merzouga-desert-vip",
+  "title": "Magie du Désert de Merzouga & Gorges du Dadès",
+  "destination": "Merzouga & Sud Marocain",
+  "region": "Désert & Dunes",
+  "duration": "3 jours / 2 nuits",
+  "days": 3,
+  "nights": 2,
+  "price": 1450,
+  "priceMAD": 1450,
+  "originalPriceMAD": 1750,
+  "image": "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80",
+  "gallery": [
+    "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?auto=format&fit=crop&w=800&q=80"
+  ],
+  "highlights": [
+    "Nuitée en bivouac de luxe au cœur des dunes de l'Erg Chebbi",
+    "Balade à dos de dromadaire au coucher et lever du soleil",
+    "Soirée animée autour du feu de camp avec musiciens Gnawa",
+    "Visite des spectaculaires Gorges du Todra et Dadès"
+  ],
+  "points_forts": [
+    "Nuitée en bivouac de luxe au cœur des dunes de l'Erg Chebbi",
+    "Balade à dos de dromadaire au coucher et lever du soleil",
+    "Soirée animée autour du feu de camp avec musiciens Gnawa",
+    "Visite des spectaculaires Gorges du Todra et Dadès"
+  ],
+  "popular": true,
+  "isPopular": true,
+  "isWeekly": true,
+  "isUpcoming": false,
+  "category": "popular",
+  "order": 1,
+  "priority": 1,
+  "rating": 4.9,
+  "reviewCount": 142,
+  "departureCities": ["Casablanca", "Rabat", "Marrakech"],
+  "nextDate": "Vendredi 18 Septembre",
+  "groupSize": "14 à 20 personnes",
+  "included": [
+    "Transport touristique tout confort climatisé A/R",
+    "Chauffeur professionnel expérimenté & accompagnateur Smart Orga",
+    "1 nuitée en hôtel de charme aux Gorges du Dadès en demi-pension",
+    "1 nuitée en bivouac supérieur à Merzouga avec sanitaires privés",
+    "Balade à dos de dromadaire aller et retour",
+    "Dîners et petits-déjeuners inclus"
+  ],
+  "notIncluded": [
+    "Déjeuners libres en cours de route",
+    "Boissons et dépenses personnelles",
+    "Session quad / buggy dans les dunes (en option sur place)"
+  ],
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Départ & Traversée du Haut-Atlas vers Ouarzazate",
+      "description": "Rendez-vous tôt le matin. Traversée du majestueux col de Tizi n'Tichka (2 260 m). Déjeuner à la Kasbah d'Aït Ben Haddou, visite des studios de cinéma de Ouarzazate et nuitée dans les Gorges du Dadès."
+    },
+    {
+      "day": 2,
+      "title": "Gorges du Todra & Immersion dans les dunes de Merzouga",
+      "description": "Route vers Tinghir et marche dans les falaises impressionnantes des Gorges du Todra. Arrivée à Merzouga en fin d'après-midi, caravane de dromadaires dans les dunes dorées, dîner traditionnel et nuit sous les étoiles."
+    },
+    {
+      "day": 3,
+      "title": "Lever de soleil sur l'Erg Chebbi & Retour",
+      "description": "Réveil matinal pour admirer le lever de soleil sur les crêtes de sable. Petit-déjeuner berbère complet, puis voyage retour avec arrêts panoramiques et souvenirs plein la tête."
+    }
+  ],
+  "weather": {
+    "temp": "27°C",
+    "condition": "Ensoleillé & Ciel pur",
+    "conditionAr": "مشمس وسماء صافية",
+    "conditionEn": "Sunny & Clear Sky",
+    "dailyForecast": [
+      { "day": 1, "temp": "26°C", "condition": "Ensoleillé", "conditionAr": "مشمس", "conditionEn": "Sunny" },
+      { "day": 2, "temp": "28°C", "condition": "Ciel étoilé", "conditionAr": "ليلة صافية", "conditionEn": "Starry & Mild" },
+      { "day": 3, "temp": "25°C", "condition": "Grand soleil", "conditionAr": "مشمس ناصع", "conditionEn": "Bright Sunshine" }
+    ]
+  },
+  "body": "Départ de Casablanca et Rabat pour une traversée spectaculaire du Moyen Atlas jusqu'aux dunes d'or de Merzouga. Nuit sous tente berbère tout confort avec sanitaires privatifs."
+}

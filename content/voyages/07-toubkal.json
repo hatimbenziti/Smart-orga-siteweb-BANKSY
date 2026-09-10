@@ -1,0 +1,80 @@
+{
+  "id": "toubkal-imlil-trek",
+  "title": "Ascension du Mont Toubkal & Vallée d'Imlil (4 167 m)",
+  "destination": "Imlil & Haut-Atlas",
+  "region": "Nature & Randonnée",
+  "duration": "3 jours / 2 nuits",
+  "days": 3,
+  "nights": 2,
+  "price": 1650,
+  "priceMAD": 1650,
+  "originalPriceMAD": 1950,
+  "image": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
+  "gallery": [
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80"
+  ],
+  "highlights": [
+    "Atteindre le sommet culminant d'Afrique du Nord à 4 167 m",
+    "Vue panoramique à 360° sur l'Atlas et le début du Sahara",
+    "Nuitée chaleureuse au refuge du Toubkal (3 207 m)",
+    "Muletiers et cuisinier berbère pour porter les bagages et préparer les repas"
+  ],
+  "points_forts": [
+    "Atteindre le sommet culminant d'Afrique du Nord à 4 167 m",
+    "Vue panoramique à 360° sur l'Atlas et le début du Sahara",
+    "Nuitée chaleureuse au refuge du Toubkal (3 207 m)",
+    "Muletiers et cuisinier berbère pour porter les bagages et préparer les repas"
+  ],
+  "popular": false,
+  "isPopular": false,
+  "isWeekly": false,
+  "isUpcoming": true,
+  "category": "upcoming",
+  "order": 7,
+  "priority": 7,
+  "rating": 4.9,
+  "reviewCount": 87,
+  "departureCities": ["Marrakech", "Casablanca", "Rabat"],
+  "nextDate": "Vendredi 2 Octobre",
+  "groupSize": "8 à 14 personnes",
+  "included": [
+    "Transport A/R en minibus touristique",
+    "2 nuits au refuge de montagne",
+    "Pension complète durant tout le trek (préparée par notre chef)",
+    "Guide de haute montagne breveté d'État",
+    "Mulets pour le portage des bagages"
+  ],
+  "notIncluded": [
+    "Équipement personnel (chaussures de marche, bâtons, sac de couchage)",
+    "Pourboires à l'équipe locale"
+  ],
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Marrakech - Imlil - Refuge du Toubkal",
+      "description": "Transfert jusqu'au village d'Imlil (1 740 m). Rencontre avec l'équipe de muletiers. Montée progressive le long de la vallée de Chamharouch jusqu'au refuge des Mouflons."
+    },
+    {
+      "day": 2,
+      "title": "L'Ascension du Sommet (4 167 m) & Célébration",
+      "description": "Départ à l'aube à la frontale. Montée vers la crête et arrivée au sommet pour assister à un lever de soleil exceptionnel. Descente vers le refuge pour un thé réconfortant."
+    },
+    {
+      "day": 3,
+      "title": "Descente vers Imlil & Retour",
+      "description": "Retour paisible vers Imlil, déjeuner convivial chez l'habitant berbère et trajet retour vers votre ville de départ."
+    }
+  ],
+  "weather": {
+    "temp": "18°C",
+    "condition": "Air pur & Ciel dégagé",
+    "conditionAr": "هواء نقي وسماء صافية",
+    "conditionEn": "Fresh Mountain Air",
+    "dailyForecast": [
+      { "day": 1, "temp": "19°C", "condition": "Idéal pour le trek", "conditionAr": "مثالي للمشي الجبلي", "conditionEn": "Ideal for Trekking" },
+      { "day": 2, "temp": "14°C", "condition": "Sommet dégagé au matin", "conditionAr": "قمة صافية مع الشروق", "conditionEn": "Clear Summit Morning" },
+      { "day": 3, "temp": "17°C", "condition": "Vallée tempérée", "conditionAr": "طقس معتدل بالوادي", "conditionEn": "Mild Valley" }
+    ]
+  },
+  "body": "L'ascension du toit de l'Afrique du Nord à 4 167 m d'altitude avec une équipe d'experts de haute montagne."
+}
