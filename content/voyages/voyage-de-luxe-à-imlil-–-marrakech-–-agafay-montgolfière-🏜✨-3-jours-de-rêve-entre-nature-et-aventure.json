@@ -1,0 +1,19 @@
+{
+  "nextDate": "chaque vendredi",
+  "body": "Préparez-vous pour une aventure unique entre les montagnes d’Imlil, le désert d’Agafay et le charme de Marrakech ! Trois jours de plaisir et de découverte avec hébergement confortable, délicieux repas et activités variées, allant de randonnées faciles, jeux d’aventure, jusqu’à l’expérience en montgolfière pour admirer le lever du soleil à près de 2000 mètres. Un voyage alliant détente, aventure et amusement pour tous. Réservez votre place dès maintenant et vivez une expérience inoubliable ! 🌄✨",
+  "price": 900,
+  "destination": "MARRAKECH IMLIL AGAFAY Palmeraie",
+  "order": 1,
+  "duration": "3 jours / 2 nuits",
+  "region": "Nature & Randonnée",
+  "originalPriceMAD": 1300,
+  "title": "Voyage de Luxe à Imlil – Marrakech – Agafay & Montgolfière 🏜✨ 3 Jours de Rêve entre Nature et Aventure !",
+  "popular": true,
+  "image": "/images/uploads/0.09049778190595215.jpeg",
+  "departureCities": [
+    "Casablanca",
+    "Marrakech"
+  ],
+  "category": "weekly",
+  "highlights": []
+}
