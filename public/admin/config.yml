@@ -79,10 +79,12 @@ collections:
     editor:
       preview: true
     fields:
-      - { label: "Lieu / Destination", name: "location", widget: "string", default: "Merzouga, Sahara" }
-      - { label: "Légende / Caption", name: "caption", widget: "string", default: "Coucher de soleil doré et caravane dans les dunes de l'Erg Chebbi ✨🐪" }
+      - { label: "Titre / Lieu", name: "title", widget: "string", default: "Merzouga, Sahara" }
       - { label: "Photo / Image du Post", name: "image", widget: "image" }
-      - { label: "Lien Instagram du post (optionnel)", name: "post_url", widget: "string", default: "https://www.instagram.com/smart_orga/", required: false }
-      - { label: "Nombre de Likes (estimé)", name: "likes", widget: "number", default: 600, value_type: "int", required: false }
-      - { label: "Nombre de Commentaires", name: "comments", widget: "number", default: 45, value_type: "int", required: false }
+      - { label: "Lien Instagram (URL)", name: "link", widget: "string", default: "https://www.instagram.com/smart_orga/", required: false }
+      - { label: "Nombre de Likes", name: "likes", widget: "number", default: 100, value_type: "int", required: false }
+      - { label: "Nombre de Commentaires", name: "comments", widget: "number", default: 10, value_type: "int", required: false }
       - { label: "Ordre d'affichage (1 = en premier)", name: "order", widget: "number", default: 1, value_type: "int" }
+      - { label: "Lieu / Destination (optionnel)", name: "location", widget: "string", required: false }
+      - { label: "Légende détaillée (optionnel)", name: "caption", widget: "string", required: false }
+      - { label: "Lien Instagram alternatif (optionnel)", name: "post_url", widget: "string", required: false }
