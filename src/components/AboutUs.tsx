@@ -12,7 +12,7 @@ export const AboutUs: React.FC = () => {
       role: t.teamMember1Role,
       bio: t.teamMember1Bio,
       specialty: t.teamMember1Specialty,
-      photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&h=500&q=80',
+      photo: '/assets/salah.png',
     },
     {
       id: 2,
@@ -20,7 +20,7 @@ export const AboutUs: React.FC = () => {
       role: t.teamMember2Role,
       bio: t.teamMember2Bio,
       specialty: t.teamMember2Specialty,
-      photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&h=500&q=80',
+      photo: '/assets/chaimaa.png',
     },
     {
       id: 3,
@@ -28,7 +28,7 @@ export const AboutUs: React.FC = () => {
       role: t.teamMember3Role,
       bio: t.teamMember3Bio,
       specialty: t.teamMember3Specialty,
-      photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&h=500&q=80',
+      photo: '/assets/hatim.png',
     },
   ];
 
