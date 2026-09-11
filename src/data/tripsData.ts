@@ -27,6 +27,8 @@ export interface CmsTripRaw {
   points_forts?: string[];
   order?: number | string;
   priority?: number | string;
+  program?: string;
+  body?: string;
   itinerary?: {
     day: number;
     title: string;
@@ -48,7 +50,6 @@ export interface CmsTripRaw {
       conditionEn?: string;
     }[];
   };
-  body?: string;
 }
 
 /**
@@ -178,6 +179,8 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
       ];
 
   const groupSize = data.groupSize || '14 à 22 personnes';
+  const program = data.program || data.body || '';
+  const body = data.body || data.program || '';
 
   const weather = data.weather || {
     temp: '25°C',
@@ -207,6 +210,8 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
     isWeekly,
     isUpcoming,
     highlights,
+    program,
+    body,
     itinerary,
     included,
     notIncluded,

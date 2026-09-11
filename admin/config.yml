@@ -35,13 +35,40 @@ collections:
       - { label: "Prix d'origine barré (MAD, optionnel)", name: "originalPriceMAD", widget: "number", value_type: "int", required: false }
       - { label: "Durée", name: "duration", widget: "string", default: "3 jours / 2 nuits" }
       - { label: "Image Principale", name: "image", widget: "image" }
+      - label: "Galerie Photos (optionnel)"
+        name: "gallery"
+        widget: "list"
+        field: { label: "Photo", name: "photo", widget: "image" }
+        required: false
       - { label: "Points forts (Highlights)", name: "highlights", widget: "list", field: { label: "Point fort", name: "item", widget: "string" } }
       - { label: "Voyage Populaire / Coup de cœur (popular)", name: "popular", widget: "boolean", default: true }
       - { label: "Ordre / Priorité d'affichage (order)", name: "order", widget: "number", default: 1, value_type: "int" }
       - { label: "Catégorie", name: "category", widget: "select", options: ["popular", "weekly", "upcoming", "all"], default: "popular" }
       - { label: "Villes de départ (optionnel)", name: "departureCities", widget: "list", field: { label: "Ville", name: "city", widget: "string" }, required: false }
       - { label: "Prochaine date de départ (optionnel)", name: "nextDate", widget: "string", required: false }
-      - { label: "Description & Itinéraire (Markdown)", name: "body", widget: "markdown", required: false }
+      - { label: "Taille du groupe (optionnel)", name: "groupSize", widget: "string", default: "14 à 22 personnes", required: false }
+      - label: "Météo du Séjour & Prévisions des Jours"
+        name: "weather"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "Température moyenne (ex: 26°C)", name: "temp", widget: "string", default: "26°C" }
+          - { label: "Condition météo générale (ex: Ensoleillé & Ciel pur)", name: "condition", widget: "string", default: "Ensoleillé & Ciel pur" }
+          - label: "Météo détaillée des jours"
+            name: "dailyForecast"
+            widget: "list"
+            required: false
+            fields:
+              - { label: "Numéro du jour (1, 2, 3...)", name: "day", widget: "number", value_type: "int", default: 1 }
+              - { label: "Température (ex: 26°C)", name: "temp", widget: "string", default: "26°C" }
+              - { label: "Météo du jour (ex: Grand soleil)", name: "condition", widget: "string", default: "Grand soleil" }
+      - label: "Programme Complet du Voyage"
+        name: "body"
+        widget: "markdown"
+        required: false
+        hint: "Rédigez ici le programme complet et détaillé du séjour (supporte les titres #, les listes à puces -, le texte en gras et les emojis)."
+      - { label: "Inclus dans le prix", name: "included", widget: "list", field: { label: "Prestation incluse", name: "item", widget: "string" }, required: false }
+      - { label: "Non inclus dans le prix", name: "notIncluded", widget: "list", field: { label: "Prestation non incluse", name: "item", widget: "string" }, required: false }
 
   # 2. Collection : Images du Slider Hero (Accueil)
   - name: "slider"

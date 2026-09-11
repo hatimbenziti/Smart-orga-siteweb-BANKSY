@@ -31,7 +31,11 @@ export interface Trip {
   highlights: string[];
   highlightsAr?: string[];
   highlightsEn?: string[];
-  itinerary: {
+  program?: string;
+  programAr?: string;
+  programEn?: string;
+  body?: string;
+  itinerary?: {
     day: number;
     title: string;
     description: string;

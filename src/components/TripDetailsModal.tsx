@@ -1,6 +1,7 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Trip } from '../types';
-import { X, Check, Clock, Calendar, Users, MapPin, MessageCircle, ShieldCheck, Sun } from 'lucide-react';
+import { X, Check, Clock, Calendar, Users, MapPin, MessageCircle, ShieldCheck, Sun, FileText } from 'lucide-react';
 import { createTripWhatsAppUrl } from '../utils/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
 import {
@@ -34,6 +35,39 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
   const directWhatsAppUrl = createTripWhatsAppUrl(trip, { lang: language });
 
+  // Compute full program content with markdown formatting
+  const programContent = (() => {
+    const customText = (trip.program || trip.body || '').trim();
+
+    if (Array.isArray(trip.itinerary) && trip.itinerary.length > 0) {
+      if (customText.length > 160) {
+        return customText;
+      }
+
+      const sections = trip.itinerary.map((item) => {
+        const itemTitle = language === 'ar'
+          ? (item.titleAr || item.title)
+          : language === 'en'
+          ? (item.titleEn || item.title)
+          : item.title;
+        const itemDesc = language === 'ar'
+          ? (item.descriptionAr || item.description)
+          : language === 'en'
+          ? (item.descriptionEn || item.description)
+          : item.description;
+
+        return `### ${itemTitle}\n\n${itemDesc}`;
+      }).join('\n\n');
+
+      if (customText.length > 0 && !sections.includes(customText)) {
+        return `${customText}\n\n${sections}`;
+      }
+      return sections;
+    }
+
+    return customText;
+  })();
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
       <div className="relative bg-white rounded-3xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
@@ -57,7 +91,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="overflow-y-auto p-6 space-y-7">
+        <div className="overflow-y-auto p-6 space-y-6">
           {/* Main Image Banner */}
           <div className="relative rounded-2xl overflow-hidden aspect-[16/9] max-h-80 bg-slate-100">
             <img
@@ -79,7 +113,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
           </div>
 
           {/* Quick Info Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs sm:text-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs sm:text-sm">
             <div>
               <span className="text-slate-400 block text-[11px] font-bold uppercase">
                 {language === 'ar' ? 'المدة' : 'Durée'}
@@ -115,69 +149,118 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                 {trip.departureCities.join(', ')}
               </span>
             </div>
-            <div>
-              <span className="text-slate-400 block text-[11px] font-bold uppercase">
-                {t.modalWeatherLabel}
-              </span>
-              <div className="flex items-center gap-1.5 font-bold text-slate-800 mt-0.5">
-                <Sun className="w-4 h-4 text-amber-500 shrink-0" />
-                <span className="truncate" title={`${weatherTemp} - ${weatherCondition}`}>
-                  {weatherTemp} • {weatherCondition}
-                </span>
-              </div>
-            </div>
           </div>
 
-          {/* Day-by-Day Itinerary */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <span>{t.modalProgramTitle}</span>
-              <span className="text-xs font-normal text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                {trip.days} {language === 'ar' ? 'أيام مفصلة' : 'jours'}
+          {/* Météo des jours du voyage (En haut du programme) */}
+          <div className="bg-gradient-to-r from-amber-500/10 via-sky-500/10 to-blue-500/10 border border-amber-200/80 rounded-2xl p-4 sm:p-5 shadow-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-amber-500/15 flex items-center justify-center text-amber-600 shrink-0">
+                  <Sun className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-slate-900">
+                    {t.modalWeatherForecastTitle || (language === 'ar' ? 'حالة الطقس وتوقعات الأيام' : 'Météo des jours du voyage')}
+                  </h4>
+                  <span className="text-[11px] text-slate-500 font-medium">
+                    {destination} • {weatherTemp} ({weatherCondition})
+                  </span>
+                </div>
+              </div>
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-900 bg-amber-100/90 px-3 py-1 rounded-full border border-amber-300/60 shadow-xs">
+                <Sun className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                <span>{weatherTemp} • {weatherCondition}</span>
               </span>
-            </h3>
+            </div>
 
-            <div className={`space-y-3.5 border-s-2 border-blue-200 ${isRTL ? 'mr-3 pr-4 sm:pr-6' : 'ml-3 pl-4 sm:pl-6'}`}>
-              {trip.itinerary.map((item) => {
-                const dayForecast = trip.weather?.dailyForecast?.find(df => df.day === item.day);
-                const dayCondition = language === 'ar'
-                  ? (dayForecast?.conditionAr || dayForecast?.condition)
-                  : language === 'en'
-                  ? (dayForecast?.conditionEn || dayForecast?.condition)
-                  : dayForecast?.condition;
+            {/* Daily forecast cards */}
+            {trip.weather?.dailyForecast && trip.weather.dailyForecast.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 pt-1">
+                {trip.weather.dailyForecast.map((df) => {
+                  const dayCond = language === 'ar'
+                    ? (df.conditionAr || df.condition)
+                    : language === 'en'
+                    ? (df.conditionEn || df.condition)
+                    : df.condition;
 
-                return (
-                  <div key={item.day} className="relative group">
-                    {/* Timeline dot */}
-                    <div className={`absolute ${isRTL ? '-right-[23px] sm:-right-[31px]' : '-left-[23px] sm:-left-[31px]'} top-1 w-4 h-4 rounded-full bg-blue-600 border-2 border-white shadow-xs`}></div>
-                    
-                    <div className="bg-slate-50/80 p-4 rounded-xl border border-slate-100">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <span className="text-xs font-extrabold text-blue-600 uppercase tracking-wider block">
-                          {language === 'ar' ? `اليوم ${item.day}` : `Jour ${item.day}`}
-                        </span>
-                        {dayForecast && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-800 bg-amber-50/90 px-2.5 py-0.5 rounded-full border border-amber-200/60 shadow-xs">
-                            <Sun className="w-3 h-3 text-amber-500 shrink-0" />
-                            <span>{dayForecast.temp} {dayCondition && `• ${dayCondition}`}</span>
-                          </span>
-                        )}
+                  return (
+                    <div
+                      key={df.day}
+                      className="bg-white/95 rounded-xl p-2.5 border border-amber-200/60 shadow-xs flex items-center gap-2.5 transition-all hover:border-amber-400/80 hover:shadow-xs"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 shrink-0">
+                        <Sun className="w-4 h-4" />
                       </div>
-                      <h4 className="text-sm sm:text-base font-bold text-slate-900 mb-1.5">
-                        {item.title}
-                      </h4>
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                        {item.description}
-                      </p>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-[11px] font-extrabold text-blue-700 uppercase">
+                            {language === 'ar' ? `اليوم ${df.day}` : `Jour ${df.day}`}
+                          </span>
+                          <span className="text-xs font-bold text-slate-900">{df.temp}</span>
+                        </div>
+                        <p className="text-[11px] text-slate-600 truncate font-medium mt-0.5" title={dayCond}>
+                          {dayCond}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-xs text-slate-700 bg-white/90 rounded-xl p-3 border border-amber-200/50 flex items-center gap-2">
+                <Sun className="w-4 h-4 text-amber-500 shrink-0" />
+                <span>
+                  {language === 'ar'
+                    ? `أجواء ممتازة متوقعة طيلة أيام الرحلة : معدل حرارة ${weatherTemp} مع طقس ${weatherCondition}.`
+                    : `Conditions optimales prévues durant le séjour : températures moyennes de ${weatherTemp} avec un climat ${weatherCondition}.`}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Programme Complet du Voyage */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                <FileText className="w-5 h-5 text-blue-600 shrink-0" />
+                <span>{t.modalProgramTitle || (language === 'ar' ? 'البرنامج الكامل للرحلة' : 'Programme complet du voyage')}</span>
+              </h3>
+              <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200/70 px-3 py-1 rounded-full">
+                {duration}
+              </span>
+            </div>
+
+            <div className="bg-slate-50/90 rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs">
+              {programContent ? (
+                <div className="text-slate-700 text-xs sm:text-sm leading-relaxed space-y-3">
+                  <ReactMarkdown
+                    components={{
+                      h1: ({ node, ...props }) => <h3 className="text-base sm:text-lg font-bold text-slate-900 mt-4 mb-2 first:mt-0" {...props} />,
+                      h2: ({ node, ...props }) => <h3 className="text-sm sm:text-base font-bold text-slate-900 mt-3.5 mb-2 first:mt-0" {...props} />,
+                      h3: ({ node, ...props }) => (
+                        <h4 className="text-sm sm:text-base font-bold text-blue-900 mt-4 mb-2 first:mt-0 flex items-center gap-2 bg-blue-100/60 text-blue-900 px-3.5 py-2 rounded-xl border-s-4 border-blue-600 shadow-xs" {...props} />
+                      ),
+                      h4: ({ node, ...props }) => <h5 className="text-xs sm:text-sm font-bold text-slate-800 mt-3 mb-1.5" {...props} />,
+                      p: ({ node, ...props }) => <p className="text-slate-600 leading-relaxed mb-3 last:mb-0" {...props} />,
+                      ul: ({ node, ...props }) => <ul className="list-disc ps-5 space-y-1.5 my-2.5 text-slate-600" {...props} />,
+                      ol: ({ node, ...props }) => <ol className="list-decimal ps-5 space-y-1.5 my-2.5 text-slate-600" {...props} />,
+                      li: ({ node, ...props }) => <li className="ps-0.5" {...props} />,
+                      strong: ({ node, ...props }) => <strong className="font-bold text-slate-900" {...props} />,
+                    }}
+                  >
+                    {programContent}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <p className="text-slate-500 italic text-sm">
+                  {language === 'ar' ? 'تفاصيل البرنامج الكامل ستتوفر قريباً.' : 'Le programme complet et détaillé du voyage sera communiqué prochainement.'}
+                </p>
+              )}
             </div>
           </div>
 
           {/* Included / Not Included */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
             <div className="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 space-y-2.5">
               <h4 className="text-sm font-bold text-emerald-900 flex items-center gap-1.5">
                 <Check className="w-4 h-4 text-emerald-600" />
