@@ -1,0 +1,35 @@
+{
+  "groupSize": "1 à 35 personnes",
+  "nextDate": "chaque semaine",
+  "price": 8500,
+  "excluded": [
+    "-"
+  ],
+  "destination": " ISTANBUL",
+  "order": 1,
+  "cancellation_policy": "Politique d'annulation\nPour toute annulation effectuée plus de 15 jours avant la date du départ, le remboursement est total (100 %).\n\nPour toute annulation effectuée entre 7 et 15 jours avant le départ, un remboursement de 50 % du montant versé sera effectué.\n\nPour toute annulation ou réservation effectuée moins de 7 jours avant le départ, aucun remboursement ne sera possible.\n\nEn cas d’annulation par l’organisateur, le montant total sera remboursé au participant.",
+  "duration": "8 jours / 7 nuits",
+  "region": "Culture & Patrimoine",
+  "weather": {
+    "temp": "26°C",
+    "condition": "Ensoleillé & Ciel pur",
+    "dailyForecast": [
+      {
+        "day": 1,
+        "temp": "26°C",
+        "condition": "Grand soleil"
+      }
+    ]
+  },
+  "originalPriceMAD": 9800,
+  "title": " ÉVASION À ISTANBUL 🇹🇷 — ENTRE HISTOIRE, BOSPHORE & DÉCOUVERTE ✨",
+  "popular": true,
+  "image": "/images/uploads/0.5477334369474541.webp",
+  "included": [
+    "✈️ Billet d’avion aller-retour avec Royal Air Maroc. 🏨 Hébergement 7 nuits dans un hôtel 3 étoiles ou équivalent. 🍳 Petits-déjeuners durant tout le séjour. 🚌 Transferts aéroport ↔ hôtel. 🗺️ Accompagnement et assistance pendant le séjour. 🕌 Visites et excursions prévues dans le programme de base. 🛍️ Temps libres dédiés à la découverte et au shopping."
+  ],
+  "departureCities": [
+    "Casablanca"
+  ],
+  "category": "popular"
+}
