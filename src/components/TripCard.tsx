@@ -31,11 +31,22 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col group">
       {/* Image container */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+      <div
+        onClick={() => onOpenDetails(trip)}
+        className="relative aspect-[16/10] overflow-hidden bg-slate-100 cursor-pointer"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onOpenDetails(trip);
+          }
+        }}
+      >
         <img
           src={trip.image}
           alt={title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
           loading="lazy"
           referrerPolicy="no-referrer"
         />
