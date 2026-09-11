@@ -1,10 +1,20 @@
-import { Trip, Review, FAQItem } from '../types';
+import { Trip, Review, FAQItem, TripThematique } from '../types';
+
+export const VALID_THEMATIQUES: TripThematique[] = [
+  'Nature & Randonnée',
+  'Désert & Aventure',
+  'Plage & Détente',
+  'Montagne & Trekking',
+  'Camping & Bivouac',
+  'Culture & Patrimoine'
+];
 
 export interface CmsTripRaw {
   id?: string;
   title?: string;
   destination?: string;
-  region?: 'Désert & Dunes' | 'Villes Impériales' | 'Nature & Randonnée' | 'Plages & Surf' | string;
+  region?: TripThematique | string;
+  thematique?: TripThematique | string;
   duration?: string;
   days?: number | string;
   nights?: number | string;
@@ -91,14 +101,30 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
   const title = data.title || 'Séjour Découverte au Maroc';
   const destination = data.destination || 'Maroc';
   
-  // Validate and map region
-  let region: 'Désert & Dunes' | 'Villes Impériales' | 'Nature & Randonnée' | 'Plages & Surf' = 'Désert & Dunes';
-  if (data.region) {
-    const regLower = data.region.toLowerCase();
-    if (regLower.includes('plage') || regLower.includes('surf')) region = 'Plages & Surf';
-    else if (regLower.includes('ville') || regLower.includes('impérial')) region = 'Villes Impériales';
-    else if (regLower.includes('nature') || regLower.includes('rando') || regLower.includes('montagne')) region = 'Nature & Randonnée';
-    else if (regLower.includes('désert') || regLower.includes('desert') || regLower.includes('dune')) region = 'Désert & Dunes';
+  // Validate and map region / thematique to one of the 6 canonical themes
+  let region: TripThematique = 'Nature & Randonnée';
+  const rawRegion = (data.region || data.thematique || '').trim();
+  if (rawRegion) {
+    if (VALID_THEMATIQUES.includes(rawRegion as TripThematique)) {
+      region = rawRegion as TripThematique;
+    } else {
+      const regLower = rawRegion.toLowerCase();
+      if (regLower.includes('bivouac') || regLower.includes('camp')) {
+        region = 'Camping & Bivouac';
+      } else if (regLower.includes('montagne') || regLower.includes('trek') || regLower.includes('toubkal') || regLower.includes('sommet')) {
+        region = 'Montagne & Trekking';
+      } else if (regLower.includes('plage') || regLower.includes('surf') || regLower.includes('détente') || regLower.includes('mer') || regLower.includes('côte')) {
+        region = 'Plage & Détente';
+      } else if (regLower.includes('ville') || regLower.includes('impérial') || regLower.includes('culture') || regLower.includes('patrimoine') || regLower.includes('médina')) {
+        region = 'Culture & Patrimoine';
+      } else if (regLower.includes('désert') || regLower.includes('desert') || regLower.includes('dune') || regLower.includes('erg') || regLower.includes('aventure')) {
+        region = 'Désert & Aventure';
+      } else if (regLower.includes('nature') || regLower.includes('rando') || regLower.includes('cascade') || regLower.includes('vallée')) {
+        region = 'Nature & Randonnée';
+      } else {
+        region = 'Nature & Randonnée';
+      }
+    }
   }
 
   const duration = data.duration || '3 jours / 2 nuits';
@@ -107,7 +133,16 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
   const priceMAD = Number(data.priceMAD || data.price) || 990;
   const originalPriceMAD = data.originalPriceMAD ? Number(data.originalPriceMAD) : undefined;
   const image = data.image || data.imageUrl || 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80';
-  const gallery = Array.isArray(data.gallery) && data.gallery.length > 0 ? data.gallery : [image];
+  const rawGallery = Array.isArray(data.gallery)
+    ? data.gallery
+        .map((item: any) => {
+          if (typeof item === 'string') return item.trim();
+          if (item && typeof item === 'object') return (item.image || item.photo || item.url || '').trim();
+          return '';
+        })
+        .filter(Boolean)
+    : [];
+  const gallery = rawGallery.length > 0 ? rawGallery : [image];
 
   const highlights = Array.isArray(data.highlights) && data.highlights.length > 0
     ? data.highlights
@@ -349,38 +384,60 @@ export const REVIEWS_DATA: Review[] = [
   }
 ];
 
-export const FAQ_DATA: FAQItem[] = [
-  {
-    question: 'Comment réserver un séjour avec Smart Orga ?',
-    answer: 'C\'est très simple et rapide ! Il vous suffit de cliquer sur le bouton "Réserver sur WhatsApp" de votre voyage favori. Un message pré-rempli avec les détails du voyage sera envoyé à nos conseillers qui vérifieront la disponibilité et finaliseront votre réservation instantanément.',
-    category: 'Réservation'
-  },
-  {
-    question: 'Quelles sont les modalités de paiement des arrhes ?',
-    answer: 'Pour garantir votre place dans le groupe, un acompte de 30% à 50% est demandé par virement bancaire sécurisé (Attijariwafa, CIH Bank, BCP) ou versement en agence. Le reliquat est réglé en espèces ou virement le jour du départ.',
-    category: 'Réservation'
-  },
-  {
-    question: 'Quelles sont les villes de départ disponibles ?',
-    answer: 'Nos principaux points de départ sont Casablanca (gare Casa Voyageurs) et Rabat (gare Rabat Ville). Pour certains séjours comme le désert ou le nord, nous effectuons également des ramassages à Marrakech, Kénitra, Tanger ou Meknès.',
-    category: 'Transport & Hébergement'
-  },
-  {
-    question: 'Le transport touristique et le logement sont-ils inclus ?',
-    answer: 'Absolument ! Tous nos séjours comprennent le transport en autocars ou minibus touristiques récents, tout confort et climatisés, ainsi que les nuitées en hôtels de charme ou bivouacs confortablement équipés.',
-    category: 'Transport & Hébergement'
-  },
-  {
-    question: 'Puis-je voyager seul(e) et intégrer un groupe ?',
-    answer: 'Tout à fait ! Près de 45% de nos participants voyagent seuls pour faire de nouvelles rencontres dans une ambiance saine, chaleureuse et sécurisée. Vous partagerez une chambre twin avec un voyageur du même sexe, ou opterez pour une chambre single en supplément.',
-    category: 'Sur place'
-  },
-  {
-    question: 'Que se passe-t-il en cas d\'imprévu ou d\'annulation ?',
-    answer: 'Si vous nous prévenez au moins 7 jours avant la date du départ, votre acompte est soit remboursé intégralement (hors frais bancaires), soit reporté sans aucuns frais sur un voyage ultérieur de votre choix valable pendant 12 mois.',
-    category: 'Réservation'
-  }
-];
+/**
+ * Dynamically loads all FAQ items from Decap CMS content/faq/*.{json,md}
+ */
+export function loadCmsFaq(): FAQItem[] {
+  const list: (FAQItem & { order: number })[] = [];
+
+  // 1. Dynamic import of all JSON files in content/faq
+  const jsonModules = import.meta.glob<Record<string, any>>('/content/faq/*.json', { eager: true });
+  Object.entries(jsonModules).forEach(([path, mod], idx) => {
+    const data = ((mod as { default?: Record<string, any> }).default || mod) as Record<string, any>;
+    const slug = path.split('/').pop()?.replace(/\.json$/, '') || `faq-${idx}`;
+    if (data && (data.question || data.q)) {
+      list.push({
+        id: slug,
+        question: data.question || data.q || '',
+        answer: data.answer || data.a || data.body || '',
+        questionAr: data.questionAr || data.qAr,
+        answerAr: data.answerAr || data.aAr,
+        questionEn: data.questionEn || data.qEn,
+        answerEn: data.answerEn || data.aEn,
+        category: data.category || 'Réservation',
+        order: typeof data.order === 'number' ? data.order : idx + 1
+      });
+    }
+  });
+
+  // 2. Dynamic import of any Markdown files in content/faq
+  const mdModules = import.meta.glob<string>('/content/faq/*.md', { eager: true, query: '?raw', import: 'default' });
+  Object.entries(mdModules).forEach(([path, rawContent], idx) => {
+    const data = parseFrontmatter(rawContent);
+    const slug = path.split('/').pop()?.replace(/\.md$/, '') || `faq-md-${idx}`;
+    if (data && (data.question || data.title)) {
+      list.push({
+        id: slug,
+        question: data.question || data.title || '',
+        answer: data.body || data.answer || '',
+        questionAr: data.questionAr,
+        answerAr: data.answerAr,
+        questionEn: data.questionEn,
+        answerEn: data.answerEn,
+        category: data.category || 'Réservation',
+        order: typeof data.order === 'number' ? data.order : 100 + idx
+      });
+    }
+  });
+
+  list.sort((a, b) => a.order - b.order);
+  return list.map(({ order: _ord, ...item }) => item);
+}
+
+/**
+ * FAQ_DATA is dynamically loaded from Decap CMS content/faq
+ */
+export const FAQ_DATA: FAQItem[] = loadCmsFaq();
 
 export const WHATSAPP_NUMBER = '212690060366'; // Format international marocain (+212 690-060366)
 export const WHATSAPP_DISPLAY = '+212 690-060366';

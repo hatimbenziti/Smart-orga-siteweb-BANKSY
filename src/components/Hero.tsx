@@ -22,10 +22,12 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   }, []);
 
   const tags = [
-    { label: t.regionDesert, raw: 'Désert & Dunes' },
-    { label: t.regionImperial, raw: 'Villes Impériales' },
     { label: t.regionNature, raw: 'Nature & Randonnée' },
-    { label: t.regionPlages, raw: 'Plages & Surf' }
+    { label: t.regionDesert, raw: 'Désert & Aventure' },
+    { label: t.regionPlages, raw: 'Plage & Détente' },
+    { label: t.regionMontagne, raw: 'Montagne & Trekking' },
+    { label: t.regionCamping, raw: 'Camping & Bivouac' },
+    { label: t.regionCulture, raw: 'Culture & Patrimoine' }
   ];
 
   // Auto carousel effect

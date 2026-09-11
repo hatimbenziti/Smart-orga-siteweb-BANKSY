@@ -1,8 +1,10 @@
 import React from 'react';
 import { Trip } from '../types';
-import { Clock, Calendar, CheckCircle2, Star, Users, MapPin, Eye, MessageCircle, Sun } from 'lucide-react';
+import { Clock, Calendar, CheckCircle2, Star, Users, MapPin, Eye, MessageCircle } from 'lucide-react';
 import { createTripWhatsAppUrl } from '../utils/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
+import { useTripWeather } from '../hooks/useTripWeather';
+import { WeatherIcon } from './WeatherIcon';
 import {
   getTripTitle,
   getTripDestination,
@@ -19,12 +21,16 @@ interface TripCardProps {
 
 export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenBookingModal }) => {
   const { language, t } = useLanguage();
+  const { weather } = useTripWeather(trip);
 
   const title = getTripTitle(trip, language);
   const destination = getTripDestination(trip, language);
   const duration = getTripDuration(trip, language);
   const highlights = getTripHighlights(trip, language);
   const nextDate = getTripNextDate(trip, language);
+
+  const displayTemp = weather?.temp || trip.weather?.temp;
+  const weatherIcon = weather?.icon || 'sun';
 
   const directWhatsAppUrl = createTripWhatsAppUrl(trip, { lang: language });
 
@@ -105,10 +111,10 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
               <span className="font-medium text-slate-700">{nextDate}</span>
             </div>
             <div className="flex items-center gap-2">
-              {trip.weather && (
+              {displayTemp && (
                 <div className="flex items-center gap-1 text-[11px] font-semibold text-amber-800 bg-amber-50/80 px-2 py-0.5 rounded-md border border-amber-200/60">
-                  <Sun className="w-3 h-3 text-amber-500 shrink-0" />
-                  <span>{trip.weather.temp}</span>
+                  <WeatherIcon icon={weatherIcon} className="w-3 h-3 text-amber-500 shrink-0" />
+                  <span>{displayTemp}</span>
                 </div>
               )}
               <div className="flex items-center gap-1 text-[11px] text-slate-400">

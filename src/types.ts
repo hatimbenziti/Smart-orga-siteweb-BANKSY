@@ -1,5 +1,13 @@
 export type Language = 'fr' | 'ar' | 'en';
 
+export type TripThematique =
+  | 'Nature & Randonnée'
+  | 'Désert & Aventure'
+  | 'Plage & Détente'
+  | 'Montagne & Trekking'
+  | 'Camping & Bivouac'
+  | 'Culture & Patrimoine';
+
 export interface Trip {
   id: string;
   title: string;
@@ -8,7 +16,8 @@ export interface Trip {
   destination: string;
   destinationAr?: string;
   destinationEn?: string;
-  region: 'Désert & Dunes' | 'Villes Impériales' | 'Nature & Randonnée' | 'Plages & Surf';
+  region: TripThematique | string;
+  thematique?: TripThematique | string;
   duration: string;
   durationAr?: string;
   durationEn?: string;
@@ -93,13 +102,15 @@ export interface Review {
 }
 
 export interface FAQItem {
+  id?: string;
   question: string;
   answer: string;
   questionAr?: string;
   answerAr?: string;
   questionEn?: string;
   answerEn?: string;
-  category: 'Réservation' | 'Transport & Hébergement' | 'Sur place';
+  category?: 'Réservation' | 'Transport & Hébergement' | 'Sur place' | string;
+  order?: number;
 }
 
 export interface FilterState {

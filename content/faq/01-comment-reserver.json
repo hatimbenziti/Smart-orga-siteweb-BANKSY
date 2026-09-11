@@ -1,0 +1,10 @@
+{
+  "question": "Comment réserver un séjour avec Smart Orga ?",
+  "answer": "C'est très simple et rapide ! Il vous suffit de cliquer sur le bouton 'Réserver sur WhatsApp' de votre voyage favori. Un message pré-rempli avec les détails du voyage sera envoyé à nos conseillers qui vérifieront la disponibilité et finaliseront votre réservation instantanément.",
+  "order": 1,
+  "category": "Réservation",
+  "questionAr": "كيف تتم عملية الحجز عبر تطبيق واتساب ؟",
+  "answerAr": "العملية في غاية السهولة: اضغط على زر \"احجز عبر واتساب\" الخاص بالرحلة التي اخترتها. سيتم إنشاء رسالة جاهزة تلقائياً تتضمن اسم الرحلة وتاريخ الانطلاق وعدد المسافرين. يقوم فريقنا بالإجابة فوراً وتأكيد المقاعد الشاغرة وإرشادكم حول دفع العربون.",
+  "questionEn": "How does the WhatsApp booking process work?",
+  "answerEn": "It is quick and straightforward: click on any 'Book on WhatsApp' button. A pre-filled message is generated with the tour name, departure date, and group size. Our advisors confirm availability instantly and guide you through confirming your deposit."
+}

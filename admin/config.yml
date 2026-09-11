@@ -30,16 +30,16 @@ collections:
     fields:
       - { label: "Titre du Séjour", name: "title", widget: "string" }
       - { label: "Destination", name: "destination", widget: "string", default: "Merzouga & Sud Marocain" }
-      - { label: "Région / Thématique", name: "region", widget: "select", options: ["Désert & Dunes", "Villes Impériales", "Nature & Randonnée", "Plages & Surf"], default: "Désert & Dunes" }
+      - { label: "Thématique / Univers", name: "region", widget: "select", options: ["Nature & Randonnée", "Désert & Aventure", "Plage & Détente", "Montagne & Trekking", "Camping & Bivouac", "Culture & Patrimoine"], default: "Nature & Randonnée" }
       - { label: "Prix (MAD)", name: "price", widget: "number", value_type: "int" }
       - { label: "Prix d'origine barré (MAD, optionnel)", name: "originalPriceMAD", widget: "number", value_type: "int", required: false }
       - { label: "Durée", name: "duration", widget: "string", default: "3 jours / 2 nuits" }
       - { label: "Image Principale", name: "image", widget: "image" }
-      - label: "Galerie Photos (optionnel)"
-        name: "gallery"
+      - name: "gallery"
+        label: "Galerie d'images (photos supplémentaires)"
         widget: "list"
-        field: { label: "Photo", name: "photo", widget: "image" }
         required: false
+        field: { label: "Image", name: "image", widget: "image" }
       - { label: "Points forts (Highlights)", name: "highlights", widget: "list", field: { label: "Point fort", name: "item", widget: "string" } }
       - { label: "Voyage Populaire / Coup de cœur (popular)", name: "popular", widget: "boolean", default: true }
       - { label: "Ordre / Priorité d'affichage (order)", name: "order", widget: "number", default: 1, value_type: "int" }
@@ -114,12 +114,17 @@ collections:
     label_singular: "Question FAQ"
     folder: "content/faq"
     create: true
-    slug: "{{slug}}"
+    slug: "{{order}}-{{slug}}"
     format: "json"
     fields:
       - { label: "Question", name: "question", widget: "string" }
       - { label: "Réponse", name: "answer", widget: "text" }
-      - { label: "Ordre", name: "order", widget: "number", default: 1 }
+      - { label: "Ordre d'affichage", name: "order", widget: "number", default: 1, value_type: "int" }
+      - { label: "Catégorie (optionnel)", name: "category", widget: "string", required: false, default: "Réservation" }
+      - { label: "Question (Arabe, optionnel)", name: "questionAr", widget: "string", required: false }
+      - { label: "Réponse (Arabe, optionnel)", name: "answerAr", widget: "text", required: false }
+      - { label: "Question (Anglais, optionnel)", name: "questionEn", widget: "string", required: false }
+      - { label: "Réponse (Anglais, optionnel)", name: "answerEn", widget: "text", required: false }
 
   # 4. Collection : Galerie Instagram (@smart_orga) - Option B
   - name: "instagram_gallery"

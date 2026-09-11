@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Trip } from '../types';
-import { X, Check, Clock, Calendar, Users, MapPin, MessageCircle, ShieldCheck, Sun, FileText, AlertCircle } from 'lucide-react';
+import { X, Check, Clock, Calendar, Users, MapPin, MessageCircle, ShieldCheck, Sun, FileText, AlertCircle, ChevronLeft, ChevronRight, Camera } from 'lucide-react';
 import { createTripWhatsAppUrl } from '../utils/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
+import { useTripWeather } from '../hooks/useTripWeather';
+import { WeatherIcon } from './WeatherIcon';
 import {
   getTripTitle,
   getTripDestination,
@@ -46,14 +48,54 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   const duration = getTripDuration(trip, language);
   const nextDate = getTripNextDate(trip, language);
 
-  const weatherTemp = trip.weather?.temp || (trip.region === 'Désert & Dunes' ? '26°C' : trip.region === 'Plages & Surf' ? '24°C' : '22°C');
+  const { weather: liveWeather } = useTripWeather(trip);
+
+  const weatherTemp = liveWeather?.temp || trip.weather?.temp || (trip.region === 'Désert & Dunes' ? '26°C' : trip.region === 'Plages & Surf' ? '24°C' : '22°C');
   const weatherCondition = language === 'ar'
-    ? (trip.weather?.conditionAr || 'مشمس وصافٍ')
+    ? (liveWeather?.conditionAr || trip.weather?.conditionAr || 'مشمس وصافٍ')
     : language === 'en'
-    ? (trip.weather?.conditionEn || 'Sunny & Clear')
-    : (trip.weather?.condition || 'Ensoleillé & Ciel clair');
+    ? (liveWeather?.conditionEn || trip.weather?.conditionEn || 'Sunny & Clear')
+    : (liveWeather?.condition || trip.weather?.condition || 'Ensoleillé & Ciel clair');
+  const weatherIcon = liveWeather?.icon || 'sun';
+  const isLiveWeather = liveWeather?.isLive || false;
 
   const directWhatsAppUrl = createTripWhatsAppUrl(trip, { lang: language });
+
+  // Slider state and images list (main image + gallery)
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const allImages = useMemo(() => {
+    const list: string[] = [];
+    if (trip.image) list.push(trip.image);
+    if (Array.isArray(trip.gallery)) {
+      trip.gallery.forEach((item: any) => {
+        const url = typeof item === 'string'
+          ? item
+          : (item && typeof item === 'object' ? (item.image || item.photo || item.url) : '');
+        if (url && typeof url === 'string' && url.trim() && !list.includes(url.trim())) {
+          list.push(url.trim());
+        }
+      });
+    }
+    return list.length > 0 ? list : (trip.image ? [trip.image] : []);
+  }, [trip.image, trip.gallery]);
+
+  // Reset to first slide whenever trip changes
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [trip.id]);
+
+  const hasMultipleImages = allImages.length > 1;
+
+  const nextImage = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setActiveImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevImage = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setActiveImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  };
 
   // Compute full program content with markdown formatting
   const programContent = (() => {
@@ -126,24 +168,111 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
         {/* Modal Scrollable Body */}
         <div className="overflow-y-auto p-6 space-y-6">
-          {/* Main Image Banner */}
-          <div className="relative rounded-2xl overflow-hidden aspect-[16/9] max-h-80 bg-slate-100">
-            <img
-              src={trip.image}
-              alt={title}
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
-            <div className="absolute bottom-4 start-4 end-4 text-white">
-              <div className="flex items-center gap-2 text-xs font-semibold text-blue-200 mb-1">
-                <MapPin className="w-4 h-4 text-blue-400" />
-                <span>{destination}</span>
+          {/* Image Slider / Gallery Banner */}
+          <div className="space-y-2">
+            <div className="relative rounded-2xl overflow-hidden aspect-[16/9] max-h-80 bg-slate-950 group select-none">
+              {allImages.map((imgUrl, index) => (
+                <div
+                  key={index}
+                  className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${
+                    index === activeImageIndex ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+                  }`}
+                >
+                  <img
+                    src={imgUrl}
+                    alt={`${title} - photo ${index + 1}`}
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+              ))}
+
+              {/* Dark Gradient Overlay for title and badge legibility */}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent z-10 pointer-events-none" />
+
+              {/* Destination & Title (Pinned at Bottom) */}
+              <div className="absolute bottom-4 start-4 end-4 text-white z-20 pointer-events-none">
+                <div className="flex items-center gap-2 text-xs font-semibold text-blue-200 mb-1">
+                  <MapPin className="w-4 h-4 text-blue-400 shrink-0" />
+                  <span>{destination}</span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-white leading-snug drop-shadow-sm">
+                  {title}
+                </h2>
               </div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-white leading-snug">
-                {title}
-              </h2>
+
+              {/* Navigation Controls (Shown only if multiple photos exist) */}
+              {hasMultipleImages && (
+                <>
+                  {/* Photo Counter Badge (Top End) */}
+                  <div className="absolute top-3 end-3 z-20 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-semibold shadow-xs">
+                    <Camera className="w-3.5 h-3.5 text-blue-300 shrink-0" />
+                    <span>{activeImageIndex + 1} / {allImages.length}</span>
+                  </div>
+
+                  {/* Navigation Indicator Dots (Top Start) */}
+                  <div className="absolute top-3 start-3 z-20 flex items-center gap-1.5 bg-black/45 backdrop-blur-md px-2.5 py-1.5 rounded-full">
+                    {allImages.map((_, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setActiveImageIndex(idx)}
+                        className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                          idx === activeImageIndex ? 'w-5 bg-blue-400' : 'w-1.5 bg-white/60 hover:bg-white'
+                        }`}
+                        aria-label={`Photo ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Previous Button */}
+                  <button
+                    type="button"
+                    onClick={isRTL ? nextImage : prevImage}
+                    className="absolute start-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/45 hover:bg-black/75 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-md opacity-90 hover:opacity-100 hover:scale-105 active:scale-95"
+                    aria-label="Photo précédente"
+                  >
+                    <ChevronLeft className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* Next Button */}
+                  <button
+                    type="button"
+                    onClick={isRTL ? prevImage : nextImage}
+                    className="absolute end-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/45 hover:bg-black/75 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-md opacity-90 hover:opacity-100 hover:scale-105 active:scale-95"
+                    aria-label="Photo suivante"
+                  >
+                    <ChevronRight className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
+                  </button>
+                </>
+              )}
             </div>
+
+            {/* Thumbnails Navigation Row (Only if multiple images) */}
+            {hasMultipleImages && (
+              <div className="flex items-center gap-2 overflow-x-auto py-1 px-0.5 scrollbar-thin">
+                {allImages.map((imgUrl, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={`relative shrink-0 w-16 h-12 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                      idx === activeImageIndex
+                        ? 'border-blue-600 ring-2 ring-blue-500/30 scale-102 opacity-100 shadow-xs'
+                        : 'border-transparent opacity-60 hover:opacity-100 hover:scale-102'
+                    }`}
+                    aria-label={`Afficher la photo ${idx + 1}`}
+                  >
+                    <img
+                      src={imgUrl}
+                      alt=""
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Quick Info Grid */}
@@ -193,27 +322,35 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-amber-500/15 flex items-center justify-center text-amber-600 shrink-0">
-                  <Sun className="w-5 h-5" />
+                  <WeatherIcon icon={weatherIcon} className="w-5 h-5 text-amber-600" />
                 </div>
                 <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-slate-900">
-                    {t.modalWeatherForecastTitle || (language === 'ar' ? 'حالة الطقس وتوقعات الأيام' : 'Météo des jours du voyage')}
-                  </h4>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-xs sm:text-sm font-bold text-slate-900">
+                      {t.modalWeatherForecastTitle || (language === 'ar' ? 'حالة الطقس وتوقعات الأيام' : 'Météo des jours du voyage')}
+                    </h4>
+                    {isLiveWeather && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>{language === 'ar' ? 'توقعات حية' : 'En direct'}</span>
+                      </span>
+                    )}
+                  </div>
                   <span className="text-[11px] text-slate-500 font-medium">
                     {destination} • {weatherTemp} ({weatherCondition})
                   </span>
                 </div>
               </div>
               <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-900 bg-amber-100/90 px-3 py-1 rounded-full border border-amber-300/60 shadow-xs">
-                <Sun className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                <WeatherIcon icon={weatherIcon} className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                 <span>{weatherTemp} • {weatherCondition}</span>
               </span>
             </div>
 
-            {/* Daily forecast cards */}
-            {trip.weather?.dailyForecast && trip.weather.dailyForecast.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 pt-1">
-                {trip.weather.dailyForecast.map((df) => {
+            {/* Daily forecast cards (3 jours du voyage) */}
+            {liveWeather?.dailyForecast && liveWeather.dailyForecast.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                {liveWeather.dailyForecast.map((df) => {
                   const dayCond = language === 'ar'
                     ? (df.conditionAr || df.condition)
                     : language === 'en'
@@ -223,19 +360,22 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                   return (
                     <div
                       key={df.day}
-                      className="bg-white/95 rounded-xl p-2.5 border border-amber-200/60 shadow-xs flex items-center gap-2.5 transition-all hover:border-amber-400/80 hover:shadow-xs"
+                      className="bg-white/95 rounded-xl p-3 border border-amber-200/60 shadow-xs flex items-center gap-3 transition-all hover:border-amber-400/80 hover:shadow-xs"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 shrink-0">
-                        <Sun className="w-4 h-4" />
+                      <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 shrink-0">
+                        <WeatherIcon icon={df.icon} className="w-5 h-5 text-amber-500" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-1">
-                          <span className="text-[11px] font-extrabold text-blue-700 uppercase">
+                          <span className="text-xs font-extrabold text-blue-700 uppercase">
                             {language === 'ar' ? `اليوم ${df.day}` : `Jour ${df.day}`}
                           </span>
-                          <span className="text-xs font-bold text-slate-900">{df.temp}</span>
+                          <span className="text-sm font-extrabold text-slate-900">{df.temp}</span>
                         </div>
-                        <p className="text-[11px] text-slate-600 truncate font-medium mt-0.5" title={dayCond}>
+                        <p className="text-[11px] text-slate-500 font-medium truncate">
+                          {df.dateFormatted}
+                        </p>
+                        <p className="text-[11px] text-slate-700 truncate font-semibold mt-0.5" title={dayCond}>
                           {dayCond}
                         </p>
                       </div>

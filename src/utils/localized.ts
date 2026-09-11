@@ -1,4 +1,5 @@
 import { Trip, Language } from '../types';
+import { getDynamicTripNextDate } from '../services/tripWeatherService';
 
 export function getTripTitle(trip: Trip, lang: Language): string {
   if (lang === 'ar') {
@@ -71,19 +72,7 @@ export function getTripDuration(trip: Trip, lang: Language): string {
 }
 
 export function getTripNextDate(trip: Trip, lang: Language): string {
-  if (lang === 'ar') {
-    if (trip.nextDate.includes('Chaque')) return 'نهاية كل أسبوع';
-    if (trip.nextDate.includes('Vendredi')) return 'الجمعة القادم';
-    if (trip.nextDate.includes('Samedi')) return 'السبت القادم';
-    return 'موعد الرحلة القريب';
-  }
-  if (lang === 'en') {
-    if (trip.nextDate.includes('Chaque')) return 'Every Weekend';
-    if (trip.nextDate.includes('Vendredi')) return 'Next Friday';
-    if (trip.nextDate.includes('Samedi')) return 'Next Saturday';
-    return trip.nextDate;
-  }
-  return trip.nextDate;
+  return getDynamicTripNextDate(trip, lang);
 }
 
 export function getTripHighlights(trip: Trip, lang: Language): string[] {

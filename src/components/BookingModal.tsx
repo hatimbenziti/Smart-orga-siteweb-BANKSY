@@ -3,7 +3,7 @@ import { Trip, BookingFormData } from '../types';
 import { X, MessageCircle, Calendar, Users, MapPin, ShieldCheck } from 'lucide-react';
 import { createFormBookingWhatsAppUrl } from '../utils/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
-import { getTripTitle, getTripDuration } from '../utils/localized';
+import { getTripTitle, getTripDuration, getTripNextDate } from '../utils/localized';
 
 interface BookingModalProps {
   trip: Trip | null;
@@ -16,13 +16,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({ trip, onClose }) => 
 
   const tripTitle = getTripTitle(trip, language);
   const tripDuration = getTripDuration(trip, language);
+  const nextDate = getTripNextDate(trip, language);
 
   const [formData, setFormData] = useState<BookingFormData>({
     tripTitle: trip.title,
     fullName: '',
     phone: '',
     departureCity: trip.departureCities[0] || 'Casablanca',
-    departureDate: trip.nextDate,
+    departureDate: nextDate,
     travelersCount: 2,
     customNotes: ''
   });

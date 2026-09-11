@@ -157,15 +157,16 @@ export default function App() {
                 </p>
               </div>
 
-              {/* Active Region Filter Badge (if any) */}
+              {/* Active Region/Thematique Filter Badge (if any) */}
               {filters.regionTag !== 'all' && (
                 <div className="flex items-center gap-2 bg-blue-50 text-blue-800 px-3.5 py-1.5 rounded-xl text-xs font-semibold shrink-0">
                   <span>
-                    {language === 'ar' ? 'التصنيف المختار :' : 'Univers filtré :'} <strong>{filters.regionTag}</strong>
+                    {language === 'ar' ? 'التصنيف المختار :' : language === 'en' ? 'Selected Theme:' : 'Thématique :'} <strong>{filters.regionTag}</strong>
                   </span>
                   <button
                     onClick={() => setFilters((p) => ({ ...p, regionTag: 'all' }))}
                     className="hover:text-blue-900 ms-1 font-bold cursor-pointer"
+                    aria-label="Effacer le filtre"
                   >
                     ×
                   </button>
@@ -173,15 +174,16 @@ export default function App() {
               )}
             </div>
 
-            {/* Active Region Filter Badge on mobile (if any) */}
+            {/* Active Region/Thematique Filter Badge on mobile (if any) */}
             {filters.regionTag !== 'all' && (
               <div className="flex md:hidden items-center justify-between bg-blue-50 text-blue-800 px-3 py-1.5 rounded-xl text-xs font-semibold mb-2.5">
                 <span>
-                  {language === 'ar' ? 'التصنيف المختار :' : 'Univers filtré :'} <strong>{filters.regionTag}</strong>
+                  {language === 'ar' ? 'التصنيف المختار :' : language === 'en' ? 'Selected Theme:' : 'Thématique :'} <strong>{filters.regionTag}</strong>
                 </span>
                 <button
                   onClick={() => setFilters((p) => ({ ...p, regionTag: 'all' }))}
                   className="hover:text-blue-900 ms-1 font-bold cursor-pointer text-base"
+                  aria-label="Effacer le filtre"
                 >
                   ×
                 </button>

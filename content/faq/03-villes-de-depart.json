@@ -1,0 +1,10 @@
+{
+  "question": "Quelles sont les villes de départ disponibles ?",
+  "answer": "Nos principaux points de départ sont Casablanca (gare Casa Voyageurs) et Rabat (gare Rabat Ville). Pour certains séjours comme le désert ou le nord, nous effectuons également des ramassages à Marrakech, Kénitra, Tanger ou Meknès.",
+  "order": 3,
+  "category": "Transport & Hébergement",
+  "questionAr": "ما هي مدن الانطلاق ونقاط التجمع ؟",
+  "answerAr": "تنطلق رحلاتنا أساساً من مدينة الدار البيضاء (محطة القطار كازا بورت / كازا فواياجور) ومدينة الرباط (محطة قطار الرباط المدينة). وبالنسبة لرحلات الشمال أو الجنوب، نوفر محطات توقف إضافية بالقنيطرة وطنجة ومراكش حسب مسار الرحلة.",
+  "questionEn": "Which cities do the tours depart from?",
+  "answerEn": "Most of our tours depart from Casablanca (Casa Voyageurs train station) and Rabat (Rabat Ville station). Depending on the route to the North or South, pickup stops are available in Kenitra, Tangier, or Marrakech."
+}

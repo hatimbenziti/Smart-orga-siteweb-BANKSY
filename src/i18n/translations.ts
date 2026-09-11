@@ -31,11 +31,14 @@ export const TRANSLATIONS = {
     heroExploreBy: "Explorer par univers :",
     heroNextDepartures: "Prochains départs chaque week-end",
     
-    // Regions
-    regionDesert: "Désert & Dunes",
-    regionImperial: "Villes Impériales",
+    // Regions / Thématiques
     regionNature: "Nature & Randonnée",
-    regionPlages: "Plages & Surf",
+    regionDesert: "Désert & Aventure",
+    regionPlages: "Plage & Détente",
+    regionMontagne: "Montagne & Trekking",
+    regionCamping: "Camping & Bivouac",
+    regionCulture: "Culture & Patrimoine",
+    regionImperial: "Villes Impériales",
 
     // Search & Filters
     sejoursBadge: "Nos Séjours Organisés",
@@ -250,11 +253,14 @@ export const TRANSLATIONS = {
     heroExploreBy: "استكشف حسب التجربة:",
     heroNextDepartures: "رحلات جديدة نهاية كل أسبوع",
 
-    // Regions
-    regionDesert: "الصحراء والكثبان",
-    regionImperial: "المدن العريقة",
+    // Regions / Thématiques
     regionNature: "الطبيعة والمشي",
-    regionPlages: "الشواطئ وركوب الأمواج",
+    regionDesert: "الصحراء والمغامرة",
+    regionPlages: "الشاطئ والاستجمام",
+    regionMontagne: "الجبال والمسارات",
+    regionCamping: "التخييم والمبيت",
+    regionCulture: "الثقافة والتراث",
+    regionImperial: "المدن العريقة",
 
     // Search & Filters
     sejoursBadge: "رحلاتنا السياحية المنظمة",
@@ -469,11 +475,14 @@ export const TRANSLATIONS = {
     heroExploreBy: "Explore by universe:",
     heroNextDepartures: "New departures every weekend",
 
-    // Regions
-    regionDesert: "Desert & Dunes",
-    regionImperial: "Imperial Cities",
+    // Regions / Thématiques
     regionNature: "Nature & Hiking",
-    regionPlages: "Beaches & Surfing",
+    regionDesert: "Desert & Adventure",
+    regionPlages: "Beach & Relaxation",
+    regionMontagne: "Mountains & Trekking",
+    regionCamping: "Camping & Bivouac",
+    regionCulture: "Culture & Heritage",
+    regionImperial: "Imperial Cities",
 
     // Search & Filters
     sejoursBadge: "Our Organized Trips",
