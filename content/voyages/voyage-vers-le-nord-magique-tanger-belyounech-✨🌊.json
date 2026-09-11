@@ -1,0 +1,38 @@
+{
+  "groupSize": "1 à 45 personnes",
+  "nextDate": "chaque jeudi",
+  "body": "🔴 JOUR 1 – DÉPART\n\n🚌 20h30 : Départ de Casablanca– Casa-Voyageurs\n\n🚌 21h15 : Départ de Mohammedia– Marjane\n\n🚌 22h30 : Départ de Rabat\n\n🚌 23h30 : Départ de Kénitra\n\n🍽️ Pause dîner à Kénitra– libre\n\n🌙 Nuit à bord del’autocar.\n\n━━━━━━━━━━━━━━━━━━\n\n🔴 JOUR 2 – AKCHOUR &CHEFCHAOUEN 🏞️💙\n\n🌅 06h30 : Arrivée à Akchour\n\n☕ Petit-déjeuner collectif dansun café à Akchour – libre\n\n🏞️ Balade et découvertede la région, de ses paysages naturels et de ses magnifiques cascades.\n\n⏰ 10h00 : Départ vers Chefchaouen💙\n\n📸 Visite collective desprincipaux monuments historiques et sites touristiques de la ville, avec séancephotos.\n\n🍽️ Déjeuner collectif.\n\n⏰ 15h00 : Départ vers Martil,lieu d’hébergement.\n\n🏨 Installation au ComplexeKarama\n🛏️ Chambres doubles, triples et appartementsfamiliaux.\n\n😌 Temps libre pour sereposer et profiter de la piscine 🏊‍♂️\n\n🌊 Temps libre pourdécouvrir la corniche de Martil et dîner.\n\n🌙 Nuit à l’hébergement.\n\n━━━━━━━━━━━━━━━━━━\n\n🔴 JOUR 3 – M’DIQ, MARINASMIR & BELYOUNECH 🚤🌊\n\n⏰ 08h00 : Rassemblement desparticipants.\n\n🥐 Petit-déjeuner à M’diq– inclus\n\n🚤 Départ vers Marina Smirpour profiter d’une magnifique excursion en yacht.\n\n💰 Option yacht : 250 DH /personne\n⏱️ Durée : 2 heures\n🎶Balade avec animation à bord.\n\n🏖️ Départ vers Belyounech\n\n🌊 Découverte de sesmagnifiques plages et de ses eaux cristallines.\n\n🤿 Possibilité depratiquer la plongée sous-marine avec des professionnels certifiés.\n\n💰 Option plongée : 300 DH/ personne\n\n🍽️ Déjeuner libre.\n\n🚍 Départ vers M’diq\n\n🛍️ Temps libre pourprofiter d’une balade et faire du shopping.\n\n🏨 Retour collectif àl’hébergement.\n\n🌙 Nuit à l’hôtel.\n\n━━━━━━━━━━━━━━━━━━\n\n🔴 JOUR 4 – TANGER &CAP SPARTEL 🌊🇲🇦\n\n⏰ 08h00 : Réveil, préparation desbagages et départ de l’hôtel.\n\n🥐 Petit-déjeunercollectif – inclus\n\n🚍 Départ vers Tanger.\n\n📍 Arrivée à Cap Spartel\n\n🌊 Découverte du célèbrepoint de rencontre entre l’océan Atlantique et la mer Méditerranée.\n\n📸 Visite du phare de CapSpartel et séance photos.\n\n🍽️ Déjeuner au port deTanger – libre.\n\n💙 Fin du voyage et départpour le retour.\n\n━━━━━━━━━━━━━━━━━━\n\n✨ Un voyage exceptionnel entrenature, montagne, mer et découverte ! 🌊🏔️💙\n\n📍 Akchour • Chefchaouen • Martil • M’diq • Marina Smir •Belyounech • Tanger • Cap Spartel",
+  "price": 980,
+  "excluded": [
+    "-"
+  ],
+  "destination": "Tanger & Belyounech ",
+  "order": 1,
+  "cancellation_policy": "Politique d'annulation\nPour toute annulation effectuée plus de 15 jours avant la date du départ, le remboursement est total (100 %).\n\nPour toute annulation effectuée entre 7 et 15 jours avant le départ, un remboursement de 50 % du montant versé sera effectué.\n\nPour toute annulation ou réservation effectuée moins de 7 jours avant le départ, aucun remboursement ne sera possible.\n\nEn cas d’annulation par l’organisateur, le montant total sera remboursé au participant.",
+  "duration": "4 jours / 2 nuits",
+  "region": "Plage & Détente",
+  "weather": {
+    "temp": "26°C",
+    "condition": "Ensoleillé & Ciel pur",
+    "dailyForecast": [
+      {
+        "day": 1,
+        "temp": "26°C",
+        "condition": "Grand soleil"
+      }
+    ]
+  },
+  "originalPriceMAD": 1100,
+  "title": "Voyage vers le Nord magique : Tanger & Belyounech ✨🌊",
+  "popular": true,
+  "image": "/images/uploads/0.630447816556324.png",
+  "included": [
+    "🚌 Transport en autocar touristique confortable 🏘️ Hébergement dans un hôtel le vendredi 🏘️ Hébergement dans un hôtel le samedi Petit-déjeuner du samedi Petit-déjeuner du dimanche 🎤 Encadrement et animation pendant tout le séjour"
+  ],
+  "departureCities": [
+    "Casablanca",
+    "rabat",
+    "kenitra"
+  ],
+  "category": "weekly"
+}
