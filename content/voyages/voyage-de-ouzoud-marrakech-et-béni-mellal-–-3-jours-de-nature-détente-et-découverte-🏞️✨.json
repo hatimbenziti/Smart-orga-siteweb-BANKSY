@@ -1,0 +1,35 @@
+{
+  "groupSize": "1 à 48 personnes",
+  "nextDate": "chaque vendredi",
+  "body": "🚦 17h00 : Départ depuis la gare de Rabat Ville\n\n⏰ 18h30 : Départ depuis la gare Casa Voyageurs\n\n📍 21h00 : Arrivée à Marrakech, la ville rouge\n\n🍽️ Dîner\n\n🌙 Balade nocturne sur la place Jamaâ El Fna et visite de la mosquée Koutoubia 🤗\n\n🏘️ 23h00 : Départ vers les cascades d’Ouzoud pour passer la nuit\n\n\n\n⏹️ Samedi\n\n🥐 08h00 : Petit-déjeuner + temps libre pour se promener et prendre des photos souvenirs\n\n🚤 11h00 : Balade en barque pour admirer de près la chute des cascades\n\n🍽️ 14h00 : Déjeuner dans un restaurant panoramique avec vue sur les cascades\n\n🏞️ 17h00 : Excursion vers les sources des cascades d’Ouzoud pour profiter des paysages magnifiques, des montagnes et de la vallée\n\n🎊 21h00 : Soirée animée en l’honneur des participants\n\n⏹️ Dimanche\n\n\n\n🥐 08h00 : Réveil et petit-déjeuner\n\n📸 10h00 : Départ vers Bin El Ouidane\n\n🚤 Balade en bateau sur le lac de Bin El Ouidane pour admirer la beauté du paysage et profiter d’un moment de détente\n\n♨️ Continuation vers Beni Mellal : visite de la Kasbah et de Aïn Asserdoun\n\n🍽️ Déjeuner dans un restaurant local\n\n⏹️ Début du trajet de retour",
+  "price": 600,
+  "excluded": [],
+  "destination": " MARRAKECH & Ouzoud & Béni Mellal & BEN OUIDAN",
+  "order": 2,
+  "cancellation_policy": "Politique d'annulation\nPour toute annulation effectuée plus de 15 jours avant la date du départ, le remboursement est total (100 %).\n\nPour toute annulation effectuée entre 7 et 15 jours avant le départ, un remboursement de 50 % du montant versé sera effectué.\n\nPour toute annulation ou réservation effectuée moins de 7 jours avant le départ, aucun remboursement ne sera possible.\n\nEn cas d’annulation par l’organisateur, le montant total sera remboursé au participant.",
+  "duration": "3 jours / 2 nuits",
+  "region": "Montagne & Trekking",
+  "weather": {
+    "temp": "26°C",
+    "condition": "Ensoleillé & Ciel pur",
+    "dailyForecast": [
+      {
+        "day": 1,
+        "temp": "26°C",
+        "condition": "Grand soleil"
+      }
+    ]
+  },
+  "originalPriceMAD": 750,
+  "title": "Voyage de Ouzoud, Marrakech et Béni Mellal – 3 jours de nature, détente et découverte 🏞️✨",
+  "popular": true,
+  "image": "/images/uploads/0.35802970616979457.png",
+  "included": [
+    "🚌 Transport en autocar touristique confortable 🥐 Petit-déjeuner 🏘️ Hébergement pour 2 nuits 🎤 Encadrement et animation pendant tout le séjour"
+  ],
+  "departureCities": [
+    "rabat",
+    "casablanca"
+  ],
+  "category": "popular"
+}
