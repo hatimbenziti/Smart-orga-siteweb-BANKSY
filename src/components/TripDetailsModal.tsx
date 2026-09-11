@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Trip } from '../types';
 import { X, Check, Clock, Calendar, Users, MapPin, MessageCircle, ShieldCheck, Sun, FileText, AlertCircle, ChevronLeft, ChevronRight, Camera } from 'lucide-react';
@@ -63,6 +63,15 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
   // Slider state and images list (main image + gallery)
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // Dragging state for smooth mouse desktop swiping
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+  const hasMovedRef = useRef(false);
 
   const allImages = useMemo(() => {
     const list: string[] = [];
@@ -80,21 +89,127 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
     return list.length > 0 ? list : (trip.image ? [trip.image] : []);
   }, [trip.image, trip.gallery]);
 
+  const hasMultipleImages = allImages.length > 1;
+
+  // Scroll to a specific slide index smoothly
+  const scrollToIndex = useCallback((index: number) => {
+    if (allImages.length === 0) return;
+    const clamped = Math.max(0, Math.min(index, allImages.length - 1));
+    setActiveImageIndex(clamped);
+    const targetSlide = slideRefs.current[clamped];
+    if (targetSlide) {
+      targetSlide.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'start'
+      });
+    }
+  }, [allImages.length]);
+
+  const nextImage = useCallback((e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (allImages.length <= 1) return;
+    const nextIdx = (activeImageIndex + 1) % allImages.length;
+    scrollToIndex(nextIdx);
+  }, [activeImageIndex, allImages.length, scrollToIndex]);
+
+  const prevImage = useCallback((e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (allImages.length <= 1) return;
+    const prevIdx = (activeImageIndex - 1 + allImages.length) % allImages.length;
+    scrollToIndex(prevIdx);
+  }, [activeImageIndex, allImages.length, scrollToIndex]);
+
   // Reset to first slide whenever trip changes
   useEffect(() => {
     setActiveImageIndex(0);
+    if (carouselRef.current) {
+      carouselRef.current.scrollLeft = 0;
+    }
   }, [trip.id]);
 
-  const hasMultipleImages = allImages.length > 1;
+  // Keyboard navigation (Arrow keys + Escape)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        if (isRTL) prevImage();
+        else nextImage();
+      } else if (e.key === 'ArrowLeft') {
+        if (isRTL) nextImage();
+        else prevImage();
+      } else if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [nextImage, prevImage, isRTL, onClose]);
 
-  const nextImage = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    setActiveImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  // Track active slide index via IntersectionObserver
+  useEffect(() => {
+    const container = carouselRef.current;
+    if (!container || !hasMultipleImages) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const indexAttr = entry.target.getAttribute('data-slide-index');
+            if (indexAttr !== null) {
+              const idx = parseInt(indexAttr, 10);
+              if (!isNaN(idx)) {
+                setActiveImageIndex(idx);
+              }
+            }
+          }
+        });
+      },
+      {
+        root: container,
+        threshold: 0.6
+      }
+    );
+
+    slideRefs.current.forEach((slide) => {
+      if (slide) observer.observe(slide);
+    });
+
+    return () => observer.disconnect();
+  }, [allImages, hasMultipleImages]);
+
+  // Keep active thumbnail visible in scroll view
+  useEffect(() => {
+    const thumb = thumbnailRefs.current[activeImageIndex];
+    if (thumb) {
+      thumb.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'nearest'
+      });
+    }
+  }, [activeImageIndex]);
+
+  // Mouse drag handlers on desktop
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!carouselRef.current) return;
+    isDraggingRef.current = true;
+    hasMovedRef.current = false;
+    startXRef.current = e.pageX - carouselRef.current.offsetLeft;
+    scrollLeftRef.current = carouselRef.current.scrollLeft;
   };
 
-  const prevImage = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    setActiveImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDraggingRef.current || !carouselRef.current) return;
+    const x = e.pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startXRef.current);
+    if (Math.abs(walk) > 4) {
+      hasMovedRef.current = true;
+    }
+    carouselRef.current.scrollLeft = scrollLeftRef.current - walk;
+  };
+
+  const handleMouseUpOrLeave = () => {
+    isDraggingRef.current = false;
   };
 
   // Compute full program content with markdown formatting
@@ -168,68 +283,75 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
         {/* Modal Scrollable Body */}
         <div className="overflow-y-auto p-6 space-y-6">
-          {/* Image Slider / Gallery Banner */}
-          <div className="space-y-2">
-            <div className="relative rounded-2xl overflow-hidden aspect-[16/9] max-h-80 bg-slate-950 group select-none">
-              {allImages.map((imgUrl, index) => (
-                <div
-                  key={index}
-                  className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${
-                    index === activeImageIndex ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-                  }`}
-                >
-                  <img
-                    src={imgUrl}
-                    alt={`${title} - photo ${index + 1}`}
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-              ))}
+          {/* Image Slider / Horizontal Carousel with Peek Effect */}
+          <div className="space-y-2.5">
+            <div className="relative group select-none">
+              {/* Scrollable Carousel Track */}
+              <div
+                ref={carouselRef}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUpOrLeave}
+                onMouseLeave={handleMouseUpOrLeave}
+                className={`flex gap-3 sm:gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-1 cursor-grab active:cursor-grabbing ${
+                  hasMultipleImages ? 'pe-[15%] sm:pe-[15%]' : ''
+                } [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
+              >
+                {allImages.map((imgUrl, index) => (
+                  <div
+                    key={index}
+                    ref={(el) => { slideRefs.current[index] = el; }}
+                    data-slide-index={index}
+                    onClick={() => {
+                      if (!hasMovedRef.current && index !== activeImageIndex) {
+                        scrollToIndex(index);
+                      }
+                    }}
+                    className={`shrink-0 snap-start relative rounded-2xl overflow-hidden aspect-[16/10] sm:aspect-[16/9] max-h-80 bg-slate-950 shadow-md transition-all duration-300 ${
+                      hasMultipleImages
+                        ? 'w-[82%] sm:w-[85%]'
+                        : 'w-full'
+                    }`}
+                  >
+                    <img
+                      src={imgUrl}
+                      alt={`${title} - photo ${index + 1}`}
+                      className="w-full h-full object-cover pointer-events-none select-none"
+                      referrerPolicy="no-referrer"
+                      loading={index === 0 ? 'eager' : 'lazy'}
+                    />
 
-              {/* Dark Gradient Overlay for title and badge legibility */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent z-10 pointer-events-none" />
+                    {/* Dark Gradient Overlay for title and badge legibility */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent pointer-events-none" />
 
-              {/* Destination & Title (Pinned at Bottom) */}
-              <div className="absolute bottom-4 start-4 end-4 text-white z-20 pointer-events-none">
-                <div className="flex items-center gap-2 text-xs font-semibold text-blue-200 mb-1">
-                  <MapPin className="w-4 h-4 text-blue-400 shrink-0" />
-                  <span>{destination}</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-white leading-snug drop-shadow-sm">
-                  {title}
-                </h2>
+                    {/* Destination & Title (Pinned at Bottom of each card) */}
+                    <div className="absolute bottom-3.5 sm:bottom-4 start-4 end-4 text-white z-10 pointer-events-none">
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-200 mb-1">
+                        <MapPin className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                        <span>{destination}</span>
+                      </div>
+                      <h2 className="text-lg sm:text-xl md:text-2xl font-extrabold text-white leading-snug drop-shadow-sm line-clamp-2">
+                        {title}
+                      </h2>
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              {/* Navigation Controls (Shown only if multiple photos exist) */}
+              {/* Controls (Counter & Arrows) */}
               {hasMultipleImages && (
                 <>
                   {/* Photo Counter Badge (Top End) */}
-                  <div className="absolute top-3 end-3 z-20 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-semibold shadow-xs">
+                  <div className="absolute top-3 end-3 sm:end-4 z-30 flex items-center gap-1.5 bg-black/65 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-semibold shadow-md pointer-events-none">
                     <Camera className="w-3.5 h-3.5 text-blue-300 shrink-0" />
                     <span>{activeImageIndex + 1} / {allImages.length}</span>
-                  </div>
-
-                  {/* Navigation Indicator Dots (Top Start) */}
-                  <div className="absolute top-3 start-3 z-20 flex items-center gap-1.5 bg-black/45 backdrop-blur-md px-2.5 py-1.5 rounded-full">
-                    {allImages.map((_, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => setActiveImageIndex(idx)}
-                        className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                          idx === activeImageIndex ? 'w-5 bg-blue-400' : 'w-1.5 bg-white/60 hover:bg-white'
-                        }`}
-                        aria-label={`Photo ${idx + 1}`}
-                      />
-                    ))}
                   </div>
 
                   {/* Previous Button */}
                   <button
                     type="button"
                     onClick={isRTL ? nextImage : prevImage}
-                    className="absolute start-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/45 hover:bg-black/75 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-md opacity-90 hover:opacity-100 hover:scale-105 active:scale-95"
+                    className="absolute start-2 sm:start-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/55 hover:bg-black/85 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-lg opacity-90 hover:opacity-100 hover:scale-105 active:scale-95"
                     aria-label="Photo précédente"
                   >
                     <ChevronLeft className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
@@ -239,7 +361,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                   <button
                     type="button"
                     onClick={isRTL ? prevImage : nextImage}
-                    className="absolute end-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/45 hover:bg-black/75 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-md opacity-90 hover:opacity-100 hover:scale-105 active:scale-95"
+                    className="absolute end-2 sm:end-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/55 hover:bg-black/85 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-lg opacity-90 hover:opacity-100 hover:scale-105 active:scale-95"
                     aria-label="Photo suivante"
                   >
                     <ChevronRight className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
@@ -250,12 +372,13 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
             {/* Thumbnails Navigation Row (Only if multiple images) */}
             {hasMultipleImages && (
-              <div className="flex items-center gap-2 overflow-x-auto py-1 px-0.5 scrollbar-thin">
+              <div className="flex items-center gap-2 overflow-x-auto py-1 px-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {allImages.map((imgUrl, idx) => (
                   <button
                     key={idx}
+                    ref={(el) => { thumbnailRefs.current[idx] = el; }}
                     type="button"
-                    onClick={() => setActiveImageIndex(idx)}
+                    onClick={() => scrollToIndex(idx)}
                     className={`relative shrink-0 w-16 h-12 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
                       idx === activeImageIndex
                         ? 'border-blue-600 ring-2 ring-blue-500/30 scale-102 opacity-100 shadow-xs'
@@ -266,7 +389,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                     <img
                       src={imgUrl}
                       alt=""
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover pointer-events-none"
                       referrerPolicy="no-referrer"
                     />
                   </button>
