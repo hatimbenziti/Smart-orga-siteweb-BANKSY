@@ -18,17 +18,14 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
   destinationsList,
   totalResults
 }) => {
-  const { t, language, isRTL } = useLanguage();
+  const { t, isRTL } = useLanguage();
   const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
 
-  const thematiquePills: { key: string; label: string }[] = [
-    { key: 'all', label: language === 'ar' ? 'جميع التجارب' : language === 'en' ? 'All Themes' : 'Toutes' },
-    { key: 'Nature & Randonnée', label: t.regionNature },
-    { key: 'Désert & Aventure', label: t.regionDesert },
-    { key: 'Plage & Détente', label: t.regionPlages },
-    { key: 'Montagne & Trekking', label: t.regionMontagne },
-    { key: 'Camping & Bivouac', label: t.regionCamping },
-    { key: 'Culture & Patrimoine', label: t.regionCulture }
+  const categoryPills: { key: FilterState['category']; label: string }[] = [
+    { key: 'all', label: t.catAll },
+    { key: 'popular', label: t.catPopular },
+    { key: 'weekly', label: t.catWeekly },
+    { key: 'upcoming', label: t.catUpcoming }
   ];
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,9 +40,9 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
     onChange({ ...filters, maxPrice: Number(e.target.value) });
   };
 
-  const handleThematiqueClick = (tag: string) => {
-    const newTag = tag === 'all' ? 'all' : filters.regionTag === tag ? 'all' : tag;
-    onChange({ ...filters, regionTag: newTag });
+  const handleCategoryClick = (cat: FilterState['category']) => {
+    const nextCat = filters.category === cat && cat !== 'all' ? 'all' : cat;
+    onChange({ ...filters, category: nextCat });
   };
 
   const isFiltered =
@@ -173,22 +170,22 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
         </div>
       </div>
 
-      {/* Bottom row: Thematique Pills & Reset Button */}
+      {/* Bottom row: Category Pills & Reset Button */}
       <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-        {/* Thematique Pills */}
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        {/* Category Pills */}
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-semibold text-slate-400 hidden sm:inline-flex items-center gap-1">
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>{language === 'ar' ? 'التصنيف :' : language === 'en' ? 'Theme:' : 'Thématique :'}</span>
+            <span>{t.filterTitle}</span>
           </span>
-          {thematiquePills.map((p) => {
-            const isActive = filters.regionTag === p.key;
+          {categoryPills.map((p) => {
+            const isActive = filters.category === p.key;
             return (
               <button
                 key={p.key}
                 type="button"
-                onClick={() => handleThematiqueClick(p.key)}
-                className={`px-3 sm:px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                onClick={() => handleCategoryClick(p.key)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
                   isActive
                     ? 'bg-blue-600 text-white shadow-xs'
                     : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700'
