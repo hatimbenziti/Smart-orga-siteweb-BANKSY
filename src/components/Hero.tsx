@@ -1,25 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { HERO_SLIDES } from '../data/tripsData';
+import { loadCmsSlides, HeroSlide } from '../data/sliderData';
 import { ChevronLeft, ChevronRight, Sparkles, Compass, Users, Award, ArrowRight, Edit3 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
-interface CmsSlide {
-  title?: string;
-  tag?: string;
-  subtitle?: string;
-  image?: string;
-  order?: number;
-  link?: string;
-}
-
-export interface HeroSlideItem {
-  title: string;
-  tag: string;
-  subtitle: string;
-  image: string;
-  order?: number;
-  link?: string;
-}
+export type { HeroSlide as HeroSlideItem };
 
 interface HeroProps {
   onSelectTag: (tag: string) => void;
@@ -32,36 +16,9 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   const [isPaused, setIsPaused] = useState(false);
   const { t, isRTL } = useLanguage();
 
-  // Load customizable slides from Decap CMS (content/slider/*.json)
-  const slides = useMemo<HeroSlideItem[]>(() => {
-    try {
-      const globFiles = (import.meta as any).glob
-        ? (import.meta as any).glob('/content/slider/*.json', { eager: true })
-        : {};
-      const items: HeroSlideItem[] = [];
-
-      Object.entries(globFiles).forEach(([, content], idx) => {
-        const data = ((content as { default?: CmsSlide }).default || content) as CmsSlide;
-        if (data && (data.image || data.title)) {
-          items.push({
-            title: data.title || 'Voyage Inoubliable',
-            tag: data.tag || 'Maroc Authentique',
-            subtitle: data.subtitle || '',
-            image: data.image || HERO_SLIDES[idx % HERO_SLIDES.length].image,
-            order: typeof data.order === 'number' ? data.order : idx + 1,
-            link: data.link
-          });
-        }
-      });
-
-      if (items.length > 0) {
-        items.sort((a, b) => (a.order || 0) - (b.order || 0));
-        return items;
-      }
-    } catch {
-      // Fallback to static slides
-    }
-    return HERO_SLIDES;
+  // Load customizable slides dynamically from Decap CMS collection (content/slider/*.json)
+  const slides = useMemo<HeroSlide[]>(() => {
+    return loadCmsSlides();
   }, []);
 
   const tags = [
@@ -225,9 +182,20 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                     <h3 className="text-xl sm:text-2xl font-bold text-white mb-1 drop-shadow-sm">
                       {slide.title}
                     </h3>
-                    <p className="text-slate-200 text-xs sm:text-sm opacity-90">
-                      {slide.subtitle}
-                    </p>
+                    {slide.subtitle && (
+                      <p className="text-slate-200 text-xs sm:text-sm opacity-90">
+                        {slide.subtitle}
+                      </p>
+                    )}
+                    {slide.link && (
+                      <a
+                        href={slide.link}
+                        className="inline-flex items-center gap-1.5 mt-2.5 px-3.5 py-1.5 rounded-full bg-white/20 hover:bg-white/35 text-white text-xs font-semibold backdrop-blur-md transition-all border border-white/20 shadow-xs cursor-pointer group/link"
+                      >
+                        <span>{t.heroBtnDiscover || 'Découvrir'}</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
+                      </a>
+                    )}
                   </div>
                 </div>
               ))}
