@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { loadCmsSlides, HeroSlide } from '../data/sliderData';
-import { ChevronLeft, ChevronRight, Sparkles, Compass, Users, Award, ArrowRight, Edit3 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sparkles, Compass, Users, Award, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export type { HeroSlide as HeroSlideItem };
@@ -229,18 +229,6 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                   />
                 ))}
               </div>
-
-              {/* Quick Admin Customization Button (shown on hover or subtle) */}
-              <a
-                href="/admin/#/collections/slider"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`absolute top-4 ${isRTL ? 'right-4' : 'left-4'} z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white text-[11px] font-medium backdrop-blur-md shadow-sm`}
-                title="Personnaliser les images et textes du slider dans le tableau de bord Decap CMS"
-              >
-                <Edit3 className="w-3 h-3 text-blue-400" />
-                <span>Modifier le slider (/admin)</span>
-              </a>
             </div>
           </div>
 
