@@ -35,7 +35,7 @@ export default function App() {
     searchQuery: '',
     destination: 'all',
     regionTag: 'all',
-    maxPrice: 5000,
+    maxPrice: 20000,
     category: 'all'
   };
 
@@ -76,7 +76,7 @@ export default function App() {
       }
 
       // 4. Price Max
-      if (filters.maxPrice < 5000 && trip.priceMAD > filters.maxPrice) {
+      if (filters.maxPrice < 20000 && trip.priceMAD > filters.maxPrice) {
         return false;
       }
 

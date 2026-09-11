@@ -47,7 +47,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
     filters.searchQuery !== '' ||
     filters.destination !== 'all' ||
     filters.regionTag !== 'all' ||
-    filters.maxPrice < 5000 ||
+    filters.maxPrice < 20000 ||
     filters.category !== 'all';
 
   return (
@@ -105,23 +105,23 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
               {t.filterBudgetLabel}
             </label>
             <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
-              {filters.maxPrice >= 5000 ? t.filterBudgetUnlimited : `${filters.maxPrice.toLocaleString()} DH`}
+              {filters.maxPrice >= 20000 ? t.filterBudgetUnlimited : `${filters.maxPrice.toLocaleString()} DH`}
             </span>
           </div>
           <input
             id="price-range"
             type="range"
-            min="800"
-            max="5000"
-            step="100"
+            min="0"
+            max="20000"
+            step="250"
             value={filters.maxPrice}
             onChange={handlePriceChange}
             className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
           />
           <div className="flex justify-between text-[11px] text-slate-400 mt-1">
-            <span>800 DH</span>
-            <span>2 500 DH</span>
-            <span>5 000+ DH</span>
+            <span>0 DH</span>
+            <span>10 000 DH</span>
+            <span>20 000+ DH</span>
           </div>
         </div>
       </div>
