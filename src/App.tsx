@@ -139,11 +139,11 @@ export default function App() {
         />
 
         {/* Trips & Search Section */}
-        <section id="sejours" className="py-12 sm:py-16 scroll-mt-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <section id="sejours" className="pt-1 pb-6 sm:py-16 scroll-mt-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            {/* Section Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            {/* Section Header (Desktop only) */}
+            <div className="hidden md:flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
               <div className="space-y-2">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider">
                   <Compass className="w-3.5 h-3.5" />
@@ -173,14 +173,31 @@ export default function App() {
               )}
             </div>
 
+            {/* Active Region Filter Badge on mobile (if any) */}
+            {filters.regionTag !== 'all' && (
+              <div className="flex md:hidden items-center justify-between bg-blue-50 text-blue-800 px-3 py-1.5 rounded-xl text-xs font-semibold mb-2.5">
+                <span>
+                  {language === 'ar' ? 'التصنيف المختار :' : 'Univers filtré :'} <strong>{filters.regionTag}</strong>
+                </span>
+                <button
+                  onClick={() => setFilters((p) => ({ ...p, regionTag: 'all' }))}
+                  className="hover:text-blue-900 ms-1 font-bold cursor-pointer text-base"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+
             {/* Advanced Search and Filters Component */}
-            <SearchFilters
-              filters={filters}
-              onChange={setFilters}
-              onReset={handleResetFilters}
-              destinationsList={destinationsList}
-              totalResults={filteredTrips.length}
-            />
+            <div className="mb-4 sm:mb-8">
+              <SearchFilters
+                filters={filters}
+                onChange={setFilters}
+                onReset={handleResetFilters}
+                destinationsList={destinationsList}
+                totalResults={filteredTrips.length}
+              />
+            </div>
 
             {/* Trip Cards Grid */}
             {filteredTrips.length > 0 ? (

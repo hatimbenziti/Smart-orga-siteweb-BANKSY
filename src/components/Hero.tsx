@@ -89,16 +89,16 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-[#F8FAFC] pt-8 pb-16 lg:pt-14 lg:pb-24">
+    <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-[#F8FAFC] pt-5 pb-3 sm:pt-8 sm:pb-16 lg:pt-14 lg:pb-24">
       {/* Subtle background decoration */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl -z-10 pointer-events-none"></div>
       <div className="absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
           {/* Left Column: Text & CTAs */}
-          <div className="lg:col-span-7 space-y-7">
+          <div className="lg:col-span-7 space-y-4 sm:space-y-7">
             {/* Top Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs sm:text-sm font-bold tracking-wide uppercase shadow-xs">
               <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
@@ -114,16 +114,16 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
               {t.heroTitleSuffix}
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl">
+            {/* Subtitle (Desktop only) */}
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl hidden md:block">
               {t.heroSubtitle}
             </p>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3.5 pt-1">
+            <div className="flex flex-wrap items-center gap-3 pt-0 sm:pt-1">
               <button
                 onClick={onDiscoverClick}
-                className="px-6 sm:px-7 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-sm sm:text-base shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2.5 cursor-pointer group"
+                className="px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-sm sm:text-base shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2.5 cursor-pointer group"
               >
                 <span>{t.heroBtnDiscover}</span>
                 <ArrowRight className={`w-4 h-4 transition-transform ${isRTL ? 'group-hover:-translate-x-1 rotate-180' : 'group-hover:translate-x-1'}`} />
@@ -131,61 +131,64 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
 
               <button
                 onClick={onPopularClick}
-                className="px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm sm:text-base shadow-xs hover:border-slate-300 transition-all flex items-center gap-2 cursor-pointer"
+                className="px-6 py-3 sm:py-3.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm sm:text-base shadow-xs hover:border-slate-300 transition-all flex items-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-4 h-4 text-amber-500" />
                 <span>{t.heroBtnPopular}</span>
               </button>
             </div>
 
-            {/* Key Micro-stats */}
-            <div className="grid grid-cols-3 gap-4 pt-2 border-t border-slate-200/80 max-w-xl">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                  <Users className="w-4 h-4" />
+            {/* Desktop Only Extra Details: Micro-stats & Explore by tags */}
+            <div className="hidden md:block space-y-7">
+              {/* Key Micro-stats */}
+              <div className="grid grid-cols-3 gap-4 pt-2 border-t border-slate-200/80 max-w-xl">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                    <Users className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="font-extrabold text-slate-900 text-base sm:text-lg">4 500+</div>
+                    <div className="text-xs text-slate-500 font-medium">{t.heroStatTravelers}</div>
+                  </div>
                 </div>
-                <div>
-                  <div className="font-extrabold text-slate-900 text-base sm:text-lg">4 500+</div>
-                  <div className="text-xs text-slate-500 font-medium">{t.heroStatTravelers}</div>
+
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                    <Award className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="font-extrabold text-slate-900 text-base sm:text-lg">4.9 / 5</div>
+                    <div className="text-xs text-slate-500 font-medium">{t.heroStatRating}</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                    <Compass className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="font-extrabold text-slate-900 text-base sm:text-lg">100%</div>
+                    <div className="text-xs text-slate-500 font-medium">{t.heroStatAuth}</div>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                  <Award className="w-4 h-4" />
+              {/* Bottom Category Filter Tags */}
+              <div className="pt-2">
+                <span className="block text-xs uppercase font-bold text-slate-400 tracking-wider mb-2.5">
+                  {t.heroExploreBy}
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tg) => (
+                    <button
+                      key={tg.raw}
+                      onClick={() => onSelectTag(tg.raw)}
+                      className="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-slate-700 hover:text-blue-700 text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer"
+                    >
+                      <span>{tg.label}</span>
+                    </button>
+                  ))}
                 </div>
-                <div>
-                  <div className="font-extrabold text-slate-900 text-base sm:text-lg">4.9 / 5</div>
-                  <div className="text-xs text-slate-500 font-medium">{t.heroStatRating}</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                  <Compass className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="font-extrabold text-slate-900 text-base sm:text-lg">100%</div>
-                  <div className="text-xs text-slate-500 font-medium">{t.heroStatAuth}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Category Filter Tags */}
-            <div className="pt-2">
-              <span className="block text-xs uppercase font-bold text-slate-400 tracking-wider mb-2.5">
-                {t.heroExploreBy}
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tg) => (
-                  <button
-                    key={tg.raw}
-                    onClick={() => onSelectTag(tg.raw)}
-                    className="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-slate-700 hover:text-blue-700 text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer"
-                  >
-                    <span>{tg.label}</span>
-                  </button>
-                ))}
               </div>
             </div>
 
@@ -193,7 +196,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
 
           {/* Right Column: Automated Landscape Slider / Carousel */}
           <div
-            className="lg:col-span-5 relative"
+            className="hidden md:block lg:col-span-5 relative"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
