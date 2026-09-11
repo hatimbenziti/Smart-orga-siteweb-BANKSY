@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Trip } from '../types';
-import { X, Check, Clock, Calendar, Users, MapPin, MessageCircle, ShieldCheck, Sun, FileText } from 'lucide-react';
+import { X, Check, Clock, Calendar, Users, MapPin, MessageCircle, ShieldCheck, Sun, FileText, AlertCircle } from 'lucide-react';
 import { createTripWhatsAppUrl } from '../utils/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
 import {
@@ -10,6 +10,26 @@ import {
   getTripDuration,
   getTripNextDate
 } from '../utils/localized';
+
+const defaultIncluded = [
+  'Transport touristique tout confort climatisé A/R',
+  'Hébergement en demi-pension ou formule adaptée',
+  'Accompagnateur dédié & assistance 24h/24 Smart Orga'
+];
+
+const defaultExcluded = [
+  'Déjeuners libres en cours de route',
+  'Boissons et dépenses personnelles'
+];
+
+const defaultCancellationPolicy = `Politique d'annulation
+Pour toute annulation effectuée plus de 15 jours avant la date du départ, le remboursement est total (100 %).
+
+Pour toute annulation effectuée entre 7 et 15 jours avant le départ, un remboursement de 50 % du montant versé sera effectué.
+
+Pour toute annulation ou réservation effectuée moins de 7 jours avant le départ, aucun remboursement ne sera possible.
+
+En cas d’annulation par l’organisateur, le montant total sera remboursé au participant.`;
 
 interface TripDetailsModalProps {
   trip: Trip | null;
@@ -67,6 +87,20 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
     return customText;
   })();
+
+  // Included / Excluded / Cancellation Policy
+  const includedList = Array.isArray(trip.included) && trip.included.length > 0
+    ? trip.included
+    : defaultIncluded;
+
+  const excludedList = Array.isArray(trip.excluded) && trip.excluded.length > 0
+    ? trip.excluded
+    : (Array.isArray(trip.notIncluded) && trip.notIncluded.length > 0
+        ? trip.notIncluded
+        : defaultExcluded);
+
+  const rawCancellation = (trip.cancellation_policy || trip.cancellationPolicy || '').trim() || defaultCancellationPolicy;
+  const cleanedCancellation = rawCancellation.replace(/^Politique d'annulation\s*(\r?\n)+/i, '');
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
@@ -261,13 +295,13 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
           {/* Included / Not Included */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-            <div className="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 space-y-2.5">
+            <div className="bg-emerald-50/70 p-4 sm:p-5 rounded-2xl border border-emerald-100 space-y-2.5">
               <h4 className="text-sm font-bold text-emerald-900 flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-emerald-600" />
+                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>{t.modalIncludedTitle}</span>
               </h4>
               <ul className="space-y-1.5 text-xs text-emerald-800">
-                {trip.included.map((inc, i) => (
+                {includedList.map((inc, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <span className="text-emerald-600 font-bold">•</span>
                     <span>{inc}</span>
@@ -276,19 +310,30 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
               </ul>
             </div>
 
-            <div className="bg-rose-50/60 p-4 rounded-2xl border border-rose-100 space-y-2.5">
+            <div className="bg-rose-50/60 p-4 sm:p-5 rounded-2xl border border-rose-100 space-y-2.5">
               <h4 className="text-sm font-bold text-rose-900 flex items-center gap-1.5">
-                <X className="w-4 h-4 text-rose-600" />
+                <X className="w-4 h-4 text-rose-600 shrink-0" />
                 <span>{t.modalNotIncludedTitle}</span>
               </h4>
               <ul className="space-y-1.5 text-xs text-rose-800">
-                {trip.notIncluded.map((notInc, i) => (
+                {excludedList.map((notInc, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <span className="text-rose-600 font-bold">•</span>
                     <span>{notInc}</span>
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+
+          {/* Politique d'annulation */}
+          <div className="bg-amber-50/50 p-4 sm:p-5 rounded-2xl border border-amber-200/70 space-y-2.5">
+            <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>{t.modalCancellationTitle || "Politique d'annulation"}</span>
+            </h4>
+            <div className="text-xs text-slate-700 leading-relaxed space-y-2 whitespace-pre-line">
+              {cleanedCancellation}
             </div>
           </div>
 

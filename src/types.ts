@@ -47,9 +47,14 @@ export interface Trip {
   included: string[];
   includedAr?: string[];
   includedEn?: string[];
+  excluded?: string[];
+  excludedAr?: string[];
+  excludedEn?: string[];
   notIncluded: string[];
   notIncludedAr?: string[];
   notIncludedEn?: string[];
+  cancellation_policy?: string;
+  cancellationPolicy?: string;
   groupSize: string;
   groupSizeAr?: string;
   groupSizeEn?: string;

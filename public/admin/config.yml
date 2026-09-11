@@ -67,8 +67,28 @@ collections:
         widget: "markdown"
         required: false
         hint: "Rédigez ici le programme complet et détaillé du séjour (supporte les titres #, les listes à puces -, le texte en gras et les emojis)."
-      - { label: "Inclus dans le prix", name: "included", widget: "list", field: { label: "Prestation incluse", name: "item", widget: "string" }, required: false }
-      - { label: "Non inclus dans le prix", name: "notIncluded", widget: "list", field: { label: "Prestation non incluse", name: "item", widget: "string" }, required: false }
+      - name: "included"
+        label: "Le prix comprend (un élément par ligne)"
+        widget: "list"
+        required: false
+        default:
+          - "Transport touristique tout confort climatisé A/R"
+          - "Hébergement en demi-pension ou formule adaptée"
+          - "Accompagnateur dédié & assistance 24h/24 Smart Orga"
+
+      - name: "excluded"
+        label: "Le prix ne comprend pas (un élément par ligne)"
+        widget: "list"
+        required: false
+        default:
+          - "Déjeuners libres en cours de route"
+          - "Boissons et dépenses personnelles"
+
+      - name: "cancellation_policy"
+        label: "Politique d'annulation"
+        widget: "text"
+        required: false
+        default: "Politique d'annulation\nPour toute annulation effectuée plus de 15 jours avant la date du départ, le remboursement est total (100 %).\n\nPour toute annulation effectuée entre 7 et 15 jours avant le départ, un remboursement de 50 % du montant versé sera effectué.\n\nPour toute annulation ou réservation effectuée moins de 7 jours avant le départ, aucun remboursement ne sera possible.\n\nEn cas d’annulation par l’organisateur, le montant total sera remboursé au participant."
 
   # 2. Collection : Images du Slider Hero (Accueil)
   - name: "slider"

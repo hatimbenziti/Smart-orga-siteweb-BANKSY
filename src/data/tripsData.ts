@@ -35,7 +35,10 @@ export interface CmsTripRaw {
     description: string;
   }[];
   included?: string[];
+  excluded?: string[];
   notIncluded?: string[];
+  cancellation_policy?: string;
+  cancellationPolicy?: string;
   groupSize?: string;
   weather?: {
     temp: string;
@@ -163,20 +166,40 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
         }
       ];
 
+  const defaultIncluded = [
+    'Transport touristique tout confort climatisé A/R',
+    'Hébergement en demi-pension ou formule adaptée',
+    'Accompagnateur dédié & assistance 24h/24 Smart Orga'
+  ];
+
   const included = Array.isArray(data.included) && data.included.length > 0
     ? data.included
-    : [
-        'Transport touristique tout confort climatisé A/R',
-        'Hébergement en demi-pension ou formule adaptée',
-        'Accompagnateur dédié & assistance 24h/24 Smart Orga'
-      ];
+    : defaultIncluded;
 
-  const notIncluded = Array.isArray(data.notIncluded) && data.notIncluded.length > 0
-    ? data.notIncluded
-    : [
-        'Déjeuners libres en cours de route',
-        'Boissons et dépenses personnelles'
-      ];
+  const defaultExcluded = [
+    'Déjeuners libres en cours de route',
+    'Boissons et dépenses personnelles'
+  ];
+
+  const excluded = Array.isArray(data.excluded) && data.excluded.length > 0
+    ? data.excluded
+    : (Array.isArray(data.notIncluded) && data.notIncluded.length > 0
+        ? data.notIncluded
+        : defaultExcluded);
+
+  const notIncluded = excluded;
+
+  const defaultCancellationPolicy = `Politique d'annulation
+Pour toute annulation effectuée plus de 15 jours avant la date du départ, le remboursement est total (100 %).
+
+Pour toute annulation effectuée entre 7 et 15 jours avant le départ, un remboursement de 50 % du montant versé sera effectué.
+
+Pour toute annulation ou réservation effectuée moins de 7 jours avant le départ, aucun remboursement ne sera possible.
+
+En cas d’annulation par l’organisateur, le montant total sera remboursé au participant.`;
+
+  const cancellation_policy = (data.cancellation_policy || data.cancellationPolicy || '').trim() || defaultCancellationPolicy;
+  const cancellationPolicy = cancellation_policy;
 
   const groupSize = data.groupSize || '14 à 22 personnes';
   const program = data.program || data.body || '';
@@ -214,7 +237,10 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
     body,
     itinerary,
     included,
+    excluded,
     notIncluded,
+    cancellation_policy,
+    cancellationPolicy,
     groupSize,
     weather,
     order
