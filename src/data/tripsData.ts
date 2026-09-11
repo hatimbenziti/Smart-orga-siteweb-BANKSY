@@ -139,9 +139,9 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
   const reviewCount = Number(data.reviewCount) || 120;
 
   const departureCities = Array.isArray(data.departureCities)
-    ? data.departureCities
+    ? data.departureCities.map((c) => String(c).trim()).filter(Boolean)
     : (typeof data.departureCities === 'string'
-        ? data.departureCities.split(',').map((c) => c.trim())
+        ? data.departureCities.split(',').map((c) => c.trim()).filter(Boolean)
         : ['Casablanca', 'Rabat']);
 
   const nextDate = data.nextDate || 'Départs réguliers';

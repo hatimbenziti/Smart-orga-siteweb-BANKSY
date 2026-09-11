@@ -179,9 +179,12 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
               <span className="text-slate-400 block text-[11px] font-bold uppercase">
                 {language === 'ar' ? 'مدن الانطلاق' : 'Villes départ'}
               </span>
-              <span className="font-bold text-slate-800 mt-0.5 block truncate">
-                {trip.departureCities.join(', ')}
-              </span>
+              <div className="flex items-start gap-1.5 font-bold text-slate-800 mt-0.5">
+                <MapPin className="w-4 h-4 text-rose-500 shrink-0 self-start mt-0.5" />
+                <span className="leading-snug break-words">
+                  {trip.departureCities.join(', ')}
+                </span>
+              </div>
             </div>
           </div>
 
