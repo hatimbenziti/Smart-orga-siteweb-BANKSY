@@ -1,9 +1,9 @@
 {
   "groupSize": "14 à 20 personnes",
-  "date_type": "Départ récurrent",
-  "recurring_day": "Chaque Vendredi",
-  "nextDate": "Chaque Vendredi",
+  "nextDate": "",
+  "ville_destination": "Merzouga",
   "body": "Départ de Casablanca et Rabat pour une traversée spectaculaire du Moyen Atlas jusqu'aux dunes d'or de Merzouga. Nuit sous tente berbère tout confort avec sanitaires privatifs.",
+  "archived": false,
   "priority": 1,
   "isUpcoming": false,
   "priceMAD": 1450,
@@ -25,6 +25,7 @@
       "description": "Réveil matinal pour admirer le lever de soleil sur les crêtes de sable. Petit-déjeuner berbère complet, puis voyage retour avec arrêts panoramiques et souvenirs plein la tête."
     }
   ],
+  "date_type": "Départ récurrent",
   "isWeekly": true,
   "points_forts": [
     "Nuitée en bivouac de luxe au cœur des dunes de l'Erg Chebbi",
@@ -33,6 +34,7 @@
     "Visite des spectaculaires Gorges du Todra et Dadès"
   ],
   "destination": "Merzouga & Sud Marocain",
+  "exact_date": "2026-09-24",
   "order": 1,
   "notIncluded": [
     "Déjeuners libres en cours de route",
@@ -81,6 +83,7 @@
   "originalPriceMAD": 1750,
   "title": "Magie du Désert de Merzouga & Gorges du Dadès",
   "popular": true,
+  "recurring_day": null,
   "id": "merzouga-desert-vip",
   "image": "/images/uploads/1784472111064-cropped-1784472103025-dakhla-maroc.jpg",
   "nights": 2,
@@ -104,6 +107,5 @@
     "Balade à dos de dromadaire au coucher et lever du soleil",
     "Soirée animée autour du feu de camp avec musiciens Gnawa",
     "Visite des spectaculaires Gorges du Todra et Dadès"
-  ],
-  "ville_destination": "Merzouga"
+  ]
 }
