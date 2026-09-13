@@ -146,3 +146,61 @@ export function getTripHighlights(trip: Trip, lang: Language): string[] {
   }
   return trip.highlights;
 }
+
+const MOROCCAN_CITIES_NAMES: Record<string, { fr: string; ar: string; en: string }> = {
+  taghazout: { fr: 'Taghazout', ar: 'تغازوت', en: 'Taghazout' },
+  dakhla: { fr: 'Dakhla', ar: 'الداخلة', en: 'Dakhla' },
+  merzouga: { fr: 'Merzouga', ar: 'مرزوكة', en: 'Merzouga' },
+  chefchaouen: { fr: 'Chefchaouen', ar: 'شفشاون', en: 'Chefchaouen' },
+  imlil: { fr: 'Imlil', ar: 'إمليل', en: 'Imlil' },
+  toubkal: { fr: 'Toubkal', ar: 'توبقال', en: 'Toubkal' },
+  ouzoud: { fr: 'Ouzoud', ar: 'أوزود', en: 'Ouzoud' },
+  agafay: { fr: 'Agafay', ar: 'أكافاي', en: 'Agafay' },
+  marrakech: { fr: 'Marrakech', ar: 'مراكش', en: 'Marrakech' },
+  ouarzazate: { fr: 'Ouarzazate', ar: 'ورزازات', en: 'Ouarzazate' },
+  zagora: { fr: 'Zagora', ar: 'زاكورة', en: 'Zagora' },
+  agadir: { fr: 'Agadir', ar: 'أكادير', en: 'Agadir' },
+  tanger: { fr: 'Tanger', ar: 'طنجة', en: 'Tangier' },
+  essaouira: { fr: 'Essaouira', ar: 'الصويرة', en: 'Essaouira' },
+  fes: { fr: 'Fès', ar: 'فاس', en: 'Fez' },
+  casablanca: { fr: 'Casablanca', ar: 'الدار البيضاء', en: 'Casablanca' },
+  rabat: { fr: 'Rabat', ar: 'الرباط', en: 'Rabat' }
+};
+
+/**
+ * Returns the single, unique destination city for a trip.
+ * Uses trip.ville_destination strictly without mixing multiple cities.
+ */
+export function getTripDestinationCity(trip: Trip, lang: Language = 'fr'): string {
+  const cityKey = (trip.ville_destination || '').trim().toLowerCase();
+  if (cityKey) {
+    for (const [key, names] of Object.entries(MOROCCAN_CITIES_NAMES)) {
+      if (cityKey.includes(key) || key.includes(cityKey)) {
+        return lang === 'ar' ? names.ar : lang === 'en' ? names.en : names.fr;
+      }
+    }
+    return trip.ville_destination!.trim();
+  }
+
+  // Fallback to infer single city
+  const fallback = `${trip.id || ''} ${trip.destination || ''} ${trip.title || ''}`
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+  for (const [key, names] of Object.entries(MOROCCAN_CITIES_NAMES)) {
+    if (fallback.includes(key)) {
+      return lang === 'ar' ? names.ar : lang === 'en' ? names.en : names.fr;
+    }
+  }
+
+  return lang === 'ar' ? 'تغازوت' : 'Taghazout';
+}
+
+/**
+ * Returns the exact single destination city for each day of the trip weather forecast.
+ * Strictly uses the unique destination city to avoid mixing multiple cities.
+ */
+export function getTripDayLocation(trip: Trip, day: number, lang: Language = 'fr'): string {
+  return getTripDestinationCity(trip, lang);
+}

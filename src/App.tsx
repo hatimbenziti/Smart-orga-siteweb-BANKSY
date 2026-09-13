@@ -51,6 +51,11 @@ export default function App() {
   // Filtered trips
   const filteredTrips = useMemo(() => {
     return trips.filter((trip) => {
+      // 0. Archived trips hidden from public site
+      if (trip.archived) {
+        return false;
+      }
+
       // 1. Keyword search
       if (filters.searchQuery.trim() !== '') {
         const q = filters.searchQuery.toLowerCase();

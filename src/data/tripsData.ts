@@ -13,6 +13,8 @@ export interface CmsTripRaw {
   id?: string;
   title?: string;
   destination?: string;
+  ville_destination?: string;
+  villeDestination?: string;
   region?: TripThematique | string;
   thematique?: TripThematique | string;
   duration?: string;
@@ -27,12 +29,21 @@ export interface CmsTripRaw {
   imageUrl?: string;
   gallery?: string[];
   departureCities?: string[] | string;
+  date_type?: string;
+  dateType?: string;
+  exact_date?: string;
+  exactDate?: string;
+  fixedDate?: string;
+  date_fixe?: string;
+  recurring_day?: string;
+  recurringDay?: string;
   nextDate?: string;
   category?: 'popular' | 'weekly' | 'upcoming' | 'all';
   popular?: boolean;
   isPopular?: boolean;
   isWeekly?: boolean;
   isUpcoming?: boolean;
+  archived?: boolean;
   highlights?: string[];
   points_forts?: string[];
   order?: number | string;
@@ -92,6 +103,32 @@ function parseFrontmatter(raw: string): Record<string, any> {
   return result;
 }
 
+function inferSingleDestinationCity(data: CmsTripRaw, slug: string): string {
+  const explicit = (data.ville_destination || data.villeDestination || '').trim();
+  if (explicit) return explicit;
+
+  const text = `${slug} ${data.id || ''} ${data.destination || ''} ${data.title || ''}`
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+  if (text.includes('taghazout')) return 'Taghazout';
+  if (text.includes('dakhla')) return 'Dakhla';
+  if (text.includes('merzouga') || text.includes('desert') || text.includes('erg chebbi')) return 'Merzouga';
+  if (text.includes('chefchaouen') || text.includes('chaouen')) return 'Chefchaouen';
+  if (text.includes('imlil') || text.includes('toubkal')) return 'Imlil';
+  if (text.includes('ouzoud') || text.includes('bin el ouidane')) return 'Ouzoud';
+  if (text.includes('ouarzazate') || text.includes('zagora') || text.includes('draa')) return 'Ouarzazate';
+  if (text.includes('agafay')) return 'Agafay';
+  if (text.includes('marrakech')) return 'Marrakech';
+  if (text.includes('agadir')) return 'Agadir';
+  if (text.includes('tanger')) return 'Tanger';
+  if (text.includes('essaouira')) return 'Essaouira';
+  if (text.includes('fes')) return 'Fès';
+
+  return (data.destination || 'Taghazout').split('&')[0].split('-')[0].trim();
+}
+
 /**
  * Normalizes a raw CMS trip object into a fully-typed Trip
  */
@@ -100,6 +137,7 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
 
   const title = data.title || 'Séjour Découverte au Maroc';
   const destination = data.destination || 'Maroc';
+  const ville_destination = inferSingleDestinationCity(data, slug);
   
   // Validate and map region / thematique to one of the 6 canonical themes
   let region: TripThematique = 'Nature & Randonnée';
@@ -251,6 +289,7 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
     id: data.id || slug,
     title,
     destination,
+    ville_destination,
     region,
     duration,
     days,
@@ -262,11 +301,15 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
     image,
     gallery,
     departureCities,
+    date_type: data.date_type || data.dateType,
+    exact_date: data.exact_date || data.exactDate || data.fixedDate || data.date_fixe,
+    recurring_day: data.recurring_day || data.recurringDay,
     nextDate,
     category,
     isPopular,
     isWeekly,
     isUpcoming,
+    archived: Boolean(data.archived),
     highlights,
     program,
     body,

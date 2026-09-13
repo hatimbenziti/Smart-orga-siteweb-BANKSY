@@ -11,7 +11,7 @@ export function useTripWeather(trip: Trip | null) {
   const departureInfo = useMemo(() => {
     if (!trip) return null;
     return getComputedTripDepartureDate(trip);
-  }, [trip?.id, trip?.nextDate, trip?.isWeekly]);
+  }, [trip?.id, trip?.date_type, trip?.exact_date, trip?.recurring_day, trip?.nextDate, trip?.isWeekly]);
 
   const [weather, setWeather] = useState<TripWeatherReport | null>(() => {
     if (!trip || !departureInfo) return null;
@@ -43,7 +43,7 @@ export function useTripWeather(trip: Trip | null) {
     return () => {
       isMounted = false;
     };
-  }, [trip?.id, trip?.destination, trip?.region, departureInfo?.date.getTime()]);
+  }, [trip?.id, trip?.ville_destination, trip?.destination, trip?.region, departureInfo?.date.getTime()]);
 
   return {
     weather,

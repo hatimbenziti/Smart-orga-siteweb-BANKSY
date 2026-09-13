@@ -36,8 +36,14 @@
   "priority": 1,
   "rating": 4.9,
   "reviewCount": 142,
-  "departureCities": ["Casablanca", "Rabat", "Marrakech"],
-  "nextDate": "Vendredi 18 Septembre",
+  "departureCities": [
+    "Casablanca",
+    "Rabat",
+    "Marrakech"
+  ],
+  "date_type": "Départ récurrent",
+  "recurring_day": "Chaque Vendredi",
+  "nextDate": "Chaque Vendredi",
   "groupSize": "14 à 20 personnes",
   "included": [
     "Transport touristique tout confort climatisé A/R",
@@ -75,10 +81,29 @@
     "conditionAr": "مشمس وسماء صافية",
     "conditionEn": "Sunny & Clear Sky",
     "dailyForecast": [
-      { "day": 1, "temp": "26°C", "condition": "Ensoleillé", "conditionAr": "مشمس", "conditionEn": "Sunny" },
-      { "day": 2, "temp": "28°C", "condition": "Ciel étoilé", "conditionAr": "ليلة صافية", "conditionEn": "Starry & Mild" },
-      { "day": 3, "temp": "25°C", "condition": "Grand soleil", "conditionAr": "مشمس ناصع", "conditionEn": "Bright Sunshine" }
+      {
+        "day": 1,
+        "temp": "26°C",
+        "condition": "Ensoleillé",
+        "conditionAr": "مشمس",
+        "conditionEn": "Sunny"
+      },
+      {
+        "day": 2,
+        "temp": "28°C",
+        "condition": "Ciel étoilé",
+        "conditionAr": "ليلة صافية",
+        "conditionEn": "Starry & Mild"
+      },
+      {
+        "day": 3,
+        "temp": "25°C",
+        "condition": "Grand soleil",
+        "conditionAr": "مشمس ناصع",
+        "conditionEn": "Bright Sunshine"
+      }
     ]
   },
-  "body": "Départ de Casablanca et Rabat pour une traversée spectaculaire du Moyen Atlas jusqu'aux dunes d'or de Merzouga. Nuit sous tente berbère tout confort avec sanitaires privatifs."
+  "body": "Départ de Casablanca et Rabat pour une traversée spectaculaire du Moyen Atlas jusqu'aux dunes d'or de Merzouga. Nuit sous tente berbère tout confort avec sanitaires privatifs.",
+  "ville_destination": "Merzouga"
 }

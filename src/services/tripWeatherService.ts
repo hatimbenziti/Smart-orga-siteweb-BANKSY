@@ -4,6 +4,17 @@ export interface DailyWeatherForecast {
   day: number;
   date: Date;
   dateFormatted: string;
+  dateFormattedExact: string;
+  dateFormattedExactAr?: string;
+  dateFormattedExactEn?: string;
+  dateFormattedAr?: string;
+  dateFormattedEn?: string;
+  location?: string;
+  locationAr?: string;
+  locationEn?: string;
+  cityName?: string;
+  cityNameAr?: string;
+  cityNameEn?: string;
   temp: string;
   tempMax: string;
   tempMin?: string;
@@ -20,9 +31,16 @@ export interface TripWeatherReport {
   conditionEn: string;
   icon: 'sun' | 'cloud' | 'cloud-rain' | 'snowflake' | 'cloud-lightning';
   dailyForecast: DailyWeatherForecast[];
-  isLive: boolean;
-  source: 'open-meteo' | 'fallback';
+  cityName?: string;
+  cityNameAr?: string;
+  cityNameEn?: string;
+  isLive?: boolean;
+  source?: 'open-meteo' | 'fallback';
 }
+
+export const FRENCH_DAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+export const ARABIC_DAYS = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+export const ENGLISH_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 export const FRENCH_MONTHS = [
   'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
@@ -39,137 +57,370 @@ export const ENGLISH_MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
+export const FRENCH_MONTHS_SHORT = [
+  'Janv', 'Févr', 'Mars', 'Avr', 'Mai', 'Juin',
+  'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'
+];
+
+export const ENGLISH_MONTHS_SHORT = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+];
+
 /**
- * Calculates the next upcoming Friday from now.
- * If today is Friday, targets the upcoming Friday (+7 days)
- * to provide a bookable upcoming date.
+ * Formats a day date concisely (e.g. "Vendredi 18 Sept", "الجمعة 18 شتنبر", "Friday, Sep 18")
  */
-export function getNextUpcomingFriday(from: Date = new Date()): Date {
+export function formatDayDateExact(date: Date, lang: string = 'fr'): string {
+  const dayOfWeek = date.getDay();
+  const dayNum = date.getDate();
+  const monthIdx = date.getMonth();
+
+  if (lang === 'ar') {
+    return `${ARABIC_DAYS[dayOfWeek]} ${dayNum} ${ARABIC_MONTHS[monthIdx]}`;
+  }
+  if (lang === 'en') {
+    return `${ENGLISH_DAYS[dayOfWeek]}, ${ENGLISH_MONTHS_SHORT[monthIdx]} ${dayNum}`;
+  }
+  return `${FRENCH_DAYS[dayOfWeek]} ${dayNum} ${FRENCH_MONTHS_SHORT[monthIdx]}`;
+}
+
+/**
+ * Maps a recurring day label or text string to the JS day-of-week index (0 = Sunday ... 6 = Saturday)
+ */
+export function parseRecurringDayToDayNumber(recurringDay?: string, fallbackText?: string): number {
+  const query = `${recurringDay || ''} ${fallbackText || ''}`.toLowerCase().trim();
+
+  if (query.includes('lundi') || query.includes('monday')) return 1;
+  if (query.includes('mardi') || query.includes('tuesday')) return 2;
+  if (query.includes('mercredi') || query.includes('wednesday')) return 3;
+  if (query.includes('jeudi') || query.includes('thursday')) return 4;
+  if (query.includes('vendredi') || query.includes('friday')) return 5;
+  if (query.includes('samedi') || query.includes('saturday')) return 6;
+  if (query.includes('dimanche') || query.includes('sunday')) return 0;
+
+  // Default to Friday (5) for weekend excursions in Morocco
+  return 5;
+}
+
+/**
+ * Parses an exact date string (e.g., "YYYY-MM-DD" or full ISO date) into a local Date object set to midday
+ */
+export function parseExactDate(dateStr?: string): Date | null {
+  if (!dateStr || typeof dateStr !== 'string') return null;
+  const trimmed = dateStr.trim();
+  if (!trimmed) return null;
+
+  // Match ISO YYYY-MM-DD
+  const ymdMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (ymdMatch) {
+    const year = parseInt(ymdMatch[1], 10);
+    const month = parseInt(ymdMatch[2], 10) - 1;
+    const day = parseInt(ymdMatch[3], 10);
+    const d = new Date(year, month, day, 12, 0, 0, 0);
+    if (!isNaN(d.getTime())) return d;
+  }
+
+  // General Date parse fallback
+  const parsed = new Date(trimmed);
+  if (!isNaN(parsed.getTime())) {
+    parsed.setHours(12, 0, 0, 0);
+    return parsed;
+  }
+
+  return null;
+}
+
+/**
+ * Computes the very next upcoming occurrence of a specific day of week (0..6).
+ * If today is the target day and the hour is already past morning, rolls over to next week (+7 days)
+ * to ensure users always see a future bookable departure date.
+ */
+export function getNextUpcomingDayOfWeek(targetDay: number, from: Date = new Date()): Date {
   const d = new Date(from);
   d.setHours(12, 0, 0, 0);
-  const day = d.getDay(); // 0 = Sun, 1 = Mon, ..., 5 = Fri, 6 = Sat
-  let diff = (5 - day + 7) % 7;
+  const currentDay = d.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+
+  let diff = (targetDay - currentDay + 7) % 7;
+  // If target day is today, schedule for next week
   if (diff === 0) {
-    diff = 7; // Next Friday
+    diff = 7;
   }
+
   d.setDate(d.getDate() + diff);
   return d;
 }
 
 /**
- * Checks if a trip date is recurring or needs dynamic calculation.
+ * Backward compatibility alias: calculates the next upcoming Friday
+ */
+export function getNextUpcomingFriday(from: Date = new Date()): Date {
+  return getNextUpcomingDayOfWeek(5, from);
+}
+
+/**
+ * Checks if a trip is configured with recurring departure or has dynamic date calculation
  */
 export function isRecurringDeparture(trip: Trip): boolean {
+  if (trip.date_type === 'Départ récurrent') return true;
+  if (trip.date_type === 'Date fixe') return false;
+  if (trip.exact_date) return false;
+  if (trip.recurring_day) return true;
   if (trip.isWeekly) return true;
+
   const raw = (trip.nextDate || '').toLowerCase().trim();
   if (!raw) return true;
+
+  // If string contains explicit day name or recurring keywords
   if (
     raw.includes('chaque') ||
-    raw.includes('vendredi') ||
+    raw.includes('tous les') ||
+    raw.includes('hebdo') ||
+    raw.includes('régulier') ||
     raw.includes('weekend') ||
     raw.includes('week-end') ||
-    raw.includes('régulier') ||
-    raw.includes('hebdo') ||
-    raw.includes('tous les') ||
-    raw.includes('prochain')
+    raw.includes('prochain') ||
+    raw.includes('vendredi') ||
+    raw.includes('samedi') ||
+    raw.includes('jeudi') ||
+    raw.includes('dimanche')
   ) {
     return true;
   }
-  // If string doesn't contain any digit, treat as recurring
-  if (!/\d/.test(raw)) {
-    return true;
-  }
-  return false;
+
+  return true;
 }
 
 /**
  * Returns the resolved departure Date object for a trip.
+ * Respects 'Date fixe' with exact_date, or computes the upcoming day for 'Départ récurrent'.
  */
 export function getComputedTripDepartureDate(trip: Trip): { date: Date; isDynamic: boolean } {
-  if (isRecurringDeparture(trip)) {
-    return { date: getNextUpcomingFriday(), isDynamic: true };
+  // 1. If explicit 'Date fixe' or exact_date provided
+  if (trip.date_type === 'Date fixe' || trip.exact_date) {
+    const parsed = parseExactDate(trip.exact_date || trip.nextDate);
+    if (parsed) {
+      return { date: parsed, isDynamic: false };
+    }
   }
 
-  // Check if trip.nextDate contains a parseable date
-  const parsed = new Date(trip.nextDate);
-  if (!isNaN(parsed.getTime()) && parsed.getTime() > Date.now() - 86400000) {
-    return { date: parsed, isDynamic: false };
-  }
-
-  return { date: getNextUpcomingFriday(), isDynamic: true };
+  // 2. Otherwise handle 'Départ récurrent' (or default)
+  const targetDay = parseRecurringDayToDayNumber(trip.recurring_day, trip.nextDate);
+  const nextDateObj = getNextUpcomingDayOfWeek(targetDay);
+  return { date: nextDateObj, isDynamic: true };
 }
 
 /**
- * Formats a departure date: "Vendredi [Jour] [Mois]" (ex: Vendredi 18 Septembre)
+ * Formats a departure date: e.g. "Samedi 19 Septembre" (FR), "السبت 19 شتنبر" (AR), "Saturday, September 19" (EN)
  */
 export function formatDepartureDate(date: Date, lang: string = 'fr'): string {
+  const dayOfWeek = date.getDay();
   const dayNum = date.getDate();
   const monthIdx = date.getMonth();
 
   if (lang === 'ar') {
-    return `الجمعة ${dayNum} ${ARABIC_MONTHS[monthIdx]}`;
+    return `${ARABIC_DAYS[dayOfWeek]} ${dayNum} ${ARABIC_MONTHS[monthIdx]}`;
   }
   if (lang === 'en') {
-    return `Friday, ${ENGLISH_MONTHS[monthIdx]} ${dayNum}`;
+    return `${ENGLISH_DAYS[dayOfWeek]}, ${ENGLISH_MONTHS[monthIdx]} ${dayNum}`;
   }
-  return `Vendredi ${dayNum} ${FRENCH_MONTHS[monthIdx]}`;
+  return `${FRENCH_DAYS[dayOfWeek]} ${dayNum} ${FRENCH_MONTHS[monthIdx]}`;
 }
 
 /**
  * Returns the localized next departure date for a trip.
- * Uses dynamic calculation for recurring departures.
+ * Evaluates 'Date fixe' or dynamic upcoming calculation for 'Départ récurrent'.
  */
 export function getDynamicTripNextDate(trip: Trip, lang: string = 'fr'): string {
   const { date, isDynamic } = getComputedTripDepartureDate(trip);
 
-  if (isDynamic) {
+  // If fixed date with localized manual text provided, use it if appropriate
+  if (!isDynamic) {
+    if (lang === 'ar' && trip.nextDateAr) return trip.nextDateAr;
+    if (lang === 'en' && trip.nextDateEn) return trip.nextDateEn;
     return formatDepartureDate(date, lang);
   }
 
-  // If fixed date with localized strings, use them
-  if (lang === 'ar' && trip.nextDateAr) return trip.nextDateAr;
-  if (lang === 'en' && trip.nextDateEn) return trip.nextDateEn;
-  return trip.nextDate || formatDepartureDate(date, lang);
+  // Dynamic recurring departure formatted with exact calculated day and date
+  return formatDepartureDate(date, lang);
 }
 
-// Destination coordinates dictionary for Moroccan destinations
-const DESTINATION_COORDS: Record<string, { lat: number; lon: number }> = {
-  merzouga: { lat: 31.099, lon: -4.012 },
-  dakhla: { lat: 23.713, lon: -15.938 },
-  chefchaouen: { lat: 35.168, lon: -5.263 },
-  chaouen: { lat: 35.168, lon: -5.263 },
-  tanger: { lat: 35.759, lon: -5.833 },
-  taghazout: { lat: 30.542, lon: -9.709 },
-  agadir: { lat: 30.427, lon: -9.598 },
-  marrakech: { lat: 31.629, lon: -7.981 },
-  agafay: { lat: 31.483, lon: -8.150 },
-  ouzoud: { lat: 32.015, lon: -6.719 },
-  toubkal: { lat: 31.135, lon: -7.918 },
-  imlil: { lat: 31.135, lon: -7.918 },
-  atlas: { lat: 31.135, lon: -7.918 },
-  ouarzazate: { lat: 30.918, lon: -6.911 },
-  dades: { lat: 31.500, lon: -5.983 },
-  todra: { lat: 31.583, lon: -5.583 },
-  fes: { lat: 34.033, lon: -5.000 },
-  meknes: { lat: 33.893, lon: -5.554 },
-  casablanca: { lat: 33.573, lon: -7.589 },
-  rabat: { lat: 34.020, lon: -6.841 }
+export interface SingleCityLocation {
+  name: string;
+  nameAr: string;
+  nameEn: string;
+  lat: number;
+  lon: number;
+}
+
+export const MOROCCAN_CITIES_COORDS: Record<string, SingleCityLocation> = {
+  taghazout: {
+    name: 'Taghazout',
+    nameAr: 'تغازوت',
+    nameEn: 'Taghazout',
+    lat: 30.542,
+    lon: -9.709
+  },
+  dakhla: {
+    name: 'Dakhla',
+    nameAr: 'الداخلة',
+    nameEn: 'Dakhla',
+    lat: 23.713,
+    lon: -15.938
+  },
+  merzouga: {
+    name: 'Merzouga',
+    nameAr: 'مرزوكة',
+    nameEn: 'Merzouga',
+    lat: 31.099,
+    lon: -4.012
+  },
+  chefchaouen: {
+    name: 'Chefchaouen',
+    nameAr: 'شفشاون',
+    nameEn: 'Chefchaouen',
+    lat: 35.168,
+    lon: -5.263
+  },
+  imlil: {
+    name: 'Imlil',
+    nameAr: 'إمليل',
+    nameEn: 'Imlil',
+    lat: 31.135,
+    lon: -7.918
+  },
+  toubkal: {
+    name: 'Toubkal',
+    nameAr: 'توبقال',
+    nameEn: 'Toubkal',
+    lat: 31.060,
+    lon: -7.915
+  },
+  ouzoud: {
+    name: 'Ouzoud',
+    nameAr: 'أوزود',
+    nameEn: 'Ouzoud',
+    lat: 32.015,
+    lon: -6.719
+  },
+  agafay: {
+    name: 'Agafay',
+    nameAr: 'أكافاي',
+    nameEn: 'Agafay',
+    lat: 31.483,
+    lon: -8.150
+  },
+  marrakech: {
+    name: 'Marrakech',
+    nameAr: 'مراكش',
+    nameEn: 'Marrakech',
+    lat: 31.629,
+    lon: -7.981
+  },
+  ouarzazate: {
+    name: 'Ouarzazate',
+    nameAr: 'ورزازات',
+    nameEn: 'Ouarzazate',
+    lat: 30.918,
+    lon: -6.911
+  },
+  zagora: {
+    name: 'Zagora',
+    nameAr: 'زاكورة',
+    nameEn: 'Zagora',
+    lat: 30.332,
+    lon: -5.838
+  },
+  agadir: {
+    name: 'Agadir',
+    nameAr: 'أكادير',
+    nameEn: 'Agadir',
+    lat: 30.427,
+    lon: -9.598
+  },
+  tanger: {
+    name: 'Tanger',
+    nameAr: 'طنجة',
+    nameEn: 'Tangier',
+    lat: 35.759,
+    lon: -5.833
+  },
+  essaouira: {
+    name: 'Essaouira',
+    nameAr: 'الصويرة',
+    nameEn: 'Essaouira',
+    lat: 31.508,
+    lon: -9.760
+  },
+  fes: {
+    name: 'Fès',
+    nameAr: 'فاس',
+    nameEn: 'Fez',
+    lat: 34.033,
+    lon: -5.000
+  },
+  casablanca: {
+    name: 'Casablanca',
+    nameAr: 'الدار البيضاء',
+    nameEn: 'Casablanca',
+    lat: 33.573,
+    lon: -7.589
+  },
+  rabat: {
+    name: 'Rabat',
+    nameAr: 'الرباط',
+    nameEn: 'Rabat',
+    lat: 34.020,
+    lon: -6.841
+  }
 };
 
-export function getCoordinatesForTrip(trip: Trip): { lat: number; lon: number } {
-  const query = `${trip.destination || ''} ${trip.region || ''} ${trip.title || ''}`
+/**
+ * Resolves the single, precise destination city for a trip.
+ * Uses trip.ville_destination strictly to avoid mixing multiple cities.
+ */
+export function getSingleDestinationCity(trip: Trip): SingleCityLocation {
+  const rawCity = (trip.ville_destination || '').trim().toLowerCase();
+  
+  if (rawCity) {
+    for (const [key, loc] of Object.entries(MOROCCAN_CITIES_COORDS)) {
+      if (rawCity.includes(key) || key.includes(rawCity)) {
+        return loc;
+      }
+    }
+    return {
+      name: trip.ville_destination!.trim(),
+      nameAr: trip.ville_destination!.trim(),
+      nameEn: trip.ville_destination!.trim(),
+      lat: 31.629,
+      lon: -7.981
+    };
+  }
+
+  // Fallback: strictly identify a single city
+  const fallbackText = `${trip.id || ''} ${trip.destination || ''} ${trip.title || ''}`
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
 
-  for (const [key, coords] of Object.entries(DESTINATION_COORDS)) {
-    if (query.includes(key)) {
-      return coords;
-    }
-  }
+  if (fallbackText.includes('taghazout')) return MOROCCAN_CITIES_COORDS.taghazout;
+  if (fallbackText.includes('dakhla')) return MOROCCAN_CITIES_COORDS.dakhla;
+  if (fallbackText.includes('merzouga') || fallbackText.includes('erg chebbi')) return MOROCCAN_CITIES_COORDS.merzouga;
+  if (fallbackText.includes('chefchaouen') || fallbackText.includes('chaouen')) return MOROCCAN_CITIES_COORDS.chefchaouen;
+  if (fallbackText.includes('imlil') || fallbackText.includes('toubkal')) return MOROCCAN_CITIES_COORDS.imlil;
+  if (fallbackText.includes('ouzoud')) return MOROCCAN_CITIES_COORDS.ouzoud;
+  if (fallbackText.includes('ouarzazate')) return MOROCCAN_CITIES_COORDS.ouarzazate;
+  if (fallbackText.includes('agafay')) return MOROCCAN_CITIES_COORDS.agafay;
+  if (fallbackText.includes('marrakech')) return MOROCCAN_CITIES_COORDS.marrakech;
+  if (fallbackText.includes('agadir')) return MOROCCAN_CITIES_COORDS.agadir;
+  if (fallbackText.includes('tanger')) return MOROCCAN_CITIES_COORDS.tanger;
+  if (fallbackText.includes('zagora')) return MOROCCAN_CITIES_COORDS.zagora;
 
-  // Fallback to central Moroccan coordinates
-  return { lat: 31.629, lon: -7.981 };
+  return MOROCCAN_CITIES_COORDS.taghazout;
+}
+
+export function getCoordinatesForTrip(trip: Trip): { lat: number; lon: number } {
+  const cityInfo = getSingleDestinationCity(trip);
+  return { lat: cityInfo.lat, lon: cityInfo.lon };
 }
 
 function interpretWmoCode(code: number): {
@@ -259,6 +510,7 @@ function interpretWmoCode(code: number): {
  * Builds default fallback weather forecast if network is unavailable
  */
 export function getFallbackWeather(trip: Trip, departureDate: Date): TripWeatherReport {
+  const cityInfo = getSingleDestinationCity(trip);
   const region = (trip.region || '').toLowerCase();
   const defaultBaseTemp = region.includes('désert') || region.includes('dunes')
     ? 28
@@ -283,14 +535,26 @@ export function getFallbackWeather(trip: Trip, departureDate: Date): TripWeather
     const tempNum = parseInt(defaultTemp.replace(/\D/g, ''), 10) || defaultBaseTemp;
     const dayTemp = `${tempNum + variation}°C`;
 
-    const dayName = i === 0 ? 'Vendredi' : i === 1 ? 'Samedi' : 'Dimanche';
-    const dayNameAr = i === 0 ? 'الجمعة' : i === 1 ? 'السبت' : 'الأحد';
-    const dayNameEn = i === 0 ? 'Friday' : i === 1 ? 'Saturday' : 'Sunday';
+    const dayOfWeek = dayDate.getDay();
+    const dayNameFr = FRENCH_DAYS[dayOfWeek];
+    const dayNameAr = ARABIC_DAYS[dayOfWeek];
+    const dayNameEn = ENGLISH_DAYS[dayOfWeek];
 
     dailyForecast.push({
       day: i + 1,
       date: dayDate,
-      dateFormatted: `${dayName} ${dayDate.getDate()} ${FRENCH_MONTHS[dayDate.getMonth()]}`,
+      dateFormatted: `${dayNameFr} ${dayDate.getDate()} ${FRENCH_MONTHS[dayDate.getMonth()]}`,
+      dateFormattedExact: `${dayNameFr} ${dayDate.getDate()} ${FRENCH_MONTHS_SHORT[dayDate.getMonth()]}`,
+      dateFormattedExactAr: `${dayNameAr} ${dayDate.getDate()} ${ARABIC_MONTHS[dayDate.getMonth()]}`,
+      dateFormattedExactEn: `${dayNameEn}, ${ENGLISH_MONTHS_SHORT[dayDate.getMonth()]} ${dayDate.getDate()}`,
+      dateFormattedAr: `${dayNameAr} ${dayDate.getDate()} ${ARABIC_MONTHS[dayDate.getMonth()]}`,
+      dateFormattedEn: `${dayNameEn}, ${ENGLISH_MONTHS[dayDate.getMonth()]} ${dayDate.getDate()}`,
+      location: cityInfo.name,
+      locationAr: cityInfo.nameAr,
+      locationEn: cityInfo.nameEn,
+      cityName: cityInfo.name,
+      cityNameAr: cityInfo.nameAr,
+      cityNameEn: cityInfo.nameEn,
       temp: dayTemp,
       tempMax: dayTemp,
       condition: i === 1 ? 'Ciel pur & lumineux' : defaultCond,
@@ -307,6 +571,9 @@ export function getFallbackWeather(trip: Trip, departureDate: Date): TripWeather
     conditionEn: defaultCondEn,
     icon: 'sun',
     dailyForecast,
+    cityName: cityInfo.name,
+    cityNameAr: cityInfo.nameAr,
+    cityNameEn: cityInfo.nameEn,
     isLive: false,
     source: 'fallback'
   };
@@ -317,14 +584,16 @@ const weatherCache = new Map<string, { report: TripWeatherReport; timestamp: num
 const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
 
 /**
- * Fetches real-time weather from Open-Meteo for the 3 days of the trip starting at departureDate.
+ * Fetches real-time weather from Open-Meteo for the days of the trip starting precisely at departureDate.
  */
 export async function fetchTripWeather(
   trip: Trip,
   departureDate: Date
 ): Promise<TripWeatherReport> {
-  const coords = getCoordinatesForTrip(trip);
-  const cacheKey = `${coords.lat.toFixed(2)}_${coords.lon.toFixed(2)}_${departureDate.toISOString().split('T')[0]}`;
+  const cityInfo = getSingleDestinationCity(trip);
+  const coords = { lat: cityInfo.lat, lon: cityInfo.lon };
+  const depIso = departureDate.toISOString().split('T')[0];
+  const cacheKey = `${cityInfo.name.toLowerCase()}_${coords.lat.toFixed(2)}_${coords.lon.toFixed(2)}_${depIso}`;
 
   const cached = weatherCache.get(cacheKey);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -335,7 +604,7 @@ export async function fetchTripWeather(
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Africa%2FCasablanca&forecast_days=16`;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4500);
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
 
     const response = await fetch(url, { signal: controller.signal });
     clearTimeout(timeoutId);
@@ -352,6 +621,7 @@ export async function fetchTripWeather(
 
     const dailyForecast: DailyWeatherForecast[] = [];
 
+    // Construct 3-day forecast corresponding precisely to departure date and next 2 days
     for (let i = 0; i < 3; i++) {
       const dayDate = new Date(departureDate);
       dayDate.setDate(dayDate.getDate() + i);
@@ -359,7 +629,7 @@ export async function fetchTripWeather(
 
       let idx = data.daily.time.indexOf(isoDate);
 
-      // If exact date is beyond the 16-day window, fallback gracefully to the nearest available day index
+      // If the departure date is beyond the 16-day window, smoothly fallback to closest day in the forecast window
       if (idx === -1) {
         idx = Math.min(i, data.daily.time.length - 1);
       }
@@ -369,12 +639,26 @@ export async function fetchTripWeather(
       const code = data.daily.weather_code[idx];
       const interpretation = interpretWmoCode(code);
 
-      const dayName = i === 0 ? 'Vendredi' : i === 1 ? 'Samedi' : 'Dimanche';
+      const dayOfWeek = dayDate.getDay();
+      const dayNameFr = FRENCH_DAYS[dayOfWeek];
+      const dayNameAr = ARABIC_DAYS[dayOfWeek];
+      const dayNameEn = ENGLISH_DAYS[dayOfWeek];
 
       dailyForecast.push({
         day: i + 1,
         date: dayDate,
-        dateFormatted: `${dayName} ${dayDate.getDate()} ${FRENCH_MONTHS[dayDate.getMonth()]}`,
+        dateFormatted: `${dayNameFr} ${dayDate.getDate()} ${FRENCH_MONTHS[dayDate.getMonth()]}`,
+        dateFormattedExact: `${dayNameFr} ${dayDate.getDate()} ${FRENCH_MONTHS_SHORT[dayDate.getMonth()]}`,
+        dateFormattedExactAr: `${dayNameAr} ${dayDate.getDate()} ${ARABIC_MONTHS[dayDate.getMonth()]}`,
+        dateFormattedExactEn: `${dayNameEn}, ${ENGLISH_MONTHS_SHORT[dayDate.getMonth()]} ${dayDate.getDate()}`,
+        dateFormattedAr: `${dayNameAr} ${dayDate.getDate()} ${ARABIC_MONTHS[dayDate.getMonth()]}`,
+        dateFormattedEn: `${dayNameEn}, ${ENGLISH_MONTHS[dayDate.getMonth()]} ${dayDate.getDate()}`,
+        location: cityInfo.name,
+        locationAr: cityInfo.nameAr,
+        locationEn: cityInfo.nameEn,
+        cityName: cityInfo.name,
+        cityNameAr: cityInfo.nameAr,
+        cityNameEn: cityInfo.nameEn,
         temp: `${tempMaxVal}°C`,
         tempMax: `${tempMaxVal}°C`,
         tempMin: tempMinVal !== undefined ? `${tempMinVal}°C` : undefined,
@@ -393,6 +677,9 @@ export async function fetchTripWeather(
       conditionEn: firstDay ? firstDay.conditionEn : 'Sunny & Clear',
       icon: firstDay ? firstDay.icon : 'sun',
       dailyForecast,
+      cityName: cityInfo.name,
+      cityNameAr: cityInfo.nameAr,
+      cityNameEn: cityInfo.nameEn,
       isLive: true,
       source: 'open-meteo'
     };

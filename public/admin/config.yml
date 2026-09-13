@@ -29,7 +29,28 @@ collections:
       preview: true
     fields:
       - { label: "Titre du Séjour", name: "title", widget: "string" }
-      - { label: "Destination", name: "destination", widget: "string", default: "Merzouga & Sud Marocain" }
+      - label: "Ville de destination unique (Météo & GPS)"
+        name: "ville_destination"
+        widget: "select"
+        options:
+          - "Taghazout"
+          - "Dakhla"
+          - "Merzouga"
+          - "Chefchaouen"
+          - "Imlil"
+          - "Toubkal"
+          - "Ouzoud"
+          - "Agafay"
+          - "Marrakech"
+          - "Ouarzazate"
+          - "Zagora"
+          - "Agadir"
+          - "Tanger"
+          - "Essaouira"
+          - "Fès"
+        default: "Taghazout"
+        hint: "Ville unique et précise utilisée pour le calcul météo exact en direct."
+      - { label: "Destination (titre affiché)", name: "destination", widget: "string", default: "Taghazout" }
       - { label: "Thématique / Univers", name: "region", widget: "select", options: ["Nature & Randonnée", "Désert & Aventure", "Plage & Détente", "Montagne & Trekking", "Camping & Bivouac", "Culture & Patrimoine"], default: "Nature & Randonnée" }
       - { label: "Prix (MAD)", name: "price", widget: "number", value_type: "int" }
       - { label: "Prix d'origine barré (MAD, optionnel)", name: "originalPriceMAD", widget: "number", value_type: "int", required: false }
@@ -42,10 +63,36 @@ collections:
         field: { label: "Image", name: "image", widget: "image" }
       - { label: "Points forts (Highlights)", name: "highlights", widget: "list", field: { label: "Point fort", name: "item", widget: "string" } }
       - { label: "Voyage Populaire / Coup de cœur (popular)", name: "popular", widget: "boolean", default: true }
+      - name: "archived"
+        label: "Archiver ce voyage (Masquer du site)"
+        widget: "boolean"
+        default: false
+        hint: "Si cette case est cochée, le voyage ne sera pas visible sur le site public."
       - { label: "Ordre / Priorité d'affichage (order)", name: "order", widget: "number", default: 1, value_type: "int" }
       - { label: "Catégorie", name: "category", widget: "select", options: ["popular", "weekly", "upcoming", "all"], default: "popular" }
       - { label: "Villes de départ (optionnel)", name: "departureCities", widget: "list", field: { label: "Ville", name: "city", widget: "string" }, required: false }
-      - { label: "Prochaine date de départ (optionnel)", name: "nextDate", widget: "string", required: false }
+      - label: "Type de date de départ"
+        name: "date_type"
+        widget: "select"
+        options: ["Date fixe", "Départ récurrent"]
+        default: "Départ récurrent"
+        hint: "Choisissez 'Date fixe' pour un départ à date précise ou 'Départ récurrent' pour chaque semaine."
+      - label: "Date exacte (si Date fixe)"
+        name: "exact_date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        required: false
+        hint: "Sélectionnez la date exacte dans le calendrier."
+      - label: "Jour récurrent (si Départ récurrent)"
+        name: "recurring_day"
+        widget: "select"
+        options: ["Chaque Lundi", "Chaque Mardi", "Chaque Mercredi", "Chaque Jeudi", "Chaque Vendredi", "Chaque Samedi", "Chaque Dimanche"]
+        default: "Chaque Vendredi"
+        required: false
+        hint: "Sélectionnez le jour de la semaine où a lieu le départ récurrent."
+      - { label: "Texte personnalisé de date (optionnel)", name: "nextDate", widget: "string", required: false }
       - { label: "Taille du groupe (optionnel)", name: "groupSize", widget: "string", default: "14 à 22 personnes", required: false }
       - label: "Météo du Séjour & Prévisions des Jours"
         name: "weather"
@@ -60,6 +107,7 @@ collections:
             required: false
             fields:
               - { label: "Numéro du jour (1, 2, 3...)", name: "day", widget: "number", value_type: "int", default: 1 }
+              - { label: "Ville / Étape du jour (optionnel, ex: Taghazout, Paradise Valley...)", name: "step", widget: "string", required: false }
               - { label: "Température (ex: 26°C)", name: "temp", widget: "string", default: "26°C" }
               - { label: "Météo du jour (ex: Grand soleil)", name: "condition", widget: "string", default: "Grand soleil" }
       - label: "Programme Complet du Voyage"

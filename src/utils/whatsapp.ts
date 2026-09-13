@@ -1,6 +1,6 @@
 import { WHATSAPP_NUMBER } from '../data/tripsData';
 import { Trip, BookingFormData, Language } from '../types';
-import { getTripTitle, getTripDuration } from './localized';
+import { getTripTitle, getTripDuration, getTripNextDate } from './localized';
 
 /**
  * Builds a direct WhatsApp reservation URL with pre-filled text in the user's language
@@ -10,7 +10,7 @@ export function createTripWhatsAppUrl(
   options?: { date?: string; people?: number; city?: string; notes?: string; lang?: Language }
 ): string {
   const lang = options?.lang || 'fr';
-  const chosenDate = options?.date || trip.nextDate;
+  const chosenDate = options?.date || getTripNextDate(trip, lang);
   const travelers = options?.people || 2;
   const title = getTripTitle(trip, lang);
   const duration = getTripDuration(trip, lang);

@@ -16,6 +16,7 @@ export interface Trip {
   destination: string;
   destinationAr?: string;
   destinationEn?: string;
+  ville_destination?: string;
   region: TripThematique | string;
   thematique?: TripThematique | string;
   duration: string;
@@ -30,6 +31,9 @@ export interface Trip {
   image: string;
   gallery: string[];
   departureCities: string[];
+  date_type?: 'Date fixe' | 'Départ récurrent' | string;
+  exact_date?: string;
+  recurring_day?: string;
   nextDate: string;
   nextDateAr?: string;
   nextDateEn?: string;
@@ -37,6 +41,7 @@ export interface Trip {
   isPopular?: boolean;
   isWeekly?: boolean;
   isUpcoming?: boolean;
+  archived?: boolean;
   highlights: string[];
   highlightsAr?: string[];
   highlightsEn?: string[];
