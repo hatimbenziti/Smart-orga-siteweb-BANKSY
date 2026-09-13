@@ -278,13 +278,6 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
   const program = data.program || data.body || '';
   const body = data.body || data.program || '';
 
-  const weather = data.weather || {
-    temp: '25°C',
-    condition: 'Ensoleillé & Ciel pur',
-    conditionAr: 'مشمس وسماء صافية',
-    conditionEn: 'Sunny & Clear Sky'
-  };
-
   return {
     id: data.id || slug,
     title,
@@ -320,7 +313,6 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
     cancellation_policy,
     cancellationPolicy,
     groupSize,
-    weather,
     order
   };
 }

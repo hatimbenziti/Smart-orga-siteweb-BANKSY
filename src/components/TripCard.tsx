@@ -29,7 +29,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
   const highlights = getTripHighlights(trip, language);
   const nextDate = getTripNextDate(trip, language);
 
-  const displayTemp = weather?.temp || trip.weather?.temp;
+  const displayTemp = weather?.temp;
   const weatherIcon = weather?.icon || 'sun';
 
   const directWhatsAppUrl = createTripWhatsAppUrl(trip, { lang: language });

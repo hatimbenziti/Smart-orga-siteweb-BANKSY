@@ -54,12 +54,12 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
   const { weather: liveWeather } = useTripWeather(trip);
 
-  const weatherTemp = liveWeather?.temp || trip.weather?.temp || (trip.region === 'Désert & Dunes' ? '26°C' : trip.region === 'Plages & Surf' ? '24°C' : '22°C');
+  const weatherTemp = liveWeather?.temp || '24°C';
   const weatherCondition = language === 'ar'
-    ? (liveWeather?.conditionAr || trip.weather?.conditionAr || 'مشمس وصافٍ')
+    ? (liveWeather?.conditionAr || 'مشمس وصافٍ')
     : language === 'en'
-    ? (liveWeather?.conditionEn || trip.weather?.conditionEn || 'Sunny & Clear')
-    : (liveWeather?.condition || trip.weather?.condition || 'Ensoleillé & Ciel clair');
+    ? (liveWeather?.conditionEn || 'Sunny & Clear')
+    : (liveWeather?.condition || 'Ensoleillé & Ciel clair');
   const weatherIcon = liveWeather?.icon || 'sun';
   const isLiveWeather = liveWeather?.isLive || false;
 

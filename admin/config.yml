@@ -94,22 +94,6 @@ collections:
         hint: "Sélectionnez le jour de la semaine où a lieu le départ récurrent."
       - { label: "Texte personnalisé de date (optionnel)", name: "nextDate", widget: "string", required: false }
       - { label: "Taille du groupe (optionnel)", name: "groupSize", widget: "string", default: "14 à 22 personnes", required: false }
-      - label: "Météo du Séjour & Prévisions des Jours"
-        name: "weather"
-        widget: "object"
-        required: false
-        fields:
-          - { label: "Température moyenne (ex: 26°C)", name: "temp", widget: "string", default: "26°C" }
-          - { label: "Condition météo générale (ex: Ensoleillé & Ciel pur)", name: "condition", widget: "string", default: "Ensoleillé & Ciel pur" }
-          - label: "Météo détaillée des jours"
-            name: "dailyForecast"
-            widget: "list"
-            required: false
-            fields:
-              - { label: "Numéro du jour (1, 2, 3...)", name: "day", widget: "number", value_type: "int", default: 1 }
-              - { label: "Ville / Étape du jour (optionnel, ex: Taghazout, Paradise Valley...)", name: "step", widget: "string", required: false }
-              - { label: "Température (ex: 26°C)", name: "temp", widget: "string", default: "26°C" }
-              - { label: "Météo du jour (ex: Grand soleil)", name: "condition", widget: "string", default: "Grand soleil" }
       - label: "Programme Complet du Voyage"
         name: "body"
         widget: "markdown"

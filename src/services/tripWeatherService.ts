@@ -512,28 +512,55 @@ function interpretWmoCode(code: number): {
 export function getFallbackWeather(trip: Trip, departureDate: Date): TripWeatherReport {
   const cityInfo = getSingleDestinationCity(trip);
   const region = (trip.region || '').toLowerCase();
-  const defaultBaseTemp = region.includes('désert') || region.includes('dunes')
-    ? 28
-    : region.includes('plage') || region.includes('mer') || region.includes('surf')
-    ? 25
-    : region.includes('montagne')
-    ? 20
-    : 24;
+  
+  // Seasonal adjustment according to departure date month (0=Jan..11=Dec)
+  const month = departureDate.getMonth();
+  const seasonalOffsets = [-4, -3, 0, 2, 5, 8, 10, 10, 7, 3, -1, -3];
+  const seasonalDelta = seasonalOffsets[month] ?? 0;
 
-  const defaultTemp = trip.weather?.temp || `${defaultBaseTemp}°C`;
-  const defaultCond = trip.weather?.condition || 'Ensoleillé & Ciel clair';
-  const defaultCondAr = trip.weather?.conditionAr || 'مشمس وصافٍ';
-  const defaultCondEn = trip.weather?.conditionEn || 'Sunny & Clear';
+  let baseCityTemp = 22;
+  const cityName = cityInfo.name.toLowerCase();
+  if (cityName.includes('dakhla')) {
+    baseCityTemp = 24;
+  } else if (cityName.includes('merzouga') || cityName.includes('zagora')) {
+    baseCityTemp = 28;
+  } else if (cityName.includes('taghazout') || cityName.includes('agadir')) {
+    baseCityTemp = 23;
+  } else if (cityName.includes('chefchaouen')) {
+    baseCityTemp = 20;
+  } else if (cityName.includes('imlil') || cityName.includes('toubkal')) {
+    baseCityTemp = 17;
+  } else if (cityName.includes('marrakech') || cityName.includes('agafay')) {
+    baseCityTemp = 26;
+  } else if (cityName.includes('ouzoud')) {
+    baseCityTemp = 22;
+  } else if (cityName.includes('tanger')) {
+    baseCityTemp = 21;
+  } else if (cityName.includes('essaouira')) {
+    baseCityTemp = 21;
+  } else if (region.includes('désert') || region.includes('dunes')) {
+    baseCityTemp = 28;
+  } else if (region.includes('plage') || region.includes('mer') || region.includes('surf')) {
+    baseCityTemp = 24;
+  } else if (region.includes('montagne') || region.includes('trekking')) {
+    baseCityTemp = 18;
+  }
+
+  const calculatedTempNum = Math.round(baseCityTemp + (seasonalDelta * 0.4));
+  const defaultTemp = `${calculatedTempNum}°C`;
+  const defaultCond = 'Ensoleillé & Ciel pur';
+  const defaultCondAr = 'مشمس وسماء صافية';
+  const defaultCondEn = 'Sunny & Clear';
 
   const dailyForecast: DailyWeatherForecast[] = [];
+  const tripDaysCount = Math.max(1, Math.min(trip.days || 3, 7));
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < tripDaysCount; i++) {
     const dayDate = new Date(departureDate);
     dayDate.setDate(dayDate.getDate() + i);
 
     const variation = i === 1 ? 1 : i === 2 ? -1 : 0;
-    const tempNum = parseInt(defaultTemp.replace(/\D/g, ''), 10) || defaultBaseTemp;
-    const dayTemp = `${tempNum + variation}°C`;
+    const dayTemp = `${calculatedTempNum + variation}°C`;
 
     const dayOfWeek = dayDate.getDay();
     const dayNameFr = FRENCH_DAYS[dayOfWeek];
@@ -620,9 +647,10 @@ export async function fetchTripWeather(
     }
 
     const dailyForecast: DailyWeatherForecast[] = [];
+    const tripDaysCount = Math.max(1, Math.min(trip.days || 3, 7));
 
-    // Construct 3-day forecast corresponding precisely to departure date and next 2 days
-    for (let i = 0; i < 3; i++) {
+    // Construct forecast corresponding precisely to departure date and days of the stay
+    for (let i = 0; i < tripDaysCount; i++) {
       const dayDate = new Date(departureDate);
       dayDate.setDate(dayDate.getDate() + i);
       const isoDate = dayDate.toISOString().split('T')[0];
