@@ -57,8 +57,12 @@ export interface CmsTripRaw {
     description: string;
   }[];
   included?: string[];
+  prix_comprend?: string[];
+  inclus?: string[];
   excluded?: string[];
   notIncluded?: string[];
+  prix_ne_comprend_pas?: string[];
+  non_inclus?: string[];
   cancellation_policy?: string;
   cancellationPolicy?: string;
   groupSize?: string;
@@ -236,8 +240,16 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
     'Accompagnateur dédié & assistance 24h/24 Smart Orga'
   ];
 
-  const included = Array.isArray(data.included) && data.included.length > 0
+  const rawIncluded = (Array.isArray(data.included) && data.included.length > 0)
     ? data.included
+    : ((Array.isArray(data.prix_comprend) && data.prix_comprend.length > 0)
+        ? data.prix_comprend
+        : ((Array.isArray(data.inclus) && data.inclus.length > 0)
+            ? data.inclus
+            : undefined));
+
+  const included = rawIncluded !== undefined
+    ? rawIncluded
     : defaultIncluded;
 
   const defaultExcluded = [
@@ -247,9 +259,13 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
 
   const rawExcluded = (Array.isArray(data.excluded) && data.excluded.length > 0)
     ? data.excluded
-    : (Array.isArray(data.notIncluded) && data.notIncluded.length > 0
+    : ((Array.isArray(data.notIncluded) && data.notIncluded.length > 0)
         ? data.notIncluded
-        : undefined);
+        : ((Array.isArray(data.prix_ne_comprend_pas) && data.prix_ne_comprend_pas.length > 0)
+            ? data.prix_ne_comprend_pas
+            : ((Array.isArray(data.non_inclus) && data.non_inclus.length > 0)
+                ? data.non_inclus
+                : undefined)));
 
   // If user or CMS explicitly set an empty or dash list (e.g. ["-"], ["_"], []), do NOT fallback to defaultExcluded
   const excluded = rawExcluded !== undefined

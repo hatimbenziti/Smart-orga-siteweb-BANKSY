@@ -40,7 +40,7 @@ collections:
         widget: "list"
         required: false
         field: { label: "Image", name: "image", widget: "image" }
-      - { label: "Points forts (Highlights)", name: "highlights", widget: "list", field: { label: "Point fort", name: "item", widget: "string" } }
+      - { label: "Points forts (Highlights)", name: "highlights", widget: "list", field: { label: "Point fort", name: "item", widget: "string" }, required: false }
       - { label: "Voyage Populaire / Coup de cœur (popular)", name: "popular", widget: "boolean", default: true }
       - name: "archived"
         label: "Archiver ce voyage (Masquer du site)"
