@@ -1,3 +1,7 @@
+# Static SEO files
+/sitemap.xml    /sitemap.xml    200
+/robots.txt     /robots.txt     200
+
 # Cloudflare Pages and SPA redirects for Decap CMS
 /admin/*    /admin/index.html    200
 /*          /index.html          200
