@@ -149,8 +149,6 @@ export const TRANSLATIONS = {
 
     // Modals
     modalClose: "Fermer",
-    modalWeatherLabel: "Météo du jour",
-    modalWeatherForecastTitle: "Météo des jours du voyage",
     modalProgramTitle: "Programme complet du voyage",
     modalIncludedTitle: "Le prix comprend :",
     modalNotIncludedTitle: "Le prix ne comprend pas :",
@@ -371,8 +369,6 @@ export const TRANSLATIONS = {
 
     // Modals
     modalClose: "إغلاق",
-    modalWeatherLabel: "طقس يوم الرحلة",
-    modalWeatherForecastTitle: "حالة الطقس وتوقعات الأيام",
     modalProgramTitle: "البرنامج الكامل للرحلة",
     modalIncludedTitle: "السعر يشمل :",
     modalNotIncludedTitle: "السعر لا يشمل :",
@@ -593,8 +589,6 @@ export const TRANSLATIONS = {
 
     // Modals
     modalClose: "Close",
-    modalWeatherLabel: "Day Weather",
-    modalWeatherForecastTitle: "Daily Weather Forecast",
     modalProgramTitle: "Full Travel Program",
     modalIncludedTitle: "The price includes:",
     modalNotIncludedTitle: "The price does not include:",

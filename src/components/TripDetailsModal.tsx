@@ -1,20 +1,15 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Trip } from '../types';
-import { X, Check, Clock, Calendar, Users, MapPin, MessageCircle, ShieldCheck, Sun, FileText, AlertCircle, ChevronLeft, ChevronRight, Camera } from 'lucide-react';
+import { X, Check, Clock, Calendar, Users, MapPin, MessageCircle, ShieldCheck, FileText, AlertCircle, ChevronLeft, ChevronRight, Camera } from 'lucide-react';
 import { createTripWhatsAppUrl } from '../utils/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
-import { useTripWeather } from '../hooks/useTripWeather';
-import { WeatherIcon } from './WeatherIcon';
 import {
   getTripTitle,
   getTripDestination,
-  getTripDestinationCity,
   getTripDuration,
-  getTripNextDate,
-  getTripDayLocation
+  getTripNextDate
 } from '../utils/localized';
-import { formatDayDateExact } from '../services/tripWeatherService';
 
 const defaultIncluded = [
   'Transport touristique tout confort climatisé A/R',
@@ -26,6 +21,55 @@ const defaultExcluded = [
   'Déjeuners libres en cours de route',
   'Boissons et dépenses personnelles'
 ];
+
+/**
+ * Checks if a string consists exclusively of emojis, symbols, and whitespace.
+ */
+function isEmojiOnly(str: string): boolean {
+  return /^[\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Emoji_Modifier}\s]+$/u.test(str);
+}
+
+/**
+ * Parses raw text or list data into clean bullet point items:
+ * - Splits by newlines (\n, \r\n) or inline bullet markers
+ * - Trims and cleans leading bullet markers (-, *, •, checkboxes)
+ * - Ignores empty strings, standalone dashes "-", placeholders, and emoji-only fragments
+ */
+function parseBulletItems(input: string[] | string | undefined | null): string[] {
+  if (!input) return [];
+  const rawList = Array.isArray(input) ? input : [input];
+  const items: string[] = [];
+
+  for (const raw of rawList) {
+    if (raw === null || raw === undefined) continue;
+    const str = String(raw);
+    const lines = str.split(/\r?\n+|<br\s*\/?>/i);
+
+    for (const line of lines) {
+      if (!line.trim()) continue;
+
+      // Split line if multiple bullet items or inline icons with space were entered on one line
+      const segments = line.split(/(?<=[^\s])\s+(?=[•\-\*⁃◦_—–~:;.]\s+|[•\-\*⁃◦✓✔✅❌\u2022\u2023\u25E6\u2043\u2219]|(?:✈️?|🚌|🏘️?|🥐|🎤|🍴|🌄|🏨|🚙|🤿|🏖️?|📸|⏰|📍|🍽️?|☕|🌅|🌙|😌|🌊|💰|⏱️|🎶|🛍️?|🧳|🍳|🗺️?|🕌|✔️|🔶|⏹️|🔴)\s)/u);
+
+      for (const seg of segments) {
+        let cleaned = seg.trim();
+        // Remove leading bullet marks: -, *, •, _, —, –, etc.
+        cleaned = cleaned.replace(/^[\s•\-\*⁃◦_—–~:;.]+/u, '').trim();
+        // Remove leading checkmark or cross icon used as bullet
+        cleaned = cleaned.replace(/^[✅✓✔❌]\s*/u, '').trim();
+
+        // Discard empty, placeholder symbols, or emoji-only fragments
+        if (!cleaned || /^[\-_—–.\s•*~;:,]+$/.test(cleaned) || isEmojiOnly(cleaned)) {
+          continue;
+        }
+
+        items.push(cleaned);
+      }
+    }
+  }
+
+  return items;
+}
 
 const defaultCancellationPolicy = `Politique d'annulation
 Pour toute annulation effectuée plus de 15 jours avant la date du départ, le remboursement est total (100 %).
@@ -48,20 +92,8 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
   const title = getTripTitle(trip, language);
   const destination = getTripDestination(trip, language);
-  const destinationCity = getTripDestinationCity(trip, language);
   const duration = getTripDuration(trip, language);
   const nextDate = getTripNextDate(trip, language);
-
-  const { weather: liveWeather } = useTripWeather(trip);
-
-  const weatherTemp = liveWeather?.temp || '24°C';
-  const weatherCondition = language === 'ar'
-    ? (liveWeather?.conditionAr || 'مشمس وصافٍ')
-    : language === 'en'
-    ? (liveWeather?.conditionEn || 'Sunny & Clear')
-    : (liveWeather?.condition || 'Ensoleillé & Ciel clair');
-  const weatherIcon = liveWeather?.icon || 'sun';
-  const isLiveWeather = liveWeather?.isLive || false;
 
   const directWhatsAppUrl = createTripWhatsAppUrl(trip, { lang: language });
 
@@ -250,15 +282,12 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   })();
 
   // Included / Excluded / Cancellation Policy
-  const includedList = Array.isArray(trip.included) && trip.included.length > 0
-    ? trip.included
-    : defaultIncluded;
+  const parsedIncluded = parseBulletItems(trip.included);
+  const includedItems = parsedIncluded.length > 0 ? parsedIncluded : defaultIncluded;
 
-  const excludedList = Array.isArray(trip.excluded) && trip.excluded.length > 0
-    ? trip.excluded
-    : (Array.isArray(trip.notIncluded) && trip.notIncluded.length > 0
-        ? trip.notIncluded
-        : defaultExcluded);
+  const parsedExcluded = parseBulletItems(trip.excluded || trip.notIncluded);
+  const excludedItems = parsedExcluded;
+  const hasExcluded = excludedItems.length > 0;
 
   const rawCancellation = (trip.cancellation_policy || trip.cancellationPolicy || '').trim() || defaultCancellationPolicy;
   const cleanedCancellation = rawCancellation.replace(/^Politique d'annulation\s*(\r?\n)+/i, '');
@@ -403,153 +432,45 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
           </div>
 
           {/* Quick Info Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs sm:text-sm">
-            <div>
-              <span className="text-slate-400 block text-[11px] font-bold uppercase">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50/80 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 text-xs sm:text-sm shadow-xs">
+            <div className="bg-white p-3 rounded-xl border border-slate-100 flex flex-col justify-between shadow-2xs">
+              <span className="text-slate-400 block text-[11px] font-bold uppercase tracking-wider">
                 {language === 'ar' ? 'المدة' : 'Durée'}
               </span>
-              <div className="flex items-center gap-1.5 font-bold text-slate-800 mt-0.5">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800 mt-1">
                 <Clock className="w-4 h-4 text-blue-600 shrink-0" />
                 <span>{duration}</span>
               </div>
             </div>
-            <div>
-              <span className="text-slate-400 block text-[11px] font-bold uppercase">
+            <div className="bg-white p-3 rounded-xl border border-slate-100 flex flex-col justify-between shadow-2xs">
+              <span className="text-slate-400 block text-[11px] font-bold uppercase tracking-wider">
                 {language === 'ar' ? 'الانطلاق' : 'Prochain départ'}
               </span>
-              <div className="flex items-center gap-1.5 font-bold text-slate-800 mt-0.5">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800 mt-1">
                 <Calendar className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>{nextDate}</span>
+                <span className="truncate">{nextDate}</span>
               </div>
             </div>
-            <div>
-              <span className="text-slate-400 block text-[11px] font-bold uppercase">
+            <div className="bg-white p-3 rounded-xl border border-slate-100 flex flex-col justify-between shadow-2xs">
+              <span className="text-slate-400 block text-[11px] font-bold uppercase tracking-wider">
                 {language === 'ar' ? 'حجم المجموعة' : 'Taille groupe'}
               </span>
-              <div className="flex items-center gap-1.5 font-bold text-slate-800 mt-0.5">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800 mt-1">
                 <Users className="w-4 h-4 text-amber-600 shrink-0" />
                 <span>{trip.groupSize}</span>
               </div>
             </div>
-            <div>
-              <span className="text-slate-400 block text-[11px] font-bold uppercase">
+            <div className="bg-white p-3 rounded-xl border border-slate-100 flex flex-col justify-between shadow-2xs">
+              <span className="text-slate-400 block text-[11px] font-bold uppercase tracking-wider">
                 {language === 'ar' ? 'مدن الانطلاق' : 'Villes départ'}
               </span>
-              <div className="flex items-start gap-1.5 font-bold text-slate-800 mt-0.5">
+              <div className="flex items-start gap-1.5 font-bold text-slate-800 mt-1">
                 <MapPin className="w-4 h-4 text-rose-500 shrink-0 self-start mt-0.5" />
                 <span className="leading-snug break-words">
                   {trip.departureCities.join(', ')}
                 </span>
               </div>
             </div>
-          </div>
-
-          {/* Météo des jours du voyage (En haut du programme) */}
-          <div className="bg-gradient-to-r from-amber-500/10 via-sky-500/10 to-blue-500/10 border border-amber-200/80 rounded-2xl p-4 sm:p-5 shadow-xs">
-            <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-500/15 flex items-center justify-center text-amber-600 shrink-0">
-                  <WeatherIcon icon={weatherIcon} className="w-5 h-5 text-amber-600" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-900">
-                      {t.modalWeatherForecastTitle || (language === 'ar' ? 'حالة الطقس وتوقعات الأيام' : 'Météo des jours du voyage')}
-                    </h4>
-                    {isLiveWeather && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span>{language === 'ar' ? 'توقعات حية' : 'En direct'}</span>
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-[11px] text-slate-500 font-medium">
-                    {destinationCity} • {weatherTemp} ({weatherCondition})
-                  </span>
-                </div>
-              </div>
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-900 bg-amber-100/90 px-3 py-1 rounded-full border border-amber-300/60 shadow-xs">
-                <WeatherIcon icon={weatherIcon} className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <span>{weatherTemp} • {weatherCondition}</span>
-              </span>
-            </div>
-
-            {/* Daily forecast cards (3 jours du voyage) */}
-            {liveWeather?.dailyForecast && liveWeather.dailyForecast.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                {liveWeather.dailyForecast.map((df) => {
-                  const dayCond = language === 'ar'
-                    ? (df.conditionAr || df.condition)
-                    : language === 'en'
-                    ? (df.conditionEn || df.condition)
-                    : df.condition;
-
-                  const dayLocation = destinationCity;
-
-                  const dayDateFormatted = df.date
-                    ? formatDayDateExact(new Date(df.date), language)
-                    : (language === 'ar'
-                        ? (df.dateFormattedExactAr || df.dateFormattedAr || df.dateFormatted)
-                        : language === 'en'
-                        ? (df.dateFormattedExactEn || df.dateFormattedEn || df.dateFormatted)
-                        : (df.dateFormattedExact || df.dateFormatted));
-
-                  const dayLabel = language === 'ar'
-                    ? `اليوم ${df.day}`
-                    : language === 'en'
-                    ? `DAY ${df.day}`
-                    : `JOUR ${df.day}`;
-
-                  return (
-                    <div
-                      key={df.day}
-                      className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-3.5 border border-amber-200/70 hover:border-amber-400 transition-all duration-200 shadow-xs hover:shadow-md flex flex-col justify-between group"
-                    >
-                      {/* En-tête : Badge Jour & Température */}
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-black uppercase tracking-wider bg-blue-50 text-blue-800 border border-blue-200/80">
-                          {dayLabel}
-                        </span>
-                        <span className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                          {df.temp}
-                        </span>
-                      </div>
-
-                      {/* Étape / Ville du jour & Date exacte calculée */}
-                      <div className="space-y-1 my-0.5">
-                        <div className="flex items-center gap-1.5 text-xs sm:text-[13px] font-bold text-slate-900" title={dayLocation}>
-                          <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                          <span className="truncate">{dayLocation}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
-                          <Calendar className="w-3 h-3 text-slate-400 shrink-0" />
-                          <span className="truncate">{dayDateFormatted}</span>
-                        </div>
-                      </div>
-
-                      {/* Pied de carte : Icône et condition météo */}
-                      <div className="pt-2 mt-2 border-t border-slate-100 flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 shrink-0">
-                          <WeatherIcon icon={df.icon} className="w-3.5 h-3.5 text-amber-500" />
-                        </div>
-                        <span className="text-[11px] sm:text-xs font-semibold text-slate-700 truncate" title={dayCond}>
-                          {dayCond}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-xs text-slate-700 bg-white/90 rounded-xl p-3 border border-amber-200/50 flex items-center gap-2">
-                <Sun className="w-4 h-4 text-amber-500 shrink-0" />
-                <span>
-                  {language === 'ar'
-                    ? `أجواء ممتازة متوقعة طيلة أيام الرحلة : معدل حرارة ${weatherTemp} مع طقس ${weatherCondition}.`
-                    : `Conditions optimales prévues durant le séjour : températures moyennes de ${weatherTemp} avec un climat ${weatherCondition}.`}
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Programme Complet du Voyage */}
@@ -594,36 +515,38 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
           </div>
 
           {/* Included / Not Included */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-            <div className="bg-emerald-50/70 p-4 sm:p-5 rounded-2xl border border-emerald-100 space-y-2.5">
+          <div className={`grid gap-4 pt-1 ${hasExcluded ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
+            <div className="bg-emerald-50/70 p-4 sm:p-5 rounded-2xl border border-emerald-100 space-y-2.5 w-full">
               <h4 className="text-sm font-bold text-emerald-900 flex items-center gap-1.5">
                 <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>{t.modalIncludedTitle}</span>
               </h4>
-              <ul className="space-y-1.5 text-xs text-emerald-800">
-                {includedList.map((inc, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-emerald-600 font-bold">•</span>
-                    <span>{inc}</span>
+              <ul className="space-y-2 text-xs text-emerald-800">
+                {includedItems.map((inc, i) => (
+                  <li key={i} className="flex items-start gap-2 leading-relaxed">
+                    <span className="text-emerald-600 font-bold leading-none mt-1 shrink-0">•</span>
+                    <span className="flex-1">{inc}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="bg-rose-50/60 p-4 sm:p-5 rounded-2xl border border-rose-100 space-y-2.5">
-              <h4 className="text-sm font-bold text-rose-900 flex items-center gap-1.5">
-                <X className="w-4 h-4 text-rose-600 shrink-0" />
-                <span>{t.modalNotIncludedTitle}</span>
-              </h4>
-              <ul className="space-y-1.5 text-xs text-rose-800">
-                {excludedList.map((notInc, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-rose-600 font-bold">•</span>
-                    <span>{notInc}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {hasExcluded && (
+              <div className="bg-rose-50/60 p-4 sm:p-5 rounded-2xl border border-rose-100 space-y-2.5 w-full">
+                <h4 className="text-sm font-bold text-rose-900 flex items-center gap-1.5">
+                  <X className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>{t.modalNotIncludedTitle}</span>
+                </h4>
+                <ul className="space-y-2 text-xs text-rose-800">
+                  {excludedItems.map((notInc, i) => (
+                    <li key={i} className="flex items-start gap-2 leading-relaxed">
+                      <span className="text-rose-600 font-bold leading-none mt-1 shrink-0">•</span>
+                      <span className="flex-1">{notInc}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           {/* Politique d'annulation */}

@@ -61,19 +61,6 @@ export interface CmsTripRaw {
   cancellation_policy?: string;
   cancellationPolicy?: string;
   groupSize?: string;
-  weather?: {
-    temp: string;
-    condition: string;
-    conditionAr?: string;
-    conditionEn?: string;
-    dailyForecast?: {
-      day: number;
-      temp: string;
-      condition: string;
-      conditionAr?: string;
-      conditionEn?: string;
-    }[];
-  };
 }
 
 /**
@@ -254,11 +241,16 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
     'Boissons et dépenses personnelles'
   ];
 
-  const excluded = Array.isArray(data.excluded) && data.excluded.length > 0
+  const rawExcluded = (Array.isArray(data.excluded) && data.excluded.length > 0)
     ? data.excluded
     : (Array.isArray(data.notIncluded) && data.notIncluded.length > 0
         ? data.notIncluded
-        : defaultExcluded);
+        : undefined);
+
+  // If user or CMS explicitly set an empty or dash list (e.g. ["-"], ["_"], []), do NOT fallback to defaultExcluded
+  const excluded = rawExcluded !== undefined
+    ? rawExcluded
+    : defaultExcluded;
 
   const notIncluded = excluded;
 

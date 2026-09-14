@@ -29,28 +29,7 @@ collections:
       preview: true
     fields:
       - { label: "Titre du Séjour", name: "title", widget: "string" }
-      - label: "Ville de destination unique (Météo & GPS)"
-        name: "ville_destination"
-        widget: "select"
-        options:
-          - "Taghazout"
-          - "Dakhla"
-          - "Merzouga"
-          - "Chefchaouen"
-          - "Imlil"
-          - "Toubkal"
-          - "Ouzoud"
-          - "Agafay"
-          - "Marrakech"
-          - "Ouarzazate"
-          - "Zagora"
-          - "Agadir"
-          - "Tanger"
-          - "Essaouira"
-          - "Fès"
-        default: "Taghazout"
-        hint: "Ville unique et précise utilisée pour le calcul météo exact en direct."
-      - { label: "Destination (titre affiché)", name: "destination", widget: "string", default: "Taghazout" }
+      - { label: "Destination", name: "destination", widget: "string", default: "Taghazout" }
       - { label: "Thématique / Univers", name: "region", widget: "select", options: ["Nature & Randonnée", "Désert & Aventure", "Plage & Détente", "Montagne & Trekking", "Camping & Bivouac", "Culture & Patrimoine"], default: "Nature & Randonnée" }
       - { label: "Prix (MAD)", name: "price", widget: "number", value_type: "int" }
       - { label: "Prix d'origine barré (MAD, optionnel)", name: "originalPriceMAD", widget: "number", value_type: "int", required: false }

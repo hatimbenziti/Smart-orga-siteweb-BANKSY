@@ -1,5 +1,5 @@
 import { Trip, Language } from '../types';
-import { getDynamicTripNextDate } from '../services/tripWeatherService';
+import { getDynamicTripNextDate } from '../services/tripDateService';
 
 export function getTripTitle(trip: Trip, lang: Language): string {
   if (lang === 'ar') {
@@ -195,12 +195,4 @@ export function getTripDestinationCity(trip: Trip, lang: Language = 'fr'): strin
   }
 
   return lang === 'ar' ? 'تغازوت' : 'Taghazout';
-}
-
-/**
- * Returns the exact single destination city for each day of the trip weather forecast.
- * Strictly uses the unique destination city to avoid mixing multiple cities.
- */
-export function getTripDayLocation(trip: Trip, day: number, lang: Language = 'fr'): string {
-  return getTripDestinationCity(trip, lang);
 }

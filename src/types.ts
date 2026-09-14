@@ -72,19 +72,6 @@ export interface Trip {
   groupSize: string;
   groupSizeAr?: string;
   groupSizeEn?: string;
-  weather?: {
-    temp: string;
-    condition: string;
-    conditionAr?: string;
-    conditionEn?: string;
-    dailyForecast?: {
-      day: number;
-      temp: string;
-      condition: string;
-      conditionAr?: string;
-      conditionEn?: string;
-    }[];
-  };
 }
 
 export interface Review {
