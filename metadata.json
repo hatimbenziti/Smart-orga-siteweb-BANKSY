@@ -1,6 +1,6 @@
 {
-  "name": "Smart Orga - Voyages Organisés au Maroc",
-  "description": "Agence de voyages organisés au Maroc : séjours de groupe dans le désert, villes impériales, randonnées de l'Atlas et plages.",
+  "name": "Voyage Organisé depuis Casablanca & Rabat | Smart Orga",
+  "description": "Séjours et voyages organisés au Maroc au départ de Casablanca, Rabat et Marrakech. Réservation directe via WhatsApp.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

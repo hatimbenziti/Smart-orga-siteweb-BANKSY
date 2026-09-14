@@ -66,6 +66,8 @@ export interface CmsTripRaw {
   cancellation_policy?: string;
   cancellationPolicy?: string;
   groupSize?: string;
+  seo_title?: string;
+  seo_description?: string;
 }
 
 /**
@@ -326,7 +328,9 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
     cancellationPolicy,
     groupSize,
     order,
-    ordre: order
+    ordre: order,
+    seo_title: data.seo_title || undefined,
+    seo_description: data.seo_description || undefined
   };
 }
 

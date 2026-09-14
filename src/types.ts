@@ -74,6 +74,8 @@ export interface Trip {
   groupSizeEn?: string;
   ordre?: number;
   order?: number;
+  seo_title?: string;
+  seo_description?: string;
 }
 
 export interface Review {

@@ -1,0 +1,7 @@
+# robots.txt for smartorga.ma
+User-agent: *
+Allow: /
+Disallow: /admin/
+
+# Sitemap location
+Sitemap: https://smartorga.ma/sitemap.xml
