@@ -97,8 +97,12 @@ export default function App() {
       }
 
       return true;
+    }).sort((a, b) => {
+      const ordA = a.ordre ?? a.order ?? 99;
+      const ordB = b.ordre ?? b.order ?? 99;
+      return ordA - ordB;
     });
-  }, [filters]);
+  }, [filters, trips]);
 
   // Scroll to section helper
   const scrollToSejours = () => {

@@ -47,7 +47,13 @@ collections:
         widget: "boolean"
         default: false
         hint: "Si cette case est cochée, le voyage ne sera pas visible sur le site public."
-      - { label: "Ordre / Priorité d'affichage (order)", name: "order", widget: "number", default: 1, value_type: "int" }
+      - name: "ordre"
+        label: "Ordre d'affichage (ex: 1 pour le premier)"
+        widget: "number"
+        value_type: "int"
+        default: 99
+        required: false
+        hint: "Les voyages seront triés du plus petit numéro au plus grand (1 apparaît en premier)."
       - { label: "Catégorie", name: "category", widget: "select", options: ["popular", "weekly", "upcoming", "all"], default: "popular" }
       - { label: "Villes de départ (optionnel)", name: "departureCities", widget: "list", field: { label: "Ville", name: "city", widget: "string" }, required: false }
       - label: "Type de date de départ"

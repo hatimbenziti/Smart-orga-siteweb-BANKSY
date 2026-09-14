@@ -72,6 +72,8 @@ export interface Trip {
   groupSize: string;
   groupSizeAr?: string;
   groupSizeEn?: string;
+  ordre?: number;
+  order?: number;
 }
 
 export interface Review {

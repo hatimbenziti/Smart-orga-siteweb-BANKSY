@@ -46,6 +46,7 @@ export interface CmsTripRaw {
   archived?: boolean;
   highlights?: string[];
   points_forts?: string[];
+  ordre?: number | string;
   order?: number | string;
   priority?: number | string;
   program?: string;
@@ -189,11 +190,14 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
 
   const category = (data.category as 'popular' | 'weekly' | 'upcoming' | 'all') || (isPopular ? 'popular' : 'all');
 
-  const order = typeof data.order === 'number'
-    ? data.order
-    : (typeof data.priority === 'number'
-        ? data.priority
-        : (Number(data.order || data.priority) || defaultOrder));
+  const rawOrdre = data.ordre !== undefined ? data.ordre : data.order;
+  const rawPriority = data.priority;
+  const parsedNum = rawOrdre !== undefined && rawOrdre !== null && String(rawOrdre).trim() !== ''
+    ? Number(rawOrdre)
+    : (rawPriority !== undefined && rawPriority !== null && String(rawPriority).trim() !== ''
+        ? Number(rawPriority)
+        : defaultOrder);
+  const order = Number.isFinite(parsedNum) ? parsedNum : defaultOrder;
 
   const rating = Number(data.rating) || 4.9;
   const reviewCount = Number(data.reviewCount) || 120;
@@ -305,7 +309,8 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
     cancellation_policy,
     cancellationPolicy,
     groupSize,
-    order
+    order,
+    ordre: order
   };
 }
 
@@ -313,16 +318,16 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
  * Dynamically loads all voyages from Decap CMS content/voyages/*.{json,md}
  */
 export function loadCmsTrips(): Trip[] {
-  const loadedList: (Trip & { order: number })[] = [];
+  const loadedList: (Trip & { order: number; _fileIndex: number })[] = [];
 
   // 1. Dynamic import of all JSON files in content/voyages
   const jsonModules = import.meta.glob<Record<string, any>>('/content/voyages/*.json', { eager: true });
   Object.entries(jsonModules).forEach(([path, mod], idx) => {
     const data = ((mod as { default?: CmsTripRaw }).default || mod) as CmsTripRaw;
     const slug = path.split('/').pop()?.replace(/\.json$/, '') || `trip-${idx}`;
-    const trip = normalizeTrip(data, slug, idx + 1);
+    const trip = normalizeTrip(data, slug, 99);
     if (trip) {
-      loadedList.push(trip);
+      loadedList.push({ ...trip, _fileIndex: idx });
     }
   });
 
@@ -331,16 +336,24 @@ export function loadCmsTrips(): Trip[] {
   Object.entries(mdModules).forEach(([path, rawContent], idx) => {
     const data = parseFrontmatter(rawContent) as CmsTripRaw;
     const slug = path.split('/').pop()?.replace(/\.md$/, '') || `trip-md-${idx}`;
-    const trip = normalizeTrip(data, slug, idx + 100);
+    const trip = normalizeTrip(data, slug, 99);
     if (trip) {
-      loadedList.push(trip);
+      loadedList.push({ ...trip, _fileIndex: idx + 1000 });
     }
   });
 
-  // Sort strictly by the order/priority defined in Decap CMS
+  // Sort automatically by the ordre/order field ascending (1, 2, 3...)
+  // If two voyages have the same order or none, preserves default order
   if (loadedList.length > 0) {
-    loadedList.sort((a, b) => a.order - b.order);
-    return loadedList.map(({ order, ...rest }) => rest as Trip);
+    loadedList.sort((a, b) => {
+      const ordA = typeof a.order === 'number' ? a.order : 99;
+      const ordB = typeof b.order === 'number' ? b.order : 99;
+      if (ordA !== ordB) {
+        return ordA - ordB;
+      }
+      return a._fileIndex - b._fileIndex;
+    });
+    return loadedList.map(({ _fileIndex, ...rest }) => rest as Trip);
   }
 
   return [];
