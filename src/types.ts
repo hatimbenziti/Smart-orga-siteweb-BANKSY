@@ -34,6 +34,7 @@ export interface Trip {
   date_type?: 'Date fixe' | 'Départ récurrent' | string;
   exact_date?: string;
   recurring_day?: string;
+  customDate?: string;
   nextDate: string;
   nextDateAr?: string;
   nextDateEn?: string;

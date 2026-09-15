@@ -24,7 +24,8 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
   const destination = getTripDestination(trip, language);
   const duration = getTripDuration(trip, language);
   const highlights = getTripHighlights(trip, language);
-  const nextDate = getTripNextDate(trip, language);
+  // Prioritize customDate (texte personnalisé du back-office) over any computed date
+  const nextDate = trip.customDate || getTripNextDate(trip, language);
 
   const directWhatsAppUrl = createTripWhatsAppUrl(trip, { lang: language });
 

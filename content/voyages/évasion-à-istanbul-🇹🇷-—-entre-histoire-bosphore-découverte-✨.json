@@ -1,6 +1,8 @@
 {
   "groupSize": "1 à 35 personnes",
-  "nextDate": "chaque semaine",
+  "customDate": "Chaque Semaine",
+  "nextDate": "Chaque Semaine",
+  "recurring_day": "Chaque Semaine",
   "archived": false,
   "price": 8500,
   "excluded": [

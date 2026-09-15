@@ -77,7 +77,11 @@ collections:
         default: "Chaque Vendredi"
         required: false
         hint: "Sélectionnez le jour de la semaine où a lieu le départ récurrent."
-      - { label: "Texte personnalisé de date (optionnel)", name: "nextDate", widget: "string", required: false }
+      - label: "Texte personnalisé (ex: Chaque vendredi)"
+        name: "customDate"
+        widget: "string"
+        required: false
+        hint: "Texte fixe récurrent affiché tel quel sur la carte (ex: 'Chaque Lundi', 'Chaque Vendredi'). Prioritaire sur toute date calculée."
       - { label: "Taille du groupe (optionnel)", name: "groupSize", widget: "string", default: "14 à 22 personnes", required: false }
       - label: "Programme Complet du Voyage"
         name: "body"
