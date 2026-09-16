@@ -62,13 +62,13 @@ export interface CmsTripRaw {
     title: string;
     description: string;
   }[];
-  included?: string[];
-  prix_comprend?: string[];
-  inclus?: string[];
-  excluded?: string[];
-  notIncluded?: string[];
-  prix_ne_comprend_pas?: string[];
-  non_inclus?: string[];
+  included?: any;
+  prix_comprend?: any;
+  inclus?: any;
+  excluded?: any;
+  notIncluded?: any;
+  prix_ne_comprend_pas?: any;
+  non_inclus?: any;
   cancellation_policy?: string;
   cancellationPolicy?: string;
   groupSize?: string;
@@ -255,38 +255,49 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
     'Accompagnateur dédié & assistance 24h/24 Smart Orga'
   ];
 
-  const rawIncluded = (Array.isArray(data.included) && data.included.length > 0)
+  const rawIncluded = data.included !== undefined
     ? data.included
-    : ((Array.isArray(data.prix_comprend) && data.prix_comprend.length > 0)
+    : (data.prix_comprend !== undefined
         ? data.prix_comprend
-        : ((Array.isArray(data.inclus) && data.inclus.length > 0)
-            ? data.inclus
-            : undefined));
+        : (data.inclus !== undefined ? data.inclus : undefined));
 
-  const included = rawIncluded !== undefined
-    ? rawIncluded
-    : defaultIncluded;
+  // Convert rawIncluded / rawExcluded into clean string[]
+  const parseRawItems = (val: any): string[] => {
+    if (!val) return [];
+    const list = Array.isArray(val) ? val : [val];
+    const result: string[] = [];
+    for (const item of list) {
+      if (!item) continue;
+      // If Decap CMS stored an object like { item: "..." } or { name: "..." }
+      const text = typeof item === 'object'
+        ? (item.item || item.name || item.title || item.text || item.value || '')
+        : String(item);
+      const lines = String(text).split(/\r?\n/);
+      for (const line of lines) {
+        const cleaned = line.replace(/^[\s•\-\*⁃◦_—–~:;.]+/u, '').trim();
+        if (cleaned && !/^[\-_—–.\s•*~;:,]+$/.test(cleaned)) {
+          result.push(cleaned);
+        }
+      }
+    }
+    return result;
+  };
 
-  const defaultExcluded = [
-    'Déjeuners libres en cours de route',
-    'Boissons et dépenses personnelles'
-  ];
+  const parsedRawIncluded = parseRawItems(rawIncluded);
+  const included = parsedRawIncluded.length > 0 ? parsedRawIncluded : defaultIncluded;
 
-  const rawExcluded = (Array.isArray(data.excluded) && data.excluded.length > 0)
+  // For excluded / notIncluded:
+  // If the field is empty, null or undefined, do NOT show any default fallback text.
+  const rawExcluded = data.excluded !== undefined
     ? data.excluded
-    : ((Array.isArray(data.notIncluded) && data.notIncluded.length > 0)
+    : (data.notIncluded !== undefined
         ? data.notIncluded
-        : ((Array.isArray(data.prix_ne_comprend_pas) && data.prix_ne_comprend_pas.length > 0)
+        : (data.prix_ne_comprend_pas !== undefined
             ? data.prix_ne_comprend_pas
-            : ((Array.isArray(data.non_inclus) && data.non_inclus.length > 0)
-                ? data.non_inclus
-                : undefined)));
+            : (data.non_inclus !== undefined ? data.non_inclus : undefined)));
 
-  // If user or CMS explicitly set an empty or dash list (e.g. ["-"], ["_"], []), do NOT fallback to defaultExcluded
-  const excluded = rawExcluded !== undefined
-    ? rawExcluded
-    : defaultExcluded;
-
+  const parsedRawExcluded = parseRawItems(rawExcluded);
+  const excluded = parsedRawExcluded;
   const notIncluded = excluded;
 
   const defaultCancellationPolicy = `Politique d'annulation

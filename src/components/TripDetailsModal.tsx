@@ -17,11 +17,6 @@ const defaultIncluded = [
   'Accompagnateur dédié & assistance 24h/24 Smart Orga'
 ];
 
-const defaultExcluded = [
-  'Déjeuners libres en cours de route',
-  'Boissons et dépenses personnelles'
-];
-
 /**
  * Checks if a string consists exclusively of emojis, symbols, and whitespace.
  */
@@ -35,14 +30,16 @@ function isEmojiOnly(str: string): boolean {
  * - Trims and cleans leading bullet markers (-, *, •, checkboxes)
  * - Ignores empty strings, standalone dashes "-", placeholders, and emoji-only fragments
  */
-function parseBulletItems(input: string[] | string | undefined | null): string[] {
+function parseBulletItems(input: any): string[] {
   if (!input) return [];
   const rawList = Array.isArray(input) ? input : [input];
   const items: string[] = [];
 
   for (const raw of rawList) {
     if (raw === null || raw === undefined) continue;
-    const str = String(raw);
+    const str = typeof raw === 'object'
+      ? (raw.item || raw.name || raw.title || raw.text || raw.value || '')
+      : String(raw);
     const lines = str.split(/\r?\n+|<br\s*\/?>/i);
 
     for (const line of lines) {
@@ -284,7 +281,8 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
   // Included / Excluded / Cancellation Policy
   const parsedIncluded = parseBulletItems(trip.included);
-  const includedItems = parsedIncluded.length > 0 ? parsedIncluded : defaultIncluded;
+  const includedItems = parsedIncluded;
+  const hasIncluded = includedItems.length > 0;
 
   const parsedExcluded = parseBulletItems(trip.excluded || trip.notIncluded);
   const excludedItems = parsedExcluded;
@@ -516,39 +514,43 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
           </div>
 
           {/* Included / Not Included */}
-          <div className={`grid gap-4 pt-1 ${hasExcluded ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
-            <div className="bg-emerald-50/70 p-4 sm:p-5 rounded-2xl border border-emerald-100 space-y-2.5 w-full">
-              <h4 className="text-sm font-bold text-emerald-900 flex items-center gap-1.5">
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>{t.modalIncludedTitle}</span>
-              </h4>
-              <ul className="space-y-2 text-xs text-emerald-800">
-                {includedItems.map((inc, i) => (
-                  <li key={i} className="flex items-start gap-2 leading-relaxed">
-                    <span className="text-emerald-600 font-bold leading-none mt-1 shrink-0">•</span>
-                    <span className="flex-1">{inc}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {(hasIncluded || hasExcluded) && (
+            <div className={`grid gap-4 pt-1 ${hasIncluded && hasExcluded ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
+              {hasIncluded && (
+                <div className="bg-emerald-50/70 p-4 sm:p-5 rounded-2xl border border-emerald-100 space-y-2.5 w-full">
+                  <h4 className="text-sm font-bold text-emerald-900 flex items-center gap-1.5">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>{t.modalIncludedTitle}</span>
+                  </h4>
+                  <ul className="space-y-2 text-xs text-emerald-800">
+                    {includedItems.map((inc, i) => (
+                      <li key={i} className="flex items-start gap-2 leading-relaxed">
+                        <span className="text-emerald-600 font-bold leading-none mt-1 shrink-0">•</span>
+                        <span className="flex-1">{inc}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-            {hasExcluded && (
-              <div className="bg-rose-50/60 p-4 sm:p-5 rounded-2xl border border-rose-100 space-y-2.5 w-full">
-                <h4 className="text-sm font-bold text-rose-900 flex items-center gap-1.5">
-                  <X className="w-4 h-4 text-rose-600 shrink-0" />
-                  <span>{t.modalNotIncludedTitle}</span>
-                </h4>
-                <ul className="space-y-2 text-xs text-rose-800">
-                  {excludedItems.map((notInc, i) => (
-                    <li key={i} className="flex items-start gap-2 leading-relaxed">
-                      <span className="text-rose-600 font-bold leading-none mt-1 shrink-0">•</span>
-                      <span className="flex-1">{notInc}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+              {hasExcluded && (
+                <div className="bg-rose-50/60 p-4 sm:p-5 rounded-2xl border border-rose-100 space-y-2.5 w-full">
+                  <h4 className="text-sm font-bold text-rose-900 flex items-center gap-1.5">
+                    <X className="w-4 h-4 text-rose-600 shrink-0" />
+                    <span>{t.modalNotIncludedTitle}</span>
+                  </h4>
+                  <ul className="space-y-2 text-xs text-rose-800">
+                    {excludedItems.map((notInc, i) => (
+                      <li key={i} className="flex items-start gap-2 leading-relaxed">
+                        <span className="text-rose-600 font-bold leading-none mt-1 shrink-0">•</span>
+                        <span className="flex-1">{notInc}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Politique d'annulation */}
           <div className="bg-amber-50/50 p-4 sm:p-5 rounded-2xl border border-amber-200/70 space-y-2.5">

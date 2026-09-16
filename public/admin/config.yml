@@ -68,22 +68,19 @@ collections:
         widget: "markdown"
         required: false
         hint: "Rédigez ici le programme complet et détaillé du séjour (supporte les titres #, les listes à puces -, le texte en gras et les emojis)."
-      - name: "included"
-        label: "Le prix comprend (un élément par ligne)"
+      - label: "Le prix comprend"
+        name: "included"
         widget: "list"
+        field: { label: "Élément inclus", name: "item", widget: "string" }
         required: false
-        default:
-          - "Transport touristique tout confort climatisé A/R"
-          - "Hébergement en demi-pension ou formule adaptée"
-          - "Accompagnateur dédié & assistance 24h/24 Smart Orga"
+        hint: "Ajoutez chaque prestation comprise ligne par ligne."
 
-      - name: "excluded"
-        label: "Le prix ne comprend pas (un élément par ligne)"
+      - label: "Le prix ne comprend pas"
+        name: "excluded"
         widget: "list"
+        field: { label: "Élément non inclus", name: "item", widget: "string" }
         required: false
-        default:
-          - "Déjeuners libres en cours de route"
-          - "Boissons et dépenses personnelles"
+        hint: "Ajoutez chaque élément non compris ligne par ligne. Si vide, cette section sera masquée sur le site."
 
       - name: "cancellation_policy"
         label: "Politique d'annulation"
