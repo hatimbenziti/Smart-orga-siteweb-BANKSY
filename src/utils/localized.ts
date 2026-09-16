@@ -72,8 +72,9 @@ export function getTripDuration(trip: Trip, lang: Language): string {
 }
 
 export function getTripNextDate(trip: Trip, lang: Language): string {
-  // If customDate is set on the trip, prioritize it directly without passing through date calculations
-  if (trip.customDate && trip.customDate.trim()) {
+  // If displayDate or customDate is set on the trip, prioritize it directly without passing through date calculations
+  const directDate = (trip.displayDate || trip.customDate || '').trim();
+  if (directDate) {
     if (lang === 'ar' && trip.nextDateAr) return trip.nextDateAr;
     if (lang === 'en' && trip.nextDateEn) return trip.nextDateEn;
     return getDynamicTripNextDate(trip, lang);

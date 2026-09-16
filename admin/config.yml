@@ -50,32 +50,12 @@ collections:
       - { label: "Ordre / Priorité d'affichage (order)", name: "order", widget: "number", default: 1, value_type: "int" }
       - { label: "Catégorie", name: "category", widget: "select", options: ["popular", "weekly", "upcoming", "all"], default: "popular" }
       - { label: "Villes de départ (optionnel)", name: "departureCities", widget: "list", field: { label: "Ville", name: "city", widget: "string" }, required: false }
-      - label: "Type de date de départ"
-        name: "date_type"
-        widget: "select"
-        options: ["Date fixe", "Départ récurrent"]
-        default: "Départ récurrent"
-        hint: "Choisissez 'Date fixe' pour un départ à date précise ou 'Départ récurrent' pour chaque semaine."
-      - label: "Date exacte (si Date fixe)"
-        name: "exact_date"
-        widget: "datetime"
-        format: "YYYY-MM-DD"
-        date_format: "YYYY-MM-DD"
-        time_format: false
-        required: false
-        hint: "Sélectionnez la date exacte dans le calendrier."
-      - label: "Jour récurrent (si Départ récurrent)"
-        name: "recurring_day"
-        widget: "select"
-        options: ["Chaque Lundi", "Chaque Mardi", "Chaque Mercredi", "Chaque Jeudi", "Chaque Vendredi", "Chaque Samedi", "Chaque Dimanche"]
+      - label: "Date de départ"
+        name: "displayDate"
+        widget: "trip_date"
         default: "Chaque Vendredi"
-        required: false
-        hint: "Sélectionnez le jour de la semaine où a lieu le départ récurrent."
-      - label: "Texte personnalisé (ex: Chaque vendredi)"
-        name: "customDate"
-        widget: "string"
-        required: false
-        hint: "Texte fixe récurrent affiché tel quel sur la carte (ex: 'Chaque Lundi', 'Chaque Vendredi'). Prioritaire sur toute date calculée."
+        required: true
+        hint: "Choisissez soit 'Date fixe' (saisie d'une date calendrier YYYY-MM-DD), soit 'Jour récurrent' (choix parmi les jours de la semaine). La valeur est enregistrée directement dans displayDate sans calcul automatique."
       - { label: "Taille du groupe (optionnel)", name: "groupSize", widget: "string", default: "14 à 22 personnes", required: false }
       - label: "Programme Complet du Voyage"
         name: "body"

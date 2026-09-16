@@ -40,8 +40,6 @@
     "Rabat",
     "Marrakech"
   ],
-  "date_type": "Départ récurrent",
-  "recurring_day": "Chaque Vendredi",
   "nextDate": "Chaque Vendredi",
   "groupSize": "16 à 24 personnes",
   "included": [
@@ -102,5 +100,6 @@
     ]
   },
   "body": "Séjour ressourçant combinant surf, yoga et baignade dans les gorges turquoises de Paradise Valley.",
-  "ville_destination": "Taghazout"
+  "ville_destination": "Taghazout",
+  "displayDate": "Chaque Vendredi"
 }

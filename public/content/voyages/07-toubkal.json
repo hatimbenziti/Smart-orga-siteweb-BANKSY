@@ -39,8 +39,6 @@
     "Casablanca",
     "Rabat"
   ],
-  "date_type": "Départ récurrent",
-  "recurring_day": "Chaque Vendredi",
   "nextDate": "Chaque Vendredi",
   "groupSize": "8 à 14 personnes",
   "included": [
@@ -101,5 +99,6 @@
     ]
   },
   "body": "L'ascension du toit de l'Afrique du Nord à 4 167 m d'altitude avec une équipe d'experts de haute montagne.",
-  "ville_destination": "Imlil"
+  "ville_destination": "Imlil",
+  "displayDate": "Chaque Vendredi"
 }

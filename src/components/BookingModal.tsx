@@ -16,8 +16,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ trip, onClose }) => 
 
   const tripTitle = getTripTitle(trip, language);
   const tripDuration = getTripDuration(trip, language);
-  // Prioritize customDate (texte personnalisé du back-office) over any computed date
-  const nextDate = trip.customDate || getTripNextDate(trip, language);
+  // Prioritize displayDate (enregistré directement depuis le tableau de bord admin sans aucun calcul)
+  const nextDate = trip.displayDate || trip.customDate || getTripNextDate(trip, language);
 
   const [formData, setFormData] = useState<BookingFormData>({
     tripTitle: trip.title,

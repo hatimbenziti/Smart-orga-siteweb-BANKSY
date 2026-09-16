@@ -40,8 +40,6 @@
     "Rabat",
     "Kénitra"
   ],
-  "date_type": "Départ récurrent",
-  "recurring_day": "Chaque Samedi",
   "nextDate": "Chaque Samedi",
   "groupSize": "15 à 22 personnes",
   "included": [
@@ -90,5 +88,6 @@
     ]
   },
   "body": "Immersion totale dans les ruelles azurées de Chefchaouen et les falaises mythiques du Cap Spartel à Tanger.",
-  "ville_destination": "Chefchaouen"
+  "ville_destination": "Chefchaouen",
+  "displayDate": "Chaque Samedi"
 }

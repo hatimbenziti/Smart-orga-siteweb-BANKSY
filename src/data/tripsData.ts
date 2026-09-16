@@ -37,6 +37,8 @@ export interface CmsTripRaw {
   date_fixe?: string;
   recurring_day?: string;
   recurringDay?: string;
+  displayDate?: string;
+  display_date?: string;
   customDate?: string;
   custom_date?: string;
   nextDate?: string;
@@ -216,12 +218,13 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
         ? data.departureCities.split(',').map((c) => c.trim()).filter(Boolean)
         : ['Casablanca', 'Rabat']);
 
-  // Extract custom date text provided in back-office.
-  // It has absolute priority over any automatically computed date.
-  const rawCustomDate = (data.customDate || data.custom_date || data.nextDate || '').trim();
+  // Extract displayDate directly from CMS (simplified 2-options logic: Date fixe or Jour récurrent).
+  // Saved directly without any automatic date calculations.
+  const rawDisplayDate = (data.displayDate || data.display_date || data.customDate || data.custom_date || data.nextDate || data.recurring_day || data.recurringDay || '').trim();
   const rawRecurringDay = (data.recurring_day || data.recurringDay || '').trim();
-  const customDate = rawCustomDate || undefined;
-  const nextDate = customDate || rawRecurringDay || 'Départs réguliers';
+  const displayDate = rawDisplayDate || undefined;
+  const customDate = rawDisplayDate || undefined;
+  const nextDate = rawDisplayDate || 'Départs réguliers';
 
   const itinerary = Array.isArray(data.itinerary) && data.itinerary.length > 0
     ? data.itinerary
@@ -318,6 +321,7 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
     date_type: data.date_type || data.dateType,
     exact_date: data.exact_date || data.exactDate || data.fixedDate || data.date_fixe,
     recurring_day: rawRecurringDay || undefined,
+    displayDate,
     customDate,
     nextDate,
     category,

@@ -39,8 +39,6 @@
     "Casablanca",
     "Rabat"
   ],
-  "date_type": "Départ récurrent",
-  "recurring_day": "Chaque Samedi",
   "nextDate": "Chaque Samedi",
   "groupSize": "12 à 20 personnes",
   "included": [
@@ -88,5 +86,6 @@
     ]
   },
   "body": "Nuit magique sous le ciel étoilé du désert d'Agafay et escapade culturelle à Marrakech.",
-  "ville_destination": "Agafay"
+  "ville_destination": "Agafay",
+  "displayDate": "Chaque Samedi"
 }

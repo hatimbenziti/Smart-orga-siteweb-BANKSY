@@ -39,8 +39,6 @@
     "Casablanca",
     "Dakhla (sur place)"
   ],
-  "date_type": "Départ récurrent",
-  "recurring_day": "Chaque Jeudi",
   "nextDate": "Chaque Jeudi",
   "groupSize": "12 à 18 personnes",
   "included": [
@@ -114,5 +112,6 @@
     ]
   },
   "body": "Séjour d'exception à Dakhla combinant lagons turquoise, sessions kitesurf et découverte du désert profond.",
-  "ville_destination": "Dakhla"
+  "ville_destination": "Dakhla",
+  "displayDate": "Chaque Jeudi"
 }

@@ -201,16 +201,16 @@ function localizeRecurringText(text: string, lang: string): string {
 
 /**
  * Returns the localized next departure date for a trip.
- * Strictly prioritizes customDate (texte personnalisé saisi dans le back-office)
- * and recurring fixed text without calculating agenda dates (e.g. "Mercredi 23 Septembre").
+ * Strictly prioritizes displayDate (champ unique du back-office à 2 options exclusives)
+ * displayed directly without any automatic date calculations.
  */
 export function getDynamicTripNextDate(trip: Trip, lang: string = 'fr'): string {
-  // 1. PRIORITÉ ABSOLUE : Texte personnalisé du back-office (customDate ou nextDate saisi)
-  const custom = (trip.customDate || trip.nextDate || '').trim();
-  if (custom && custom !== 'Départs réguliers') {
+  // 1. PRIORITÉ ABSOLUE : displayDate (saisi directement dans le CMS sans calcul automatique)
+  const direct = (trip.displayDate || trip.customDate || trip.nextDate || '').trim();
+  if (direct && direct !== 'Départs réguliers') {
     if (lang === 'ar' && trip.nextDateAr) return trip.nextDateAr;
     if (lang === 'en' && trip.nextDateEn) return trip.nextDateEn;
-    return localizeRecurringText(custom, lang);
+    return localizeRecurringText(direct, lang);
   }
 
   // 2. DEUXIÈME PRIORITÉ : Jour récurrent fixe (ex: "Chaque Mardi", "Chaque Vendredi")
@@ -228,9 +228,9 @@ export function getDynamicTripNextDate(trip: Trip, lang: string = 'fr'): string 
     return trip.exact_date;
   }
 
-  // 4. Si customDate ou nextDate est 'Départs réguliers'
-  if (custom) {
-    return localizeRecurringText(custom, lang);
+  // 4. Si displayDate ou nextDate est 'Départs réguliers'
+  if (direct) {
+    return localizeRecurringText(direct, lang);
   }
 
   return lang === 'ar' ? 'رحلات منتظمة' : (lang === 'en' ? 'Regular departures' : 'Départs réguliers');

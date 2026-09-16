@@ -7,9 +7,7 @@
   "excluded": [
     "-"
   ],
-  "date_type": "Départ récurrent",
   "destination": "MARRAKECH & IMLIL & AGAFAY & Palmeraie & Dar El Fallah",
-  "exact_date": "2026-11-23",
   "cancellation_policy": "Politique d'annulation\nPour toute annulation effectuée plus de 15 jours avant la date du départ, le remboursement est total (100 %).\n\nPour toute annulation effectuée entre 7 et 15 jours avant le départ, un remboursement de 50 % du montant versé sera effectué.\n\nPour toute annulation ou réservation effectuée moins de 7 jours avant le départ, aucun remboursement ne sera possible.\n\nEn cas d’annulation par l’organisateur, le montant total sera remboursé au participant.",
   "ordre": 1,
   "duration": "3 jours / 2 nuits",
@@ -17,7 +15,6 @@
   "originalPriceMAD": 1100,
   "title": "Excursion Magique: Marrakech & Imlil -Agafay / Dar El Fallah / Palmeraie",
   "popular": true,
-  "recurring_day": null,
   "image": "/images/uploads/505eda19-86a1-442a-8329-19896751bad4-1-.webp",
   "included": [
     "🚌 Transport en autocar touristique confortable 🏘️ Hébergement dans une Auberge à Imlil le vendredi 🏘️ Hébergement dans un hôtel 4 étoiles à Marrakech le samedi Petit-déjeuner du samedi Petit-déjeuner du dimanche (buffet) 🎤 Encadrement et animation pendant tout le séjour"
@@ -34,5 +31,5 @@
     "🎈 Vol en montgolfière au lever du soleil",
     "🏍️ Balade en quad au cœur de la Palmeraie"
   ],
-  "customDate": ""
+  "displayDate": "Chaque Vendredi"
 }

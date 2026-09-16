@@ -35,6 +35,7 @@ export interface Trip {
   exact_date?: string;
   recurring_day?: string;
   customDate?: string;
+  displayDate?: string;
   nextDate: string;
   nextDateAr?: string;
   nextDateEn?: string;

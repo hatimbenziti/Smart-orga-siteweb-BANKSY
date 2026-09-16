@@ -41,8 +41,6 @@
     "Rabat",
     "Marrakech"
   ],
-  "date_type": "Départ récurrent",
-  "recurring_day": "Chaque Vendredi",
   "nextDate": "Chaque Vendredi",
   "groupSize": "14 à 20 personnes",
   "included": [
@@ -105,5 +103,6 @@
     ]
   },
   "body": "Départ de Casablanca et Rabat pour une traversée spectaculaire du Moyen Atlas jusqu'aux dunes d'or de Merzouga. Nuit sous tente berbère tout confort avec sanitaires privatifs.",
-  "ville_destination": "Merzouga"
+  "ville_destination": "Merzouga",
+  "displayDate": "Chaque Vendredi"
 }

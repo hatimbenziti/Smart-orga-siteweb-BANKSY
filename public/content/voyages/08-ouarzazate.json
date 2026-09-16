@@ -39,8 +39,6 @@
     "Rabat",
     "Marrakech"
   ],
-  "date_type": "Départ récurrent",
-  "recurring_day": "Chaque Vendredi",
   "nextDate": "Chaque Vendredi",
   "groupSize": "14 à 20 personnes",
   "included": [
@@ -101,5 +99,6 @@
     ]
   },
   "body": "Traversée des palmeraies de la Vallée du Draa et forteresses de terre rouge d'Aït Ben Haddou.",
-  "ville_destination": "Ouarzazate"
+  "ville_destination": "Ouarzazate",
+  "displayDate": "Chaque Vendredi"
 }
