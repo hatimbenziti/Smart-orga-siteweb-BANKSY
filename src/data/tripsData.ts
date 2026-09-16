@@ -37,6 +37,8 @@ export interface CmsTripRaw {
   date_fixe?: string;
   recurring_day?: string;
   recurringDay?: string;
+  dateText?: string;
+  date_text?: string;
   displayDate?: string;
   display_date?: string;
   customDate?: string;
@@ -218,13 +220,14 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
         ? data.departureCities.split(',').map((c) => c.trim()).filter(Boolean)
         : ['Casablanca', 'Rabat']);
 
-  // Extract displayDate directly from CMS (simplified 2-options logic: Date fixe or Jour récurrent).
-  // Saved directly without any automatic date calculations.
-  const rawDisplayDate = (data.displayDate || data.display_date || data.customDate || data.custom_date || data.nextDate || data.recurring_day || data.recurringDay || '').trim();
+  // Extract dateText directly from CMS (champ unique 'Date du voyage (Texte libre)')
+  // Saved directly and rendered word-for-word on the site without any automatic date calculations.
+  const rawDateText = (data.dateText || data.date_text || data.displayDate || data.display_date || data.customDate || data.custom_date || data.nextDate || data.recurring_day || data.recurringDay || '').trim();
   const rawRecurringDay = (data.recurring_day || data.recurringDay || '').trim();
-  const displayDate = rawDisplayDate || undefined;
-  const customDate = rawDisplayDate || undefined;
-  const nextDate = rawDisplayDate || 'Départs réguliers';
+  const dateText = rawDateText || undefined;
+  const displayDate = rawDateText || undefined;
+  const customDate = rawDateText || undefined;
+  const nextDate = rawDateText || 'Départs réguliers';
 
   const itinerary = Array.isArray(data.itinerary) && data.itinerary.length > 0
     ? data.itinerary
@@ -318,6 +321,7 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
     image,
     gallery,
     departureCities,
+    dateText,
     date_type: data.date_type || data.dateType,
     exact_date: data.exact_date || data.exactDate || data.fixedDate || data.date_fixe,
     recurring_day: rawRecurringDay || undefined,

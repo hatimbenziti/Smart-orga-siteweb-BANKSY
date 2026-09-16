@@ -205,7 +205,12 @@ function localizeRecurringText(text: string, lang: string): string {
  * displayed directly without any automatic date calculations.
  */
 export function getDynamicTripNextDate(trip: Trip, lang: string = 'fr'): string {
-  // 1. PRIORITÉ ABSOLUE : displayDate (saisi directement dans le CMS sans calcul automatique)
+  // 1. PRIORITÉ ABSOLUE : dateText (champ texte libre saisi dans l'admin, mot pour mot sans conversion)
+  if (trip.dateText && trip.dateText.trim()) {
+    return trip.dateText.trim();
+  }
+
+  // 2. displayDate / customDate
   const direct = (trip.displayDate || trip.customDate || trip.nextDate || '').trim();
   if (direct && direct !== 'Départs réguliers') {
     if (lang === 'ar' && trip.nextDateAr) return trip.nextDateAr;

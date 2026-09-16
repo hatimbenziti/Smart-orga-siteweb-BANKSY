@@ -72,6 +72,11 @@ export function getTripDuration(trip: Trip, lang: Language): string {
 }
 
 export function getTripNextDate(trip: Trip, lang: Language): string {
+  // Si dateText est défini (texte libre saisi dans l'admin), l'afficher mot pour mot sans aucun calcul ni conversion
+  if (trip.dateText && trip.dateText.trim()) {
+    return trip.dateText.trim();
+  }
+
   // If displayDate or customDate is set on the trip, prioritize it directly without passing through date calculations
   const directDate = (trip.displayDate || trip.customDate || '').trim();
   if (directDate) {

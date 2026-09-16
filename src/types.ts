@@ -31,6 +31,7 @@ export interface Trip {
   image: string;
   gallery: string[];
   departureCities: string[];
+  dateText?: string;
   date_type?: 'Date fixe' | 'Départ récurrent' | string;
   exact_date?: string;
   recurring_day?: string;

@@ -24,8 +24,8 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
   const destination = getTripDestination(trip, language);
   const duration = getTripDuration(trip, language);
   const highlights = getTripHighlights(trip, language);
-  // Prioritize displayDate (enregistré directement depuis le tableau de bord admin sans aucun calcul)
-  const nextDate = trip.displayDate || trip.customDate || getTripNextDate(trip, language);
+  // Prioritize dateText (texte libre saisi dans l'admin, affiché mot pour mot sans aucun calcul)
+  const nextDate = trip.dateText || trip.displayDate || trip.customDate || getTripNextDate(trip, language);
 
   const directWhatsAppUrl = createTripWhatsAppUrl(trip, { lang: language });
 

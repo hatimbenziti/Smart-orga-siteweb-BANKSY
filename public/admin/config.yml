@@ -56,12 +56,12 @@ collections:
         hint: "Les voyages seront triés du plus petit numéro au plus grand (1 apparaît en premier)."
       - { label: "Catégorie", name: "category", widget: "select", options: ["popular", "weekly", "upcoming", "all"], default: "popular" }
       - { label: "Villes de départ (optionnel)", name: "departureCities", widget: "list", field: { label: "Ville", name: "city", widget: "string" }, required: false }
-      - label: "Date de départ"
-        name: "displayDate"
-        widget: "trip_date"
+      - label: "Date du voyage (Texte libre)"
+        name: "dateText"
+        widget: "string"
         default: "Chaque Vendredi"
-        required: true
-        hint: "Choisissez soit 'Date fixe' (saisie d'une date calendrier YYYY-MM-DD), soit 'Jour récurrent' (choix parmi les jours de la semaine). La valeur est enregistrée directement dans displayDate sans calcul automatique."
+        required: false
+        hint: "Ce qui est tapé ici s'affiche mot pour mot sur le site (ex: Chaque vendredi, Du 15 au 20 Octobre, Tous les week-ends, etc.)."
       - { label: "Taille du groupe (optionnel)", name: "groupSize", widget: "string", default: "14 à 22 personnes", required: false }
       - label: "Programme Complet du Voyage"
         name: "body"

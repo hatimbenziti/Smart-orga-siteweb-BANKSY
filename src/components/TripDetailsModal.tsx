@@ -93,8 +93,8 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   const title = getTripTitle(trip, language);
   const destination = getTripDestination(trip, language);
   const duration = getTripDuration(trip, language);
-  // Prioritize displayDate (enregistré directement depuis le tableau de bord admin sans aucun calcul)
-  const nextDate = trip.displayDate || trip.customDate || getTripNextDate(trip, language);
+  // Prioritize dateText (texte libre saisi dans l'admin, affiché mot pour mot sans aucun calcul)
+  const nextDate = trip.dateText || trip.displayDate || trip.customDate || getTripNextDate(trip, language);
 
   const directWhatsAppUrl = createTripWhatsAppUrl(trip, { lang: language });
 
