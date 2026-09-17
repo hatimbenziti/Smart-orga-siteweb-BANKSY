@@ -90,14 +90,59 @@ export default function App() {
       }
 
       // 5. Category
-      if (filters.category === 'popular' && !trip.isPopular) {
-        return false;
-      }
-      if (filters.category === 'weekly' && !trip.isWeekly) {
-        return false;
-      }
-      if (filters.category === 'upcoming' && !trip.isUpcoming) {
-        return false;
+      if (filters.category !== 'all') {
+        const selectedCat = filters.category.toLowerCase().trim();
+        const tripCat = (trip.category || '').toLowerCase().trim();
+
+        if (selectedCat === 'populaire' || selectedCat === 'popular') {
+          const isPop = tripCat === 'populaire' || tripCat === 'popular' || trip.isPopular || (trip as any).popular;
+          if (!isPop) return false;
+        } else if (selectedCat === 'nord') {
+          const isNord = tripCat === 'nord' ||
+            trip.destination.toLowerCase().includes('tanger') ||
+            trip.destination.toLowerCase().includes('tetouan') ||
+            trip.destination.toLowerCase().includes('belyounech') ||
+            trip.destination.toLowerCase().includes('chefchaouen') ||
+            trip.region.toLowerCase().includes('nord');
+          if (!isNord) return false;
+        } else if (selectedCat === 'sud') {
+          const isSud = tripCat === 'sud' ||
+            trip.destination.toLowerCase().includes('dakhla') ||
+            trip.destination.toLowerCase().includes('agadir') ||
+            trip.destination.toLowerCase().includes('taghazout') ||
+            trip.destination.toLowerCase().includes('sud');
+          if (!isSud) return false;
+        } else if (selectedCat === 'atlas') {
+          const isAtlas = tripCat === 'atlas' ||
+            trip.destination.toLowerCase().includes('atlas') ||
+            trip.destination.toLowerCase().includes('imlil') ||
+            trip.destination.toLowerCase().includes('toubkal') ||
+            trip.destination.toLowerCase().includes('ouzoud') ||
+            trip.destination.toLowerCase().includes('béni mellal') ||
+            trip.destination.toLowerCase().includes('marrakech');
+          if (!isAtlas) return false;
+        } else if (selectedCat === 'desert') {
+          const isDesert = tripCat === 'desert' ||
+            tripCat === 'désert' ||
+            trip.destination.toLowerCase().includes('merzouga') ||
+            trip.destination.toLowerCase().includes('désert') ||
+            trip.destination.toLowerCase().includes('desert') ||
+            trip.destination.toLowerCase().includes('zagora') ||
+            trip.destination.toLowerCase().includes('agafay') ||
+            trip.region.toLowerCase().includes('désert');
+          if (!isDesert) return false;
+        } else if (selectedCat === 'etranger') {
+          const isEtranger = tripCat === 'etranger' ||
+            tripCat === 'étranger' ||
+            trip.destination.toLowerCase().includes('istanbul') ||
+            trip.destination.toLowerCase().includes('turquie') ||
+            trip.destination.toLowerCase().includes('étranger');
+          if (!isEtranger) return false;
+        } else {
+          if (tripCat !== selectedCat) {
+            return false;
+          }
+        }
       }
 
       return true;
@@ -128,7 +173,7 @@ export default function App() {
   };
 
   const handlePopularClick = () => {
-    setFilters((prev) => ({ ...prev, category: 'popular', regionTag: 'all' }));
+    setFilters((prev) => ({ ...prev, category: 'populaire', regionTag: 'all' }));
     scrollToSejours();
   };
 

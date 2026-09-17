@@ -62,7 +62,17 @@ collections:
         default: 1
         required: false
         hint: "Position d'affichage (1 = premier, 2 = deuxième...). En cas d'égalité, le plus récent passe automatiquement en tête."
-      - { label: "Catégorie", name: "category", widget: "select", options: ["popular", "weekly", "upcoming", "all"], default: "popular" }
+      - label: "Catégorie"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "Populaire", value: "populaire" }
+          - { label: "Nord du Maroc", value: "nord" }
+          - { label: "Sud du Maroc", value: "sud" }
+          - { label: "Région de l'Atlas", value: "atlas" }
+          - { label: "Désert du Maroc", value: "desert" }
+          - { label: "Voyage à l'étranger", value: "etranger" }
+        default: "populaire"
       - { label: "Villes de départ (optionnel)", name: "departureCities", widget: "list", field: { label: "Ville", name: "city", widget: "string" }, required: false }
       - label: "Date du voyage (Texte libre)"
         name: "dateText"

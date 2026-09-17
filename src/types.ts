@@ -40,7 +40,7 @@ export interface Trip {
   nextDate: string;
   nextDateAr?: string;
   nextDateEn?: string;
-  category: 'popular' | 'weekly' | 'upcoming' | 'all';
+  category: 'populaire' | 'nord' | 'sud' | 'atlas' | 'desert' | 'etranger' | 'popular' | 'weekly' | 'upcoming' | 'all' | string;
   isPopular?: boolean;
   isWeekly?: boolean;
   isUpcoming?: boolean;
@@ -117,12 +117,14 @@ export interface FAQItem {
   order?: number;
 }
 
+export type TripCategoryFilter = 'all' | 'populaire' | 'nord' | 'sud' | 'atlas' | 'desert' | 'etranger' | 'popular' | 'weekly' | 'upcoming' | string;
+
 export interface FilterState {
   searchQuery: string;
   destination: string;
   regionTag: string;
   maxPrice: number;
-  category: 'all' | 'popular' | 'weekly' | 'upcoming';
+  category: TripCategoryFilter;
 }
 
 export interface BookingFormData {

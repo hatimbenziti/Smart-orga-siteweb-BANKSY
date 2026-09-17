@@ -45,7 +45,7 @@ export interface CmsTripRaw {
   customDate?: string;
   custom_date?: string;
   nextDate?: string;
-  category?: 'popular' | 'weekly' | 'upcoming' | 'all';
+  category?: string;
   popular?: boolean;
   isPopular?: boolean;
   isWeekly?: boolean;
@@ -199,7 +199,7 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
 
   const isPopular = data.popular !== undefined
     ? Boolean(data.popular)
-    : (data.isPopular !== undefined ? Boolean(data.isPopular) : (data.category === 'popular'));
+    : (data.isPopular !== undefined ? Boolean(data.isPopular) : (data.category === 'popular' || data.category === 'populaire'));
 
   const isWeekly = data.isWeekly !== undefined
     ? Boolean(data.isWeekly)
@@ -209,7 +209,7 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
     ? Boolean(data.isUpcoming)
     : (data.category === 'upcoming');
 
-  const category = (data.category as 'popular' | 'weekly' | 'upcoming' | 'all') || (isPopular ? 'popular' : 'all');
+  const category = (data.category as string) || (isPopular ? 'populaire' : 'all');
 
   const rawOrdre = data.order !== undefined ? data.order : data.ordre;
   const rawPriority = data.priority;

@@ -23,9 +23,12 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
 
   const categoryPills: { key: FilterState['category']; label: string }[] = [
     { key: 'all', label: t.catAll },
-    { key: 'popular', label: t.catPopular },
-    { key: 'weekly', label: t.catWeekly },
-    { key: 'upcoming', label: t.catUpcoming }
+    { key: 'populaire', label: t.catPopular },
+    { key: 'nord', label: t.catNord },
+    { key: 'sud', label: t.catSud },
+    { key: 'atlas', label: t.catAtlas },
+    { key: 'desert', label: t.catDesert },
+    { key: 'etranger', label: t.catEtranger }
   ];
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,7 +182,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
             <span>{t.filterTitle}</span>
           </span>
           {categoryPills.map((p) => {
-            const isActive = filters.category === p.key;
+            const isActive = filters.category === p.key || (p.key === 'populaire' && filters.category === 'popular');
             return (
               <button
                 key={p.key}
