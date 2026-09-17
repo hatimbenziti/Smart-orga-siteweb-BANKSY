@@ -210,7 +210,7 @@ export const TRANSLATIONS = {
     floatAgentHelp: "Besoin d'aide pour choisir votre séjour ou vérifier une date ? Écrivez-nous !",
 
     // Footer
-    footerDesc: "Agence marocaine spécialiste des voyages organisés en groupe et sur-mesure. Vivez la magie du désert de Merzouga, la fraîcheur de Dakhla et la beauté des villes impériales dans le plus grand confort.",
+    footerDesc: "Groupe de voyage marocain spécialiste des voyages organisés en groupe et sur-mesure. Vivez la magie du désert de Merzouga, la fraîcheur de Dakhla et la beauté des villes impériales dans le plus grand confort.",
     footerDestTitle: "Destinations Clés",
     footerNavTitle: "Navigation",
     footerContactTitle: "Contact & Réservations",
@@ -430,7 +430,7 @@ export const TRANSLATIONS = {
     floatAgentHelp: "هل تحتاج مساعدة لاختيار رحلتك أو التأكد من المقاعد؟ راسلنا الآن !",
 
     // Footer
-    footerDesc: "وكالة أسفار مغربية متخصصة في الرحلات المنظمة الجماعية والخاصة. عش متعة الصحراء في مرزوكة، وسحر الداخلة، وعراقة المدن المغربية براحة تامة.",
+    footerDesc: "مجموعة رحلات مغربية متخصصة في الرحلات المنظمة الجماعية والخاصة. عش متعة الصحراء في مرزوكة، وسحر الداخلة، وعراقة المدن المغربية براحة تامة.",
     footerDestTitle: "أبرز الوجهات",
     footerNavTitle: "روابط سريعة",
     footerContactTitle: "التواصل والحجز",
@@ -650,7 +650,7 @@ export const TRANSLATIONS = {
     floatAgentHelp: "Need help picking your trip or checking dates? Message us right away!",
 
     // Footer
-    footerDesc: "Moroccan travel agency specialized in organized group tours and tailor-made expeditions. Experience Merzouga desert, Dakhla lagoons, and imperial cities in supreme comfort.",
+    footerDesc: "Moroccan travel group specialized in organized group tours and tailor-made expeditions. Experience Merzouga desert, Dakhla lagoons, and imperial cities in supreme comfort.",
     footerDestTitle: "Key Destinations",
     footerNavTitle: "Quick Links",
     footerContactTitle: "Contact & Booking",
