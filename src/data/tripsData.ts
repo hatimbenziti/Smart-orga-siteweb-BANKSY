@@ -363,65 +363,60 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
 }
 
 /**
- * Dynamically loads the ordered list of trips from content/settings/order-settings.json
+ * Dynamically loads the ordered list of trips from content/settings/order.json
  */
-export function getOrderSettings(): string[] {
+export function getOrderItems(): string[] {
   try {
-    const settingsModules = import.meta.glob<Record<string, any>>('/content/settings/order-settings.json', { eager: true });
+    const settingsModules = import.meta.glob<Record<string, any>>('/content/settings/order.json', { eager: true });
     for (const mod of Object.values(settingsModules)) {
       const data = ((mod as { default?: any }).default || mod) as any;
-      if (data && Array.isArray(data.trips)) {
-        return data.trips
+      if (data && Array.isArray(data.items)) {
+        return data.items
           .map((item: any) => {
             if (typeof item === 'string') return item.trim();
-            if (item && typeof item === 'object') return (item.trip || item.slug || item.id || '').trim();
+            if (item && typeof item === 'object') return (item.voyage || item.slug || item.trip || '').trim();
             return '';
           })
           .filter(Boolean);
       }
     }
   } catch (e) {
-    console.warn('Could not read order-settings.json:', e);
+    console.warn('Could not read content/settings/order.json:', e);
   }
   return [];
 }
 
 /**
- * Sorts any list of trips according to content/settings/order-settings.json,
- * with fallback to numeric order / file order.
+ * Backwards compatible alias
  */
-export function sortTripsByOrderSettings(trips: Trip[]): Trip[] {
-  const orderList = getOrderSettings();
-  const sorted = [...trips];
+export const getOrderSettings = getOrderItems;
 
-  if (orderList.length > 0) {
-    const orderMap = new Map<string, number>();
-    orderList.forEach((slugOrId, index) => {
-      orderMap.set(slugOrId, index);
-    });
-
-    return sorted.sort((a, b) => {
-      const slugA = a.slug || a.id;
-      const slugB = b.slug || b.id;
-      const idxA = orderMap.has(slugA) ? orderMap.get(slugA)! : (orderMap.has(a.id) ? orderMap.get(a.id)! : 9999);
-      const idxB = orderMap.has(slugB) ? orderMap.get(slugB)! : (orderMap.has(b.id) ? orderMap.get(b.id)! : 9999);
-
-      if (idxA !== idxB) {
-        return idxA - idxB;
-      }
-
-      const ordA = typeof a.order === 'number' ? a.order : (typeof a.ordre === 'number' ? a.ordre : 99);
-      const ordB = typeof b.order === 'number' ? b.order : (typeof b.ordre === 'number' ? b.ordre : 99);
-      return ordA - ordB;
-    });
-  }
+/**
+ * Sorts any list of trips according to the index in content/settings/order.json:
+ * Items not in order.json are positioned at the end (pos 999).
+ */
+export function sortVoyagesByOrder(voyages: Trip[]): Trip[] {
+  const items = getOrderItems();
+  const sorted = [...voyages];
 
   return sorted.sort((a, b) => {
-    const ordA = typeof a.order === 'number' ? a.order : (typeof a.ordre === 'number' ? a.ordre : 99);
-    const ordB = typeof b.order === 'number' ? b.order : (typeof b.ordre === 'number' ? b.ordre : 99);
-    return ordA - ordB;
+    const slugA = a.slug || a.id;
+    const slugB = b.slug || b.id;
+    const indexA = items.indexOf(slugA);
+    const indexB = items.indexOf(slugB);
+
+    // Si l'élément n'est pas encore dans order.json, le mettre à la fin
+    const posA = indexA === -1 ? 999 : indexA;
+    const posB = indexB === -1 ? 999 : indexB;
+
+    return posA - posB;
   });
 }
+
+/**
+ * Backwards compatible alias
+ */
+export const sortTripsByOrderSettings = sortVoyagesByOrder;
 
 /**
  * Dynamically loads all voyages from Decap CMS content/voyages/*.{json,md}

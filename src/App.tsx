@@ -13,7 +13,7 @@ import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { TripDetailsModal } from './components/TripDetailsModal';
 import { BookingModal } from './components/BookingModal';
 import { SurMesureModal } from './components/SurMesureModal';
-import { loadCmsTrips, sortTripsByOrderSettings } from './data/tripsData';
+import { loadCmsTrips, sortVoyagesByOrder } from './data/tripsData';
 import { Trip, FilterState } from './types';
 import { Compass, Sparkles, AlertCircle, RotateCcw, MessageCircle } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
@@ -24,9 +24,10 @@ export default function App() {
   // Dynamic trips loaded from Decap CMS (content/voyages/*.json)
   const trips = useMemo<Trip[]>(() => {
     const rawVoyages = loadCmsTrips();
-    return rawVoyages
-      .filter((v) => !v.archived)
-      .sort((a, b) => (a.order || 99) - (b.order || 99));
+    // 1. Filtrer les voyages non archivés
+    const activeVoyages = rawVoyages.filter((voyage) => !voyage.archived);
+    // 2. Trier selon la position du slug dans la liste order.json
+    return sortVoyagesByOrder(activeVoyages);
   }, []);
 
   // Modal states
@@ -103,7 +104,7 @@ export default function App() {
       return true;
     });
 
-    return filtered.sort((a, b) => (a.order || 99) - (b.order || 99));
+    return sortVoyagesByOrder(filtered);
   }, [filters, trips]);
 
   // Scroll to section helper

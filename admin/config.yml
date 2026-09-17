@@ -27,7 +27,7 @@ collections:
     format: "json"
     editor:
       preview: true
-    sortable_fields: ['order', 'title', 'date']
+    sortable_fields: ['title', 'date']
     view_filters:
       - label: "Actifs"
         field: "archived"
@@ -55,12 +55,6 @@ collections:
         widget: "boolean"
         default: false
         hint: "Si cette case est cochée, le voyage ne sera pas visible sur le site public."
-      - name: "order"
-        label: "Ordre d'affichage"
-        widget: "number"
-        value_type: "int"
-        default: 1
-        hint: "Définissez manuellement l'ordre d'affichage (ex: 1 s'affiche en premier, puis 2, etc.)."
       - { label: "Catégorie", name: "category", widget: "select", options: ["popular", "weekly", "upcoming", "all"], default: "popular" }
       - { label: "Villes de départ (optionnel)", name: "departureCities", widget: "list", field: { label: "Ville", name: "city", widget: "string" }, required: false }
       - label: "Date du voyage (Texte libre)"
@@ -152,26 +146,23 @@ collections:
       - { label: "Légende détaillée (optionnel)", name: "caption", widget: "string", required: false }
       - { label: "Lien Instagram alternatif (optionnel)", name: "post_url", widget: "string", required: false }
 
-  # 5. Collection de type 'file' : Ordre des Voyages Organisés (order-settings)
-  - name: "order_settings"
-    label: "Ordre des Voyages"
+  # Fichier unique pour gérer le classement par Drag & Drop
+  - name: "settings"
+    label: "Configuration"
     files:
-      - name: "order_settings_file"
-        label: "Ordre d'affichage des Voyages"
-        file: "content/settings/order-settings.json"
-        description: "Organisez et glissez-déposez les voyages dans l'ordre exact où vous souhaitez qu'ils apparaissent sur le site."
-        format: "json"
+      - file: "content/settings/order.json"
+        label: "Ordre des Voyages"
+        name: "voyages_order"
         fields:
-          - label: "Liste ordonnée des voyages"
-            name: "trips"
+          - label: "Ordre d'affichage (Glisser-déposer les éléments)"
+            name: "items"
             widget: "list"
-            summary: "{{fields.trip}}"
             field:
               label: "Voyage"
-              name: "trip"
+              name: "voyage"
               widget: "relation"
               collection: "voyages"
-              search_fields: ["title", "destination"]
+              search_fields: ["title"]
               value_field: "{{slug}}"
-              display_fields: ["title", "destination"]
+              display_fields: ["title"]
 
