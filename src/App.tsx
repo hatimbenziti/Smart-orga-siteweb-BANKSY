@@ -23,7 +23,10 @@ export default function App() {
 
   // Dynamic trips loaded from Decap CMS (content/voyages/*.json)
   const trips = useMemo<Trip[]>(() => {
-    return loadCmsTrips();
+    const rawVoyages = loadCmsTrips();
+    return rawVoyages
+      .filter((v) => !v.archived)
+      .sort((a, b) => (a.order || 99) - (b.order || 99));
   }, []);
 
   // Modal states
@@ -100,7 +103,7 @@ export default function App() {
       return true;
     });
 
-    return sortTripsByOrderSettings(filtered);
+    return filtered.sort((a, b) => (a.order || 99) - (b.order || 99));
   }, [filters, trips]);
 
   // Scroll to section helper
