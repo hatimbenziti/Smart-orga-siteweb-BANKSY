@@ -202,14 +202,14 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
 
   const category = (data.category as 'popular' | 'weekly' | 'upcoming' | 'all') || (isPopular ? 'popular' : 'all');
 
-  const rawOrdre = data.ordre !== undefined ? data.ordre : data.order;
+  const rawOrdre = data.order !== undefined ? data.order : data.ordre;
   const rawPriority = data.priority;
   const parsedNum = rawOrdre !== undefined && rawOrdre !== null && String(rawOrdre).trim() !== ''
     ? Number(rawOrdre)
     : (rawPriority !== undefined && rawPriority !== null && String(rawPriority).trim() !== ''
         ? Number(rawPriority)
         : defaultOrder);
-  const order = Number.isFinite(parsedNum) ? parsedNum : defaultOrder;
+  const order = Number.isFinite(parsedNum) ? parsedNum : (defaultOrder ?? 1);
 
   const rating = Number(data.rating) || 4.9;
   const reviewCount = Number(data.reviewCount) || 120;

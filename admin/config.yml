@@ -27,6 +27,14 @@ collections:
     format: "json"
     editor:
       preview: true
+    sortable_fields: ['order', 'title', 'date']
+    view_filters:
+      - label: "Actifs"
+        field: "archived"
+        pattern: false
+      - label: "Archivés"
+        field: "archived"
+        pattern: true
     fields:
       - { label: "Titre du Séjour", name: "title", widget: "string" }
       - { label: "Destination", name: "destination", widget: "string", default: "Taghazout" }
@@ -43,11 +51,16 @@ collections:
       - { label: "Points forts (Highlights)", name: "highlights", widget: "list", field: { label: "Point fort", name: "item", widget: "string" } }
       - { label: "Voyage Populaire / Coup de cœur (popular)", name: "popular", widget: "boolean", default: true }
       - name: "archived"
-        label: "Archiver ce voyage (Masquer du site)"
+        label: "Archivé ?"
         widget: "boolean"
         default: false
         hint: "Si cette case est cochée, le voyage ne sera pas visible sur le site public."
-      - { label: "Ordre / Priorité d'affichage (order)", name: "order", widget: "number", default: 1, value_type: "int" }
+      - name: "order"
+        label: "Ordre d'affichage"
+        widget: "number"
+        value_type: "int"
+        default: 1
+        hint: "Définissez manuellement l'ordre d'affichage (ex: 1 s'affiche en premier, puis 2, etc.)."
       - { label: "Catégorie", name: "category", widget: "select", options: ["popular", "weekly", "upcoming", "all"], default: "popular" }
       - { label: "Villes de départ (optionnel)", name: "departureCities", widget: "list", field: { label: "Ville", name: "city", widget: "string" }, required: false }
       - label: "Date du voyage (Texte libre)"

@@ -1,0 +1,25 @@
+/* Admin Styles for Decap CMS */
+
+/* Preview pane styling for archived trips */
+.archived-preview,
+[data-archived="true"],
+.preview-archived {
+  filter: grayscale(100%);
+  opacity: 0.5;
+  border: 2px dashed #94a3b8 !important;
+  border-radius: 12px;
+  padding: 16px;
+  background-color: #f8fafc;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Dashboard entry cards styling when marked as archived */
+.cms-card-archived,
+[data-testid*="card"][data-archived="true"],
+article[data-archived="true"] {
+  filter: grayscale(100%) !important;
+  opacity: 0.5 !important;
+  border: 2px dashed #94a3b8 !important;
+  background: #f1f5f9 !important;
+  transition: all 0.2s ease-in-out;
+}

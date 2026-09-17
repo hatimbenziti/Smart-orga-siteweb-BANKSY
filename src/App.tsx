@@ -99,8 +99,8 @@ export default function App() {
 
       return true;
     }).sort((a, b) => {
-      const ordA = a.ordre ?? a.order ?? 99;
-      const ordB = b.ordre ?? b.order ?? 99;
+      const ordA = typeof a.order === 'number' ? a.order : (typeof a.ordre === 'number' ? a.ordre : 99);
+      const ordB = typeof b.order === 'number' ? b.order : (typeof b.ordre === 'number' ? b.ordre : 99);
       return ordA - ordB;
     });
   }, [filters, trips]);

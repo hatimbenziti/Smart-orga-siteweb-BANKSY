@@ -50,6 +50,81 @@
       var bar = document.getElementById('cms-helper-bar');
       if (bar) bar.classList.add('visible');
     });
+
+    // 2. Style personnalisé pour le Dashboard & Previews via CMS.registerPreviewStyle()
+    if (window.CMS) {
+      CMS.registerPreviewStyle('/admin/admin-styles.css');
+
+      // Custom preview component for voyages to apply the archived grayscale effect in the editor preview
+      var VoyagePreview = createClass({
+        render: function() {
+          var entry = this.props.entry;
+          var isArchived = Boolean(entry.getIn(['data', 'archived']));
+          var title = entry.getIn(['data', 'title']) || 'Titre du voyage';
+          var destination = entry.getIn(['data', 'destination']) || '';
+          var price = entry.getIn(['data', 'price']) || '';
+          var image = this.props.getAsset(entry.getIn(['data', 'image']));
+          var order = entry.getIn(['data', 'order']) || entry.getIn(['data', 'ordre']) || 1;
+
+          return h('div', {
+            className: isArchived ? 'archived-preview' : 'active-preview',
+            style: isArchived ? {
+              filter: 'grayscale(100%)',
+              opacity: 0.5,
+              border: '2px dashed #94a3b8',
+              borderRadius: '12px',
+              padding: '16px',
+              background: '#f8fafc',
+              fontFamily: 'system-ui, sans-serif'
+            } : {
+              padding: '16px',
+              borderRadius: '12px',
+              background: '#ffffff',
+              fontFamily: 'system-ui, sans-serif',
+              border: '1px solid #e2e8f0'
+            }
+          },
+            isArchived ? h('div', {
+              style: {
+                display: 'inline-block',
+                background: '#64748b',
+                color: '#ffffff',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                padding: '3px 8px',
+                borderRadius: '6px',
+                marginBottom: '10px'
+              }
+            }, 'VOYAGE ARCHIVÉ (MASQUÉ DU SITE)') : null,
+            image ? h('img', { src: image.toString(), style: { maxWidth: '100%', height: '220px', objectFit: 'cover', borderRadius: '8px', marginBottom: '12px' } }) : null,
+            h('h2', { style: { margin: '0 0 8px 0', fontSize: '20px', color: '#1e293b' } }, title),
+            h('p', { style: { margin: '4px 0', color: '#64748b' } }, '📍 Destination: ' + destination + (price ? ' | 💰 ' + price + ' MAD' : '') + ' | 🔢 Ordre: ' + order),
+            h('hr', { style: { margin: '14px 0', borderColor: '#e2e8f0' } }),
+            this.props.widgetFor('body')
+          );
+        }
+      });
+
+      CMS.registerPreviewTemplate('voyages', VoyagePreview);
+    }
+
+    // Observer to tag collection cards on dashboard so that archived entries get styled in real-time
+    function applyArchivedStylesToDashboard() {
+      try {
+        var cards = document.querySelectorAll('main a[href*="/collections/voyages/entries/"], main article, div[class*="Card"]');
+        cards.forEach(function(card) {
+          var text = card.textContent || '';
+          if (text.includes('Archivé') || text.includes('archived: true') || card.querySelector('[class*="archived"]')) {
+            card.setAttribute('data-archived', 'true');
+            card.style.filter = 'grayscale(100%)';
+            card.style.opacity = '0.5';
+            card.style.border = '2px dashed #94a3b8';
+          }
+        });
+      } catch (e) {}
+    }
+
+    setInterval(applyArchivedStylesToDashboard, 1000);
   </script>
 </body>
 </html>
