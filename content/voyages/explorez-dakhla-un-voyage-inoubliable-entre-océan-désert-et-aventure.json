@@ -6,7 +6,7 @@
   "price": 4950,
   "excluded": [],
   "destination": "dakhla",
-  "order": 1,
+  "order": 2,
   "cancellation_policy": "Politique d'annulation\nPour toute annulation effectuée plus de 15 jours avant la date du départ, le remboursement est total (100 %).\n\nPour toute annulation effectuée entre 7 et 15 jours avant le départ, un remboursement de 50 % du montant versé sera effectué.\n\nPour toute annulation ou réservation effectuée moins de 7 jours avant le départ, aucun remboursement ne sera possible.\n\nEn cas d’annulation par l’organisateur, le montant total sera remboursé au participant.",
   "gallery": [],
   "ordre": "",
@@ -27,6 +27,7 @@
   "title": "Explorez Dakhla : Un Voyage Inoubliable entre Océan, Désert et Aventure",
   "popular": true,
   "image": "/images/uploads/0.007062949512699257-2-.webp",
+  "dateText": "Chaque Jeudi",
   "included": [
     "✈️ Vol direct rabat ou Casablanca ↔️ Dakhla↔️ casablanca (bagage : 23 kg soute + 10 kg cabine) • 🚙 Transferts aéroport ↔️ hôtel en 4x4 dakhla • 🏨 3 nuits en chambre double ou twin • 🍴 3 Petits-déjeuners inclus • 🌄 Deux excursions sahariennes en 4x4 :  1️⃣  premier jours Sebkha Imlili – Plage Porto Rico – Source thermale Asmaa  2️⃣  2 ème jour Dune Blanche – Plage PK25 – Ferme d’autruches  - tecket Source thermale Asmaa🛁 - ticket entré ferme autruche 🦩"
   ],
@@ -35,6 +36,5 @@
     "Vol direct Casablanca ↔ Dakhla",
     "Safari 4x4 & découverte du désert",
     "Dune Blanche, Porto Rico & PK25"
-  ],
-  "dateText": "Chaque Jeudi"
+  ]
 }
