@@ -13,7 +13,7 @@ import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { TripDetailsModal } from './components/TripDetailsModal';
 import { BookingModal } from './components/BookingModal';
 import { SurMesureModal } from './components/SurMesureModal';
-import { loadCmsTrips } from './data/tripsData';
+import { loadCmsTrips, sortTripsByOrderSettings } from './data/tripsData';
 import { Trip, FilterState } from './types';
 import { Compass, Sparkles, AlertCircle, RotateCcw, MessageCircle } from 'lucide-react';
 import { useLanguage } from './context/LanguageContext';
@@ -51,7 +51,7 @@ export default function App() {
 
   // Filtered trips
   const filteredTrips = useMemo(() => {
-    return trips.filter((trip) => {
+    const filtered = trips.filter((trip) => {
       // 0. Archived trips hidden from public site
       if (trip.archived) {
         return false;
@@ -98,11 +98,9 @@ export default function App() {
       }
 
       return true;
-    }).sort((a, b) => {
-      const ordA = typeof a.order === 'number' ? a.order : (typeof a.ordre === 'number' ? a.ordre : 99);
-      const ordB = typeof b.order === 'number' ? b.order : (typeof b.ordre === 'number' ? b.ordre : 99);
-      return ordA - ordB;
     });
+
+    return sortTripsByOrderSettings(filtered);
   }, [filters, trips]);
 
   // Scroll to section helper

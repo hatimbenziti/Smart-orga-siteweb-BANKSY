@@ -77,6 +77,7 @@ export interface Trip {
   groupSizeEn?: string;
   ordre?: number;
   order?: number;
+  slug?: string;
   seo_title?: string;
   seo_description?: string;
 }

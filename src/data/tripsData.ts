@@ -356,16 +356,78 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
     groupSize,
     order,
     ordre: order,
+    slug,
     seo_title: data.seo_title || undefined,
     seo_description: data.seo_description || undefined
   };
 }
 
 /**
+ * Dynamically loads the ordered list of trips from content/settings/order-settings.json
+ */
+export function getOrderSettings(): string[] {
+  try {
+    const settingsModules = import.meta.glob<Record<string, any>>('/content/settings/order-settings.json', { eager: true });
+    for (const mod of Object.values(settingsModules)) {
+      const data = ((mod as { default?: any }).default || mod) as any;
+      if (data && Array.isArray(data.trips)) {
+        return data.trips
+          .map((item: any) => {
+            if (typeof item === 'string') return item.trim();
+            if (item && typeof item === 'object') return (item.trip || item.slug || item.id || '').trim();
+            return '';
+          })
+          .filter(Boolean);
+      }
+    }
+  } catch (e) {
+    console.warn('Could not read order-settings.json:', e);
+  }
+  return [];
+}
+
+/**
+ * Sorts any list of trips according to content/settings/order-settings.json,
+ * with fallback to numeric order / file order.
+ */
+export function sortTripsByOrderSettings(trips: Trip[]): Trip[] {
+  const orderList = getOrderSettings();
+  const sorted = [...trips];
+
+  if (orderList.length > 0) {
+    const orderMap = new Map<string, number>();
+    orderList.forEach((slugOrId, index) => {
+      orderMap.set(slugOrId, index);
+    });
+
+    return sorted.sort((a, b) => {
+      const slugA = a.slug || a.id;
+      const slugB = b.slug || b.id;
+      const idxA = orderMap.has(slugA) ? orderMap.get(slugA)! : (orderMap.has(a.id) ? orderMap.get(a.id)! : 9999);
+      const idxB = orderMap.has(slugB) ? orderMap.get(slugB)! : (orderMap.has(b.id) ? orderMap.get(b.id)! : 9999);
+
+      if (idxA !== idxB) {
+        return idxA - idxB;
+      }
+
+      const ordA = typeof a.order === 'number' ? a.order : (typeof a.ordre === 'number' ? a.ordre : 99);
+      const ordB = typeof b.order === 'number' ? b.order : (typeof b.ordre === 'number' ? b.ordre : 99);
+      return ordA - ordB;
+    });
+  }
+
+  return sorted.sort((a, b) => {
+    const ordA = typeof a.order === 'number' ? a.order : (typeof a.ordre === 'number' ? a.ordre : 99);
+    const ordB = typeof b.order === 'number' ? b.order : (typeof b.ordre === 'number' ? b.ordre : 99);
+    return ordA - ordB;
+  });
+}
+
+/**
  * Dynamically loads all voyages from Decap CMS content/voyages/*.{json,md}
  */
 export function loadCmsTrips(): Trip[] {
-  const loadedList: (Trip & { order: number; _fileIndex: number })[] = [];
+  const loadedList: (Trip & { order: number; _fileIndex: number; slug: string })[] = [];
 
   // 1. Dynamic import of all JSON files in content/voyages
   const jsonModules = import.meta.glob<Record<string, any>>('/content/voyages/*.json', { eager: true });
@@ -374,7 +436,7 @@ export function loadCmsTrips(): Trip[] {
     const slug = path.split('/').pop()?.replace(/\.json$/, '') || `trip-${idx}`;
     const trip = normalizeTrip(data, slug, 99);
     if (trip) {
-      loadedList.push({ ...trip, _fileIndex: idx });
+      loadedList.push({ ...trip, slug, _fileIndex: idx });
     }
   });
 
@@ -385,25 +447,17 @@ export function loadCmsTrips(): Trip[] {
     const slug = path.split('/').pop()?.replace(/\.md$/, '') || `trip-md-${idx}`;
     const trip = normalizeTrip(data, slug, 99);
     if (trip) {
-      loadedList.push({ ...trip, _fileIndex: idx + 1000 });
+      loadedList.push({ ...trip, slug, _fileIndex: idx + 1000 });
     }
   });
 
-  // Sort automatically by the ordre/order field ascending (1, 2, 3...)
-  // If two voyages have the same order or none, preserves default order
-  if (loadedList.length > 0) {
-    loadedList.sort((a, b) => {
-      const ordA = typeof a.order === 'number' ? a.order : 99;
-      const ordB = typeof b.order === 'number' ? b.order : 99;
-      if (ordA !== ordB) {
-        return ordA - ordB;
-      }
-      return a._fileIndex - b._fileIndex;
-    });
-    return loadedList.map(({ _fileIndex, ...rest }) => rest as Trip);
+  if (loadedList.length === 0) {
+    return [];
   }
 
-  return [];
+  // 3. Use sortTripsByOrderSettings to sort all trips according to order-settings.json
+  const rawTrips = loadedList.map(({ _fileIndex, ...rest }) => rest as Trip);
+  return sortTripsByOrderSettings(rawTrips);
 }
 
 /**

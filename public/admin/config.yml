@@ -163,3 +163,27 @@ collections:
       - { label: "Lieu / Destination (optionnel)", name: "location", widget: "string", required: false }
       - { label: "Légende détaillée (optionnel)", name: "caption", widget: "string", required: false }
       - { label: "Lien Instagram alternatif (optionnel)", name: "post_url", widget: "string", required: false }
+
+  # 5. Collection de type 'file' : Ordre des Voyages Organisés (order-settings)
+  - name: "order_settings"
+    label: "Ordre des Voyages"
+    files:
+      - name: "order_settings_file"
+        label: "Ordre d'affichage des Voyages"
+        file: "content/settings/order-settings.json"
+        description: "Organisez et glissez-déposez les voyages dans l'ordre exact où vous souhaitez qu'ils apparaissent sur le site."
+        format: "json"
+        fields:
+          - label: "Liste ordonnée des voyages"
+            name: "trips"
+            widget: "list"
+            summary: "{{fields.trip}}"
+            field:
+              label: "Voyage"
+              name: "trip"
+              widget: "relation"
+              collection: "voyages"
+              search_fields: ["title", "destination"]
+              value_field: "{{slug}}"
+              display_fields: ["title", "destination"]
+
