@@ -25,6 +25,7 @@
   "title": "Voyage de Ouzoud, Marrakech et Béni Mellal – 3 jours de nature, détente et découverte 🏞️✨",
   "popular": true,
   "image": "/images/uploads/7b99517e-b8a0-4082-949c-dc114238ede5.webp",
+  "dateText": "Chaque Mardi",
   "included": [
     "mslsc  klmssfrrgg klmssfrrgg"
   ],
@@ -32,11 +33,10 @@
     "rabat",
     "casablanca"
   ],
-  "category": "atlas",
+  "category": "desert",
   "highlights": [
     "Marrakech by Night & Jamaâ El Fna",
     "Cascades d’Ouzoud & balade en barque",
     "Lac de Bin El Ouidane & paysages naturels"
-  ],
-  "dateText": "Chaque Mardi"
+  ]
 }
