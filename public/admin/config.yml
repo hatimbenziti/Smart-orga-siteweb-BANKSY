@@ -27,7 +27,7 @@ collections:
     format: "json"
     editor:
       preview: true
-    sortable_fields: ['title', 'date']
+    sortable_fields: ['order', 'title', 'date']
     view_filters:
       - label: "Actifs"
         field: "archived"
@@ -55,6 +55,13 @@ collections:
         widget: "boolean"
         default: false
         hint: "Si cette case est cochée, le voyage ne sera pas visible sur le site public."
+      - name: "order"
+        label: "Ordre d'affichage (Position)"
+        widget: "number"
+        value_type: "int"
+        default: 1
+        required: false
+        hint: "Position d'affichage (1 = premier, 2 = deuxième...). En cas d'égalité, le plus récent passe automatiquement en tête."
       - { label: "Catégorie", name: "category", widget: "select", options: ["popular", "weekly", "upcoming", "all"], default: "popular" }
       - { label: "Villes de départ (optionnel)", name: "departureCities", widget: "list", field: { label: "Ville", name: "city", widget: "string" }, required: false }
       - label: "Date du voyage (Texte libre)"

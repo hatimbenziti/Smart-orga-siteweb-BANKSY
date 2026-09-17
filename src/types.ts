@@ -78,6 +78,10 @@ export interface Trip {
   ordre?: number;
   order?: number;
   slug?: string;
+  date?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  _mtime?: number;
   seo_title?: string;
   seo_description?: string;
 }

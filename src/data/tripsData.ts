@@ -1,4 +1,5 @@
 import { Trip, Review, FAQItem, TripThematique } from '../types';
+import voyagesMeta from './voyagesMeta.json';
 
 export const VALID_THEMATIQUES: TripThematique[] = [
   'Nature & Randonnée',
@@ -55,6 +56,14 @@ export interface CmsTripRaw {
   ordre?: number | string;
   order?: number | string;
   priority?: number | string;
+  date?: string;
+  createdAt?: string;
+  created_at?: string;
+  date_created?: string;
+  updatedAt?: string;
+  updated_at?: string;
+  _mtime?: number;
+  _fileDate?: string;
   program?: string;
   body?: string;
   itinerary?: {
@@ -357,13 +366,92 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
     order,
     ordre: order,
     slug,
+    date: data.date || data.createdAt || data.date_created || data.created_at || data.updatedAt || undefined,
+    createdAt: data.createdAt || data.created_at || undefined,
+    updatedAt: data.updatedAt || data.updated_at || undefined,
+    _mtime: typeof data._mtime === 'number' ? data._mtime : undefined,
     seo_title: data.seo_title || undefined,
     seo_description: data.seo_description || undefined
   };
 }
 
 /**
- * Dynamically loads the ordered list of trips from content/settings/order.json
+ * Extrait le timestamp de date/modification d'un voyage pour départager les égalités.
+ * Vérifie dans l'ordre :
+ * 1. Le champ 'date' / 'createdAt' / 'updatedAt' du voyage
+ * 2. La propriété _mtime injectée par Vite
+ * 3. La date de modification réelle enregistrée dans voyagesMeta.json
+ */
+export function getVoyageTimestamp(voyage: Trip): number {
+  if (voyage.date) {
+    const p = Date.parse(voyage.date);
+    if (!isNaN(p) && p > 0) return p;
+  }
+  if (voyage.createdAt) {
+    const p = Date.parse(voyage.createdAt);
+    if (!isNaN(p) && p > 0) return p;
+  }
+  if (voyage.updatedAt) {
+    const p = Date.parse(voyage.updatedAt);
+    if (!isNaN(p) && p > 0) return p;
+  }
+  if (typeof voyage._mtime === 'number' && voyage._mtime > 0) {
+    return voyage._mtime;
+  }
+
+  const slug = voyage.slug || voyage.id;
+  if (slug && (voyagesMeta as Record<string, any>)[slug]) {
+    const entry = (voyagesMeta as Record<string, any>)[slug];
+    if (typeof entry.mtime === 'number') return entry.mtime;
+    if (typeof entry.birthtime === 'number') return entry.birthtime;
+  }
+
+  return 0;
+}
+
+/**
+ * Tri intelligent basé sur le champ 'order' avec décalage automatique en cas d'égalité :
+ * 1. Filtre les voyages actifs (archived === false).
+ * 2. Trie la liste des voyages :
+ *    - Priorité 1 : La valeur numérique du champ 'order' (de 1 à N).
+ *    - Priorité 2 (Décalage automatique) : En cas d'égalité sur la valeur 'order' (ex: deux voyages avec 'order: 1'),
+ *      le voyage le plus récent (selon date de modification/création ou champ 'date') passe automatiquement AVANT l'ancien.
+ */
+export function sortVoyagesSmart(voyages: Trip[]): Trip[] {
+  // 1. Filtrer les voyages actifs
+  const activeVoyages = voyages.filter((v) => !v.archived);
+
+  // 2. Trier selon la priorité 1 (order) puis priorité 2 (décalage automatique par date)
+  return activeVoyages.sort((a, b) => {
+    // Priorité 1 : Valeur numérique du champ 'order' (1 à N)
+    const rawA = a.order !== undefined ? a.order : a.ordre;
+    const rawB = b.order !== undefined ? b.order : b.ordre;
+    const numA = typeof rawA === 'number' && rawA > 0 ? rawA : Number(rawA);
+    const numB = typeof rawB === 'number' && rawB > 0 ? rawB : Number(rawB);
+
+    const ordA = Number.isFinite(numA) && numA > 0 ? numA : 999;
+    const ordB = Number.isFinite(numB) && numB > 0 ? numB : 999;
+
+    if (ordA !== ordB) {
+      return ordA - ordB;
+    }
+
+    // Priorité 2 : En cas d'égalité sur 'order', le voyage le plus récent passe AVANT l'ancien
+    const timeA = getVoyageTimestamp(a);
+    const timeB = getVoyageTimestamp(b);
+
+    return timeB - timeA;
+  });
+}
+
+/**
+ * Backwards compatible aliases
+ */
+export const sortVoyagesByOrder = sortVoyagesSmart;
+export const sortTripsByOrderSettings = sortVoyagesSmart;
+
+/**
+ * Dynamically loads the ordered list of trips from content/settings/order.json (if present)
  */
 export function getOrderItems(): string[] {
   try {
@@ -386,37 +474,7 @@ export function getOrderItems(): string[] {
   return [];
 }
 
-/**
- * Backwards compatible alias
- */
 export const getOrderSettings = getOrderItems;
-
-/**
- * Sorts any list of trips according to the index in content/settings/order.json:
- * Items not in order.json are positioned at the end (pos 999).
- */
-export function sortVoyagesByOrder(voyages: Trip[]): Trip[] {
-  const items = getOrderItems();
-  const sorted = [...voyages];
-
-  return sorted.sort((a, b) => {
-    const slugA = a.slug || a.id;
-    const slugB = b.slug || b.id;
-    const indexA = items.indexOf(slugA);
-    const indexB = items.indexOf(slugB);
-
-    // Si l'élément n'est pas encore dans order.json, le mettre à la fin
-    const posA = indexA === -1 ? 999 : indexA;
-    const posB = indexB === -1 ? 999 : indexB;
-
-    return posA - posB;
-  });
-}
-
-/**
- * Backwards compatible alias
- */
-export const sortTripsByOrderSettings = sortVoyagesByOrder;
 
 /**
  * Dynamically loads all voyages from Decap CMS content/voyages/*.{json,md}
@@ -450,9 +508,9 @@ export function loadCmsTrips(): Trip[] {
     return [];
   }
 
-  // 3. Use sortTripsByOrderSettings to sort all trips according to order-settings.json
+  // 3. Use sortVoyagesSmart to filter active and sort by order with automatic shift
   const rawTrips = loadedList.map(({ _fileIndex, ...rest }) => rest as Trip);
-  return sortTripsByOrderSettings(rawTrips);
+  return sortVoyagesSmart(rawTrips);
 }
 
 /**
