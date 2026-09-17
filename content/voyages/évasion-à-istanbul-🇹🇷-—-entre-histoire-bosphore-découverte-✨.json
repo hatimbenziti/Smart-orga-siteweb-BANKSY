@@ -38,5 +38,8 @@
     " Billet d’avion aller-retour avec Royal Air Maroc.",
     " Hébergement 7 nuits dans un hôtel 3 étoiles ou équivalent.",
     "Petits-déjeuners durant tout le séjour"
+  ],
+  "categories": [
+    "etranger"
   ]
 }

@@ -45,6 +45,7 @@ export interface CmsTripRaw {
   customDate?: string;
   custom_date?: string;
   nextDate?: string;
+  categories?: any;
   category?: string;
   popular?: boolean;
   isPopular?: boolean;
@@ -197,19 +198,63 @@ function normalizeTrip(data: CmsTripRaw, slug: string, defaultOrder: number): (T
         ? data.points_forts
         : ['Transport touristique climatisé grand confort', 'Hébergement de charme avec petit-déjeuner', 'Accompagnement professionnel Smart Orga']);
 
+  // Parse categories with retrocompatibility
+  const rawCategories = data.categories !== undefined
+    ? data.categories
+    : (data.category !== undefined ? data.category : []);
+
+  const parsedCategories: string[] = [];
+  const addCategory = (val: any) => {
+    if (!val) return;
+    if (typeof val === 'string') {
+      const clean = val.trim().toLowerCase();
+      if (clean && !parsedCategories.includes(clean)) {
+        parsedCategories.push(clean);
+      }
+    } else if (typeof val === 'object') {
+      // Decap CMS widget: list with field: { name: 'category' }
+      const itemVal = val.category || val.name || val.value || val.item || val.label;
+      if (itemVal && typeof itemVal === 'string') {
+        const clean = itemVal.trim().toLowerCase();
+        if (clean && !parsedCategories.includes(clean)) {
+          parsedCategories.push(clean);
+        }
+      }
+    }
+  };
+
+  if (Array.isArray(rawCategories)) {
+    rawCategories.forEach(addCategory);
+  } else if (typeof rawCategories === 'string') {
+    rawCategories.split(',').forEach(addCategory);
+  }
+
+  // Retrocompatibility if single category string was provided
+  if (data.category && typeof data.category === 'string') {
+    addCategory(data.category);
+  }
+
+  // If popular boolean flag is set, ensure 'populaire' is in categories
+  if (data.popular === true || data.isPopular === true) {
+    if (!parsedCategories.includes('populaire')) {
+      parsedCategories.push('populaire');
+    }
+  }
+
   const isPopular = data.popular !== undefined
     ? Boolean(data.popular)
-    : (data.isPopular !== undefined ? Boolean(data.isPopular) : (data.category === 'popular' || data.category === 'populaire'));
+    : (data.isPopular !== undefined ? Boolean(data.isPopular) : (parsedCategories.includes('populaire') || parsedCategories.includes('popular')));
 
   const isWeekly = data.isWeekly !== undefined
     ? Boolean(data.isWeekly)
-    : (data.category === 'weekly');
+    : (parsedCategories.includes('weekly'));
 
   const isUpcoming = data.isUpcoming !== undefined
     ? Boolean(data.isUpcoming)
-    : (data.category === 'upcoming');
+    : (parsedCategories.includes('upcoming'));
 
-  const category = (data.category as string) || (isPopular ? 'populaire' : 'all');
+  const category = parsedCategories[0] || (isPopular ? 'populaire' : 'all');
+  const categories = parsedCategories;
 
   const rawOrdre = data.order !== undefined ? data.order : data.ordre;
   const rawPriority = data.priority;
@@ -349,6 +394,7 @@ En cas d’annulation par l’organisateur, le montant total sera remboursé au 
     customDate,
     nextDate,
     category,
+    categories,
     isPopular,
     isWeekly,
     isUpcoming,

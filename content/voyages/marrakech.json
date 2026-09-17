@@ -22,5 +22,8 @@
     "zrezrezr",
     "erzrzrzer"
   ],
-  "category": "populaire"
+  "category": "populaire",
+  "categories": [
+    "populaire"
+  ]
 }

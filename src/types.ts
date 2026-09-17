@@ -40,7 +40,8 @@ export interface Trip {
   nextDate: string;
   nextDateAr?: string;
   nextDateEn?: string;
-  category: 'populaire' | 'nord' | 'sud' | 'atlas' | 'desert' | 'etranger' | 'popular' | 'weekly' | 'upcoming' | 'all' | string;
+  categories: string[];
+  category?: 'populaire' | 'nord' | 'sud' | 'atlas' | 'desert' | 'etranger' | 'popular' | 'weekly' | 'upcoming' | 'all' | string;
   isPopular?: boolean;
   isWeekly?: boolean;
   isUpcoming?: boolean;

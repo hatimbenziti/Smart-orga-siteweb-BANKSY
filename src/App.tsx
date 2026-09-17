@@ -89,59 +89,47 @@ export default function App() {
         return false;
       }
 
-      // 5. Category
+      // 5. Category (dynamic list match with retrocompatibility)
       if (filters.category !== 'all') {
         const selectedCat = filters.category.toLowerCase().trim();
-        const tripCat = (trip.category || '').toLowerCase().trim();
 
-        if (selectedCat === 'populaire' || selectedCat === 'popular') {
-          const isPop = tripCat === 'populaire' || tripCat === 'popular' || trip.isPopular || (trip as any).popular;
-          if (!isPop) return false;
-        } else if (selectedCat === 'nord') {
-          const isNord = tripCat === 'nord' ||
-            trip.destination.toLowerCase().includes('tanger') ||
-            trip.destination.toLowerCase().includes('tetouan') ||
-            trip.destination.toLowerCase().includes('belyounech') ||
-            trip.destination.toLowerCase().includes('chefchaouen') ||
-            trip.region.toLowerCase().includes('nord');
-          if (!isNord) return false;
-        } else if (selectedCat === 'sud') {
-          const isSud = tripCat === 'sud' ||
-            trip.destination.toLowerCase().includes('dakhla') ||
-            trip.destination.toLowerCase().includes('agadir') ||
-            trip.destination.toLowerCase().includes('taghazout') ||
-            trip.destination.toLowerCase().includes('sud');
-          if (!isSud) return false;
-        } else if (selectedCat === 'atlas') {
-          const isAtlas = tripCat === 'atlas' ||
-            trip.destination.toLowerCase().includes('atlas') ||
-            trip.destination.toLowerCase().includes('imlil') ||
-            trip.destination.toLowerCase().includes('toubkal') ||
-            trip.destination.toLowerCase().includes('ouzoud') ||
-            trip.destination.toLowerCase().includes('béni mellal') ||
-            trip.destination.toLowerCase().includes('marrakech');
-          if (!isAtlas) return false;
-        } else if (selectedCat === 'desert') {
-          const isDesert = tripCat === 'desert' ||
-            tripCat === 'désert' ||
-            trip.destination.toLowerCase().includes('merzouga') ||
-            trip.destination.toLowerCase().includes('désert') ||
-            trip.destination.toLowerCase().includes('desert') ||
-            trip.destination.toLowerCase().includes('zagora') ||
-            trip.destination.toLowerCase().includes('agafay') ||
-            trip.region.toLowerCase().includes('désert');
-          if (!isDesert) return false;
-        } else if (selectedCat === 'etranger') {
-          const isEtranger = tripCat === 'etranger' ||
-            tripCat === 'étranger' ||
-            trip.destination.toLowerCase().includes('istanbul') ||
-            trip.destination.toLowerCase().includes('turquie') ||
-            trip.destination.toLowerCase().includes('étranger');
-          if (!isEtranger) return false;
-        } else {
-          if (tripCat !== selectedCat) {
-            return false;
+        // Build the normalized list of categories for the trip
+        const tripCats: string[] = [];
+        if (Array.isArray(trip.categories)) {
+          trip.categories.forEach((c) => {
+            if (typeof c === 'string') tripCats.push(c.toLowerCase().trim());
+            else if (c && typeof c === 'object') {
+              const val = (c as any).category || (c as any).name || (c as any).value;
+              if (val) tripCats.push(String(val).toLowerCase().trim());
+            }
+          });
+        }
+        // Retrocompatibility if single category string was provided
+        if (trip.category && typeof trip.category === 'string') {
+          const catStr = trip.category.toLowerCase().trim();
+          if (catStr && !tripCats.includes(catStr)) {
+            tripCats.push(catStr);
           }
+        }
+        // If popular flag is true, also include 'populaire' and 'popular'
+        if (trip.isPopular || (trip as any).popular) {
+          if (!tripCats.includes('populaire')) tripCats.push('populaire');
+          if (!tripCats.includes('popular')) tripCats.push('popular');
+        }
+
+        const match =
+          selectedCat === 'all' ||
+          tripCats.includes(selectedCat) ||
+          ((selectedCat === 'populaire' || selectedCat === 'popular') && (tripCats.includes('populaire') || tripCats.includes('popular') || trip.isPopular || (trip as any).popular)) ||
+          // Fallback matching for voyages not yet re-saved in Decap CMS
+          (selectedCat === 'nord' && (trip.destination.toLowerCase().includes('tanger') || trip.destination.toLowerCase().includes('tetouan') || trip.destination.toLowerCase().includes('belyounech') || trip.destination.toLowerCase().includes('chefchaouen') || trip.region.toLowerCase().includes('nord'))) ||
+          (selectedCat === 'sud' && (trip.destination.toLowerCase().includes('dakhla') || trip.destination.toLowerCase().includes('agadir') || trip.destination.toLowerCase().includes('taghazout') || trip.destination.toLowerCase().includes('sud'))) ||
+          (selectedCat === 'atlas' && (trip.destination.toLowerCase().includes('atlas') || trip.destination.toLowerCase().includes('imlil') || trip.destination.toLowerCase().includes('toubkal') || trip.destination.toLowerCase().includes('ouzoud') || trip.destination.toLowerCase().includes('béni mellal') || trip.destination.toLowerCase().includes('marrakech'))) ||
+          (selectedCat === 'desert' && (tripCats.includes('désert') || trip.destination.toLowerCase().includes('merzouga') || trip.destination.toLowerCase().includes('désert') || trip.destination.toLowerCase().includes('zagora') || trip.destination.toLowerCase().includes('agafay') || trip.region.toLowerCase().includes('désert'))) ||
+          (selectedCat === 'etranger' && (tripCats.includes('étranger') || trip.destination.toLowerCase().includes('istanbul') || trip.destination.toLowerCase().includes('turquie') || trip.destination.toLowerCase().includes('étranger')));
+
+        if (!match) {
+          return false;
         }
       }
 
