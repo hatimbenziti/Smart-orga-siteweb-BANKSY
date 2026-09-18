@@ -8,7 +8,7 @@
     "-"
   ],
   "destination": "Tanger & Belyounech ",
-  "order": 4,
+  "order": 7,
   "cancellation_policy": "Politique d'annulation\nPour toute annulation effectuée plus de 15 jours avant la date du départ, le remboursement est total (100 %).\n\nPour toute annulation effectuée entre 7 et 15 jours avant le départ, un remboursement de 50 % du montant versé sera effectué.\n\nPour toute annulation ou réservation effectuée moins de 7 jours avant le départ, aucun remboursement ne sera possible.\n\nEn cas d’annulation par l’organisateur, le montant total sera remboursé au participant.",
   "duration": "4 jours / 2 nuits",
   "region": "Plage & Détente",
@@ -31,6 +31,9 @@
   "included": [
     "🚌 Transport en autocar touristique confortable 🏘️ Hébergement dans un hôtel le vendredi 🏘️ Hébergement dans un hôtel le samedi Petit-déjeuner du samedi Petit-déjeuner du dimanche 🎤 Encadrement et animation pendant tout le séjour"
   ],
+  "categories": [
+    "nord"
+  ],
   "departureCities": [
     "Casablanca",
     "rabat",
@@ -41,8 +44,5 @@
     "Plages de Belyounech & Cap Spartel",
     "Excursion en yacht à Marina Smir",
     "Cascades d’Akchour & Chefchaouen"
-  ],
-  "categories": [
-    "nord"
   ]
 }
