@@ -22,6 +22,19 @@ export function generateVoyagesMeta() {
   }
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(meta, null, 2), 'utf-8');
   console.log('Generated voyagesMeta.json for', Object.keys(meta).length, 'files');
+
+  // Keep public/content/settings/hero_mobile.json in sync with content/settings/hero_mobile.json
+  try {
+    const srcHero = path.resolve(process.cwd(), 'content/settings/hero_mobile.json');
+    const destHero = path.resolve(process.cwd(), 'public/content/settings/hero_mobile.json');
+    if (fs.existsSync(srcHero)) {
+      fs.mkdirSync(path.dirname(destHero), { recursive: true });
+      fs.copyFileSync(srcHero, destHero);
+      console.log('Synced hero_mobile.json to public/content/settings/');
+    }
+  } catch (err) {
+    console.warn('Could not sync hero_mobile.json to public:', err);
+  }
 }
 
 generateVoyagesMeta();

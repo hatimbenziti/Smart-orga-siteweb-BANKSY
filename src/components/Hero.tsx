@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { loadCmsSlides, HeroSlide, normalizeCmsImagePath } from '../data/sliderData';
 import { ChevronLeft, ChevronRight, Sparkles, Compass, Users, Award, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { getHeroMobileConfig, subscribeHeroMobile, HeroMobileConfig } from '../services/heroMobileService';
+import { getHeroMobileConfig, subscribeHeroMobile, refreshHeroMobileConfigFromRemote, HeroMobileConfig } from '../services/heroMobileService';
 
 export type { HeroSlide as HeroSlideItem };
 
@@ -21,6 +21,9 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   const [mobileConfig, setMobileConfig] = useState<HeroMobileConfig>(() => getHeroMobileConfig());
 
   useEffect(() => {
+    // Initial fetch in case settings file on server was updated via Decap CMS
+    refreshHeroMobileConfigFromRemote();
+
     const unsubscribe = subscribeHeroMobile((updated) => {
       setMobileConfig(updated);
     });
@@ -35,19 +38,19 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   // Active slide from Decap CMS collection
   const activeSlide = slides[currentSlide] || slides[0];
 
-  // Resolve the image coming from Decap CMS (Slider Hero collection or hero_mobile settings):
-  // 1. activeSlide.mobileImage (if set in Slider Hero collection)
-  // 2. activeSlide.image (hero.image from Slider Hero collection)
-  // 3. mobileConfig.image (from hero_mobile settings if enabled and set)
-  // 4. Fallback safe asset
-  const rawMobileImage = (
-    activeSlide?.mobileImage ||
-    activeSlide?.image ||
-    (mobileConfig.enabled ? mobileConfig.image : '') ||
-    '/assets/merzouga.png'
-  );
-  const mobileHeroImageUrl = normalizeCmsImagePath(rawMobileImage);
-  const hasMobileImage = Boolean(mobileHeroImageUrl);
+  // Mobile Hero Background Connection (Settings from Admin Dashboard: "Image Hero — Mobile")
+  // 1. Mobile Hero image
+  // 2. "Activer l'image sur mobile" (enabled)
+  // 3. Image position (position: 'center' | 'left' | 'right')
+  // 4. Overlay intensity (overlayOpacity: 0 à 90)
+  // 5. Brightness (brightness: 'normal' | 'dimmed' | 'dark')
+  //
+  // If "Activer l'image sur mobile" is OFF (or image is empty):
+  // → use the existing default Hero background.
+  // If it is ON and an image exists:
+  // → use the uploaded image as the mobile Hero background.
+  const hasMobileImage = Boolean(mobileConfig.enabled && mobileConfig.image && mobileConfig.image.trim() !== '');
+  const mobileHeroImageUrl = hasMobileImage ? normalizeCmsImagePath(mobileConfig.image) : '';
 
   const tags = [
     { label: t.regionNature, raw: 'Nature & Randonnée' },
@@ -190,7 +193,9 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                     type="button"
                     onClick={() => setCurrentSlide(idx)}
                     className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                      idx === currentSlide ? 'w-5 bg-white' : 'w-1.5 bg-white/40'
+                      idx === currentSlide 
+                        ? (hasMobileImage ? 'w-5 bg-white' : 'w-5 bg-blue-600') 
+                        : (hasMobileImage ? 'w-1.5 bg-white/40' : 'w-1.5 bg-slate-300')
                     }`}
                     aria-label={`Diapositive ${idx + 1}`}
                   />
