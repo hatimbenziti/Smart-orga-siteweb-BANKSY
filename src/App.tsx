@@ -13,6 +13,7 @@ import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { TripDetailsModal } from './components/TripDetailsModal';
 import { BookingModal } from './components/BookingModal';
 import { SurMesureModal } from './components/SurMesureModal';
+import { HeroMobileAdminModal } from './components/HeroMobileAdminModal';
 import { loadCmsTrips, sortVoyagesSmart } from './data/tripsData';
 import { Trip, FilterState } from './types';
 import { Compass, Sparkles, AlertCircle, RotateCcw, MessageCircle } from 'lucide-react';
@@ -33,6 +34,17 @@ export default function App() {
   const [selectedTripForDetails, setSelectedTripForDetails] = useState<Trip | null>(null);
   const [selectedTripForBooking, setSelectedTripForBooking] = useState<Trip | null>(null);
   const [isSurMesureOpen, setIsSurMesureOpen] = useState(false);
+  const [isHeroAdminOpen, setIsHeroAdminOpen] = useState(false);
+
+  // Check URL parameter for direct admin opening (?admin=hero)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('admin') === 'hero') {
+        setIsHeroAdminOpen(true);
+      }
+    }
+  }, []);
 
   // Filter state
   const initialFilterState: FilterState = {
@@ -325,6 +337,7 @@ export default function App() {
       <Footer
         onOpenSurMesure={() => setIsSurMesureOpen(true)}
         onSelectTag={handleSelectTag}
+        onOpenHeroAdmin={() => setIsHeroAdminOpen(true)}
       />
 
       {/* Floating WhatsApp Action Button */}
@@ -348,6 +361,11 @@ export default function App() {
       <SurMesureModal
         isOpen={isSurMesureOpen}
         onClose={() => setIsSurMesureOpen(false)}
+      />
+
+      <HeroMobileAdminModal
+        isOpen={isHeroAdminOpen}
+        onClose={() => setIsHeroAdminOpen(false)}
       />
     </div>
   );

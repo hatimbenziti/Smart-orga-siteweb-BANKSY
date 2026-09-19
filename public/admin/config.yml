@@ -199,3 +199,50 @@ collections:
               value_field: "{{slug}}"
               display_fields: ["title"]
 
+      # Réglage spécifique Image Hero Mobile (Uniquement smartphone < 768px)
+      - file: "content/settings/hero_mobile.json"
+        label: "Image Hero — Mobile"
+        name: "hero_mobile"
+        fields:
+          - label: "Image d'arrière-plan Mobile"
+            name: "image"
+            widget: "image"
+            default: "/assets/merzouga.png"
+            required: false
+            hint: "Image de fond affichée UNIQUEMENT sur mobile (smartphone < 768px). Ne modifie PAS la version ordinateur (Desktop) ni tablette."
+
+          - label: "Position de l'image"
+            name: "position"
+            widget: "select"
+            options:
+              - { label: "Centre (Center)", value: "center" }
+              - { label: "Gauche (Left)", value: "left" }
+              - { label: "Droite (Right)", value: "right" }
+            default: "center"
+            hint: "Cadrage de l'image sur l'écran du smartphone."
+
+          - label: "Intensité du voile d'assombrissement / Overlay (%)"
+            name: "overlayOpacity"
+            widget: "number"
+            value_type: "int"
+            min: 0
+            max: 90
+            default: 50
+            hint: "Pourcentage d'assombrissement transparent pour garantir la lisibilité parfaite du texte (recommandé: 40% à 60%)."
+
+          - label: "Ajustement de luminosité (Brightness)"
+            name: "brightness"
+            widget: "select"
+            options:
+              - { label: "Normale (100%)", value: "normal" }
+              - { label: "Légèrement assombrie (90%)", value: "dimmed" }
+              - { label: "Assombrie (75%)", value: "dark" }
+            default: "normal"
+            required: false
+
+          - label: "Activer l'image sur Mobile"
+            name: "enabled"
+            widget: "boolean"
+            default: true
+            hint: "Désactiver pour revenir au fond dégradé par défaut sans image."
+

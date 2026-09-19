@@ -106,6 +106,183 @@
       });
 
       CMS.registerPreviewTemplate('voyages', VoyagePreview);
+
+      // 3. Custom preview component for Image Hero — Mobile
+      var HeroMobilePreview = createClass({
+        render: function() {
+          var entry = this.props.entry;
+          var image = this.props.getAsset(entry.getIn(['data', 'image']));
+          var position = entry.getIn(['data', 'position']) || 'center';
+          var opacity = Number(entry.getIn(['data', 'overlayOpacity'])) || 50;
+          var brightness = entry.getIn(['data', 'brightness']) || 'normal';
+          var enabled = entry.getIn(['data', 'enabled']) !== false;
+          var imgSrc = image ? image.toString() : '/assets/merzouga.png';
+
+          var posStyle = 'center center';
+          if (position === 'left') posStyle = 'left center';
+          if (position === 'right') posStyle = 'right center';
+
+          var filterStyle = 'brightness(1)';
+          if (brightness === 'dimmed') filterStyle = 'brightness(0.9)';
+          if (brightness === 'dark') filterStyle = 'brightness(0.75)';
+
+          return h('div', {
+            style: {
+              padding: '24px',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              maxWidth: '420px',
+              margin: '0 auto'
+            }
+          },
+            h('div', {
+              style: {
+                background: '#0f172a',
+                color: '#38bdf8',
+                padding: '10px 14px',
+                borderRadius: '12px 12px 0 0',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }
+            },
+              h('span', null, '📱 Aperçu Hero Smartphone (< 768px)'),
+              h('span', { style: { color: '#94a3b8', fontSize: '10px' } }, 'Mobile Uniquement')
+            ),
+            h('div', {
+              style: {
+                position: 'relative',
+                width: '100%',
+                height: '480px',
+                borderRadius: '0 0 16px 16px',
+                overflow: 'hidden',
+                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3)',
+                border: '3px solid #1e293b',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                padding: '24px',
+                boxSizing: 'border-box'
+              }
+            },
+              // Background image
+              enabled ? h('img', {
+                src: imgSrc,
+                style: {
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: posStyle,
+                  filter: filterStyle,
+                  zIndex: 1
+                }
+              }) : null,
+              // Transparent gradient overlay
+              enabled ? h('div', {
+                style: {
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(15, 23, 42, ' + (opacity / 100) + ')',
+                  backgroundImage: 'linear-gradient(180deg, rgba(15, 23, 42, ' + ((opacity/100)*0.75) + ') 0%, rgba(15, 23, 42, ' + Math.min(0.92, (opacity/100)*1.15) + ') 100%)',
+                  zIndex: 2
+                }
+              }) : null,
+              // Content
+              h('div', {
+                style: {
+                  position: 'relative',
+                  zIndex: 3,
+                  color: '#ffffff'
+                }
+              },
+                h('div', {
+                  style: {
+                    display: 'inline-block',
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    color: '#1d4ed8',
+                    padding: '4px 12px',
+                    borderRadius: '9999px',
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    marginBottom: '14px',
+                    textTransform: 'uppercase'
+                  }
+                }, 'VOYAGEZ EN TOUTE QUIÉTUDE'),
+                h('h1', {
+                  style: {
+                    fontSize: '24px',
+                    fontWeight: '800',
+                    lineHeight: '1.25',
+                    margin: '0 0 18px 0',
+                    color: '#ffffff',
+                    textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                  }
+                },
+                  'Voyagez en groupe et ',
+                  h('span', { style: { color: '#60a5fa' } }, 'Créez des souvenirs'),
+                  ' avec Smart Orga'
+                ),
+                h('div', {
+                  style: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px'
+                  }
+                },
+                  h('div', {
+                    style: {
+                      background: '#2563eb',
+                      color: '#ffffff',
+                      padding: '12px',
+                      borderRadius: '10px',
+                      fontWeight: 'bold',
+                      fontSize: '13px',
+                      textAlign: 'center'
+                    }
+                  }, 'Découvrez nos séjours →'),
+                  h('div', {
+                    style: {
+                      background: 'rgba(255, 255, 255, 0.95)',
+                      color: '#0f172a',
+                      padding: '12px',
+                      borderRadius: '10px',
+                      fontWeight: 'bold',
+                      fontSize: '13px',
+                      textAlign: 'center'
+                    }
+                  }, '✨ Voyages Populaires')
+                )
+              )
+            ),
+            h('div', {
+              style: {
+                marginTop: '16px',
+                padding: '12px',
+                background: '#f8fafc',
+                borderRadius: '8px',
+                fontSize: '11px',
+                color: '#64748b',
+                lineHeight: '1.6',
+                border: '1px solid #e2e8f0'
+              }
+            },
+              h('div', null, h('strong', null, 'Position cadrage : '), position),
+              h('div', null, h('strong', null, 'Voile assombrissant (Overlay) : '), opacity + '%'),
+              h('div', null, h('strong', null, 'Luminosité : '), brightness),
+              h('div', { style: { color: '#059669', marginTop: '4px', fontWeight: 'bold' } }, '✓ N\'impacte ni la version Ordinateur ni la version Tablette.')
+            )
+          );
+        }
+      });
+
+      CMS.registerPreviewTemplate('hero_mobile', HeroMobilePreview);
     }
 
     // Observer to tag collection cards on dashboard so that archived entries get styled in real-time

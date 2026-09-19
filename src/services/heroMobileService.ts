@@ -1,0 +1,183 @@
+/**
+ * Service de gestion pour la configuration du Hero Mobile
+ * Supporte :
+ * 1. La lecture depuis /content/settings/hero_mobile.json (Decap CMS)
+ * 2. La persistance locale (localStorage) avec mise à jour en temps réel sans rechargement
+ * 3. Les actions : voir, charger, prévisualiser, remplacer, enregistrer, supprimer, rétablir par défaut
+ */
+
+export interface HeroMobileConfig {
+  image: string;
+  position: 'center' | 'left' | 'right';
+  overlayOpacity: number; // Valeur en pourcentage (0 à 90)
+  brightness: 'normal' | 'dimmed' | 'dark';
+  enabled: boolean;
+}
+
+export const DEFAULT_HERO_MOBILE_CONFIG: HeroMobileConfig = {
+  image: '/assets/merzouga.png',
+  position: 'center',
+  overlayOpacity: 50,
+  brightness: 'normal',
+  enabled: true
+};
+
+const STORAGE_KEY = 'smart_orga_hero_mobile_config';
+const EVENT_NAME = 'smart_orga_hero_mobile_change';
+
+/**
+ * Charge la configuration de base depuis /content/settings/hero_mobile.json
+ */
+function loadFileConfig(): Partial<HeroMobileConfig> | null {
+  try {
+    const modules = import.meta.glob<Record<string, any>>('/content/settings/hero_mobile.json', { eager: true });
+    for (const mod of Object.values(modules)) {
+      const data = ((mod as { default?: any }).default || mod) as any;
+      if (data && typeof data === 'object') {
+        return {
+          image: typeof data.image === 'string' ? data.image.trim() : undefined,
+          position: data.position === 'left' || data.position === 'right' ? data.position : 'center',
+          overlayOpacity: typeof data.overlayOpacity === 'number' ? Math.min(90, Math.max(0, data.overlayOpacity)) : undefined,
+          brightness: data.brightness === 'dimmed' || data.brightness === 'dark' ? data.brightness : 'normal',
+          enabled: typeof data.enabled === 'boolean' ? data.enabled : true
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('Could not load /content/settings/hero_mobile.json:', err);
+  }
+
+  // Fallback public folder
+  try {
+    const pubModules = import.meta.glob<Record<string, any>>('/public/content/settings/hero_mobile.json', { eager: true });
+    for (const mod of Object.values(pubModules)) {
+      const data = ((mod as { default?: any }).default || mod) as any;
+      if (data && typeof data === 'object') {
+        return {
+          image: typeof data.image === 'string' ? data.image.trim() : undefined,
+          position: data.position === 'left' || data.position === 'right' ? data.position : 'center',
+          overlayOpacity: typeof data.overlayOpacity === 'number' ? Math.min(90, Math.max(0, data.overlayOpacity)) : undefined,
+          brightness: data.brightness === 'dimmed' || data.brightness === 'dark' ? data.brightness : 'normal',
+          enabled: typeof data.enabled === 'boolean' ? data.enabled : true
+        };
+      }
+    }
+  } catch {}
+
+  return null;
+}
+
+/**
+ * Récupère la configuration actuelle active
+ */
+export function getHeroMobileConfig(): HeroMobileConfig {
+  const fileConfig = loadFileConfig() || {};
+  let localConfig: Partial<HeroMobileConfig> = {};
+
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        localConfig = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.warn('Erreur lecture localStorage hero mobile:', e);
+    }
+  }
+
+  return {
+    image: localConfig.image !== undefined ? localConfig.image : (fileConfig.image || DEFAULT_HERO_MOBILE_CONFIG.image),
+    position: localConfig.position || fileConfig.position || DEFAULT_HERO_MOBILE_CONFIG.position,
+    overlayOpacity: typeof localConfig.overlayOpacity === 'number'
+      ? localConfig.overlayOpacity
+      : (typeof fileConfig.overlayOpacity === 'number' ? fileConfig.overlayOpacity : DEFAULT_HERO_MOBILE_CONFIG.overlayOpacity),
+    brightness: localConfig.brightness || fileConfig.brightness || DEFAULT_HERO_MOBILE_CONFIG.brightness,
+    enabled: localConfig.enabled !== undefined
+      ? localConfig.enabled
+      : (fileConfig.enabled !== undefined ? fileConfig.enabled : DEFAULT_HERO_MOBILE_CONFIG.enabled)
+  };
+}
+
+/**
+ * Sauvegarde la configuration dans le stockage local et avertit les composants
+ */
+export function saveHeroMobileConfig(config: Partial<HeroMobileConfig>): HeroMobileConfig {
+  const current = getHeroMobileConfig();
+  const updated: HeroMobileConfig = {
+    ...current,
+    ...config,
+    overlayOpacity: typeof config.overlayOpacity === 'number' ? Math.min(90, Math.max(0, config.overlayOpacity)) : current.overlayOpacity
+  };
+
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: updated }));
+    } catch (e) {
+      console.error('Erreur sauvegarde localStorage hero mobile:', e);
+    }
+  }
+
+  return updated;
+}
+
+/**
+ * Rétablit l'image et les paramètres par défaut
+ */
+export function restoreDefaultHeroMobileConfig(): HeroMobileConfig {
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: DEFAULT_HERO_MOBILE_CONFIG }));
+    } catch (e) {
+      console.error('Erreur réinitialisation hero mobile:', e);
+    }
+  }
+  return { ...DEFAULT_HERO_MOBILE_CONFIG };
+}
+
+/**
+ * Supprime l'image personnalisée (désactive l'image ou la vide)
+ */
+export function deleteCustomHeroMobileImage(): HeroMobileConfig {
+  const updated: HeroMobileConfig = {
+    ...getHeroMobileConfig(),
+    image: '',
+    enabled: false
+  };
+
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: updated }));
+    } catch (e) {
+      console.error('Erreur suppression image hero mobile:', e);
+    }
+  }
+
+  return updated;
+}
+
+/**
+ * S'abonne aux changements de configuration du Hero mobile
+ */
+export function subscribeHeroMobile(callback: (config: HeroMobileConfig) => void): () => void {
+  if (typeof window === 'undefined') return () => {};
+
+  const handler = (e: Event) => {
+    const customEvent = e as CustomEvent<HeroMobileConfig>;
+    if (customEvent.detail) {
+      callback(customEvent.detail);
+    } else {
+      callback(getHeroMobileConfig());
+    }
+  };
+
+  window.addEventListener(EVENT_NAME, handler);
+  window.addEventListener('storage', handler);
+
+  return () => {
+    window.removeEventListener(EVENT_NAME, handler);
+    window.removeEventListener('storage', handler);
+  };
+}

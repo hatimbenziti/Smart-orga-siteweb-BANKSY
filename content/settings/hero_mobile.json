@@ -1,0 +1,7 @@
+{
+  "image": "/assets/merzouga.png",
+  "position": "center",
+  "overlayOpacity": 50,
+  "brightness": "normal",
+  "enabled": true
+}

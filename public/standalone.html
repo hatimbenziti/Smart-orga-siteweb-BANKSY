@@ -47,6 +47,25 @@
 
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    /* Mobile Hero Background (< 768px) */
+    @media (max-width: 767px) {
+      .mobile-hero-bg {
+        display: block !important;
+      }
+      .mobile-hero-title {
+        color: #ffffff !important;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      }
+      .mobile-hero-badge {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        color: #1d4ed8 !important;
+      }
+    }
+    @media (min-width: 768px) {
+      .mobile-hero-bg {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-[#F8FAFC] text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900">
@@ -94,16 +113,22 @@
 
   <!-- HERO SECTION -->
   <section class="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-[#F8FAFC] pt-8 pb-16 lg:pt-14 lg:pb-24">
+    <!-- Mobile Hero Background (< 768px only) -->
+    <div class="mobile-hero-bg hidden absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+      <img src="/assets/merzouga.png" alt="Mobile Hero Background" class="w-full h-full object-cover object-center">
+      <div class="absolute inset-0 bg-slate-950/50" style="background-image: linear-gradient(180deg, rgba(15,23,42,0.35) 0%, rgba(15,23,42,0.7) 100%);"></div>
+    </div>
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
         <!-- Left Content -->
         <div class="lg:col-span-7 space-y-7">
-          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs sm:text-sm font-bold tracking-wide uppercase">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs sm:text-sm font-bold tracking-wide uppercase mobile-hero-badge">
             <span class="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
             <span>• VOYAGEZ EN TOUTE QUIÉTUDE</span>
           </div>
 
-          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 tracking-tight leading-[1.15]">
+          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 tracking-tight leading-[1.15] mobile-hero-title">
             Voyagez en groupe <br class="hidden sm:inline">
             <span class="text-blue-600 inline-block">et Créez des souvenirs</span> avec Smart Orga
           </h1>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { loadCmsSlides, HeroSlide } from '../data/sliderData';
 import { ChevronLeft, ChevronRight, Sparkles, Compass, Users, Award, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { getHeroMobileConfig, subscribeHeroMobile, HeroMobileConfig } from '../services/heroMobileService';
 
 export type { HeroSlide as HeroSlideItem };
 
@@ -15,6 +16,18 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const { t, isRTL } = useLanguage();
+
+  // Mobile Hero Background configuration (ONLY for mobile < 768px, does not touch Desktop/Tablet)
+  const [mobileConfig, setMobileConfig] = useState<HeroMobileConfig>(() => getHeroMobileConfig());
+
+  useEffect(() => {
+    const unsubscribe = subscribeHeroMobile((updated) => {
+      setMobileConfig(updated);
+    });
+    return unsubscribe;
+  }, []);
+
+  const hasMobileImage = Boolean(mobileConfig.enabled && mobileConfig.image);
 
   // Load customizable slides dynamically from Decap CMS collection (content/slider/*.json)
   const slides = useMemo<HeroSlide[]>(() => {
@@ -48,10 +61,39 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-[#F8FAFC] pt-5 pb-3 sm:pt-8 sm:pb-16 lg:pt-14 lg:pb-24">
-      {/* Subtle background decoration */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl -z-10 pointer-events-none"></div>
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+    <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-[#F8FAFC] pt-6 pb-6 sm:pt-8 sm:pb-16 lg:pt-14 lg:pb-24">
+      {/* MOBILE HERO BACKGROUND IMAGE (ONLY on screens < 768px, strictly hidden on Tablet and Desktop) */}
+      {hasMobileImage && (
+        <div 
+          className="block md:hidden absolute inset-0 -z-10 overflow-hidden pointer-events-none"
+          aria-hidden="true"
+        >
+          <img
+            src={mobileConfig.image}
+            alt="Hero Mobile Background"
+            className={`w-full h-full object-cover transition-all duration-300 ${
+              mobileConfig.position === 'left' ? 'object-left' :
+              mobileConfig.position === 'right' ? 'object-right' : 'object-center'
+            } ${
+              mobileConfig.brightness === 'dimmed' ? 'brightness-90' :
+              mobileConfig.brightness === 'dark' ? 'brightness-75' : 'brightness-100'
+            }`}
+            referrerPolicy="no-referrer"
+          />
+          {/* Subtle transparent gradient/overlay on the mobile Hero background to keep the text readable */}
+          <div
+            className="absolute inset-0 transition-opacity duration-300"
+            style={{
+              backgroundColor: `rgba(15, 23, 42, ${mobileConfig.overlayOpacity / 100})`,
+              backgroundImage: `linear-gradient(180deg, rgba(15, 23, 42, ${Math.max(0.2, (mobileConfig.overlayOpacity / 100) * 0.7)}) 0%, rgba(15, 23, 42, ${Math.min(0.92, (mobileConfig.overlayOpacity / 100) * 1.15)}) 100%)`
+            }}
+          />
+        </div>
+      )}
+
+      {/* Subtle background decoration (Desktop & Tablet only) */}
+      <div className="hidden md:block absolute top-0 right-1/4 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+      <div className="hidden md:block absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
@@ -59,15 +101,27 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
           {/* Left Column: Text & CTAs */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-7">
             {/* Top Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs sm:text-sm font-bold tracking-wide uppercase shadow-xs">
+            <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase transition-all ${
+              hasMobileImage 
+                ? 'bg-white/95 md:bg-blue-50 border border-white/80 md:border-blue-200/80 text-blue-700 shadow-sm backdrop-blur-md' 
+                : 'bg-blue-50 border border-blue-200/80 text-blue-700 shadow-xs'
+            }`}>
               <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
               <span>{t.heroBadge}</span>
             </div>
 
             {/* Main Title */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 tracking-tight leading-[1.18]">
+            <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold tracking-tight leading-[1.18] transition-colors ${
+              hasMobileImage 
+                ? 'text-white md:text-slate-900 drop-shadow-md md:drop-shadow-none' 
+                : 'text-slate-900'
+            }`}>
               {t.heroTitlePrefix}{' '}
-              <span className="text-blue-600 inline-block drop-shadow-xs">
+              <span className={`inline-block drop-shadow-xs ${
+                hasMobileImage 
+                  ? 'text-blue-400 md:text-blue-600 drop-shadow-md md:drop-shadow-none' 
+                  : 'text-blue-600'
+              }`}>
                 {t.heroTitleHighlight}
               </span>{' '}
               {t.heroTitleSuffix}
@@ -90,12 +144,17 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
 
               <button
                 onClick={onPopularClick}
-                className="px-6 py-3 sm:py-3.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold text-sm sm:text-base shadow-xs hover:border-slate-300 transition-all flex items-center gap-2 cursor-pointer"
+                className={`px-6 py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center gap-2 cursor-pointer ${
+                  hasMobileImage
+                    ? 'bg-white/95 hover:bg-white text-slate-900 border border-white/80 shadow-md backdrop-blur-sm'
+                    : 'bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 shadow-xs hover:border-slate-300'
+                }`}
               >
                 <Sparkles className="w-4 h-4 text-amber-500" />
                 <span>{t.heroBtnPopular}</span>
               </button>
             </div>
+
 
             {/* Desktop Only Extra Details: Micro-stats & Explore by tags */}
             <div className="hidden md:block space-y-7">
