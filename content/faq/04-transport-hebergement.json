@@ -1,10 +1,10 @@
 {
   "question": "Le transport touristique et le logement sont-ils inclus ?",
-  "answer": "Absolument ! Tous nos séjours comprennent le transport en autocars ou minibus touristiques récents, tout confort et climatisés, ainsi que les nuitées en hôtels de charme ou bivouacs confortablement équipés avec douches chaudes.",
+  "answer": "Oui. Le transport touristique est inclus dans nos programmes.\nPour les voyages d’une durée de 2 jours ou plus, l’hébergement est également inclus, selon les conditions précisées dans chaque programme.\nLes repas et autres prestations dépendent de l’offre et sont indiqués dans le programme du voyage.",
   "order": 4,
   "category": "Transport & Hébergement",
-  "questionAr": "هل وسائل النقل والإقامات ذات جودة وضمانة ومشمولة بالكامل ؟",
-  "answerAr": "جميع حافلاتنا وسياراتنا السياحية مرخصة من وزارة السياحة وتخضع لمعايير صيانة دورية دقيقة ومزودة بتكييف شامل وتأمين للمسافرين. كما نقوم بفحص الفنادق والمخيمات الصحراوية شخصياً لضمان النظافة والراحة التامة.",
-  "questionEn": "Are the tourist transport and stays verified and included?",
-  "answerEn": "100% of our vehicles are fully licensed by the Moroccan Ministry of Tourism with comprehensive passenger liability insurance. Hotels and luxury desert camps are personally audited for hygiene, comfort, and hot water amenities."
+  "questionAr": "هل النقل السياحي والإقامة مشمولان في ثمن الرحلة؟",
+  "answerAr": "نعم، النقل السياحي مشمول في جميع برامجنا.\nوبالنسبة للرحلات التي تمتد لمدة يومين أو أكثر، فإن الإقامة تكون مشمولة حسب البرنامج.\nأما الوجبات والأكل، فتختلف حسب كل عرض ويتم توضيحها بالتفصيل في برنامج الرحلة.",
+  "questionEn": "Are transportation and accommodation included?",
+  "answerEn": "Yes. Tourist transportation is included in all our trip programs.\nFor trips lasting 2 days or more, accommodation is also included, according to the details specified in each program.\nMeals and other services depend on the specific offer and are clearly indicated in the trip program."
 }
