@@ -9,8 +9,8 @@ backend:
 local_backend: true
 
 # Configuration des dossiers médias
-media_folder: "public/images/uploads"
-public_folder: "/images/uploads"
+media_folder: "public/uploads"
+public_folder: "/uploads"
 
 # Localisation de l'interface
 locale: "fr"
@@ -136,7 +136,8 @@ collections:
       - { label: "Titre du Slide", name: "title", widget: "string", default: "Dakhla & La Dune Blanche" }
       - { label: "Badge / Tag (ex: SAHARA OCÉANIQUE)", name: "tag", widget: "string", default: "Sahara Océanique" }
       - { label: "Sous-titre / Description", name: "subtitle", widget: "string", default: "Lagon turquoise & aventure 4x4 sauvage" }
-      - { label: "Photo / Image du Slide", name: "image", widget: "image" }
+      - { label: "Photo / Image du Slide (Desktop & Mobile)", name: "image", widget: "image" }
+      - { label: "Photo / Image spécifique Mobile (optionnel)", name: "mobileImage", widget: "image", required: false, hint: "Optionnel : image spécifique affichée sur mobile à la place de l'image principale." }
       - { label: "Ordre d'affichage (1 = en premier)", name: "order", widget: "number", default: 1, value_type: "int" }
       - { label: "Lien ou Destination (optionnel)", name: "link", widget: "string", required: false }
 

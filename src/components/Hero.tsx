@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { loadCmsSlides, HeroSlide } from '../data/sliderData';
+import { loadCmsSlides, HeroSlide, normalizeCmsImagePath } from '../data/sliderData';
 import { ChevronLeft, ChevronRight, Sparkles, Compass, Users, Award, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getHeroMobileConfig, subscribeHeroMobile, HeroMobileConfig } from '../services/heroMobileService';
@@ -27,12 +27,27 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
     return unsubscribe;
   }, []);
 
-  const hasMobileImage = Boolean(mobileConfig.enabled && mobileConfig.image);
-
   // Load customizable slides dynamically from Decap CMS collection (content/slider/*.json)
   const slides = useMemo<HeroSlide[]>(() => {
     return loadCmsSlides();
   }, []);
+
+  // Active slide from Decap CMS collection
+  const activeSlide = slides[currentSlide] || slides[0];
+
+  // Resolve the image coming from Decap CMS (Slider Hero collection or hero_mobile settings):
+  // 1. activeSlide.mobileImage (if set in Slider Hero collection)
+  // 2. activeSlide.image (hero.image from Slider Hero collection)
+  // 3. mobileConfig.image (from hero_mobile settings if enabled and set)
+  // 4. Fallback safe asset
+  const rawMobileImage = (
+    activeSlide?.mobileImage ||
+    activeSlide?.image ||
+    (mobileConfig.enabled ? mobileConfig.image : '') ||
+    '/assets/merzouga.png'
+  );
+  const mobileHeroImageUrl = normalizeCmsImagePath(rawMobileImage);
+  const hasMobileImage = Boolean(mobileHeroImageUrl);
 
   const tags = [
     { label: t.regionNature, raw: 'Nature & Randonnée' },
@@ -69,23 +84,34 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
           aria-hidden="true"
         >
           <img
-            src={mobileConfig.image}
-            alt="Hero Mobile Background"
-            className={`w-full h-full object-cover transition-all duration-300 ${
+            src={mobileHeroImageUrl}
+            alt={activeSlide?.title || "Hero Mobile Background"}
+            className={`w-full h-full object-cover transition-all duration-500 ${
               mobileConfig.position === 'left' ? 'object-left' :
               mobileConfig.position === 'right' ? 'object-right' : 'object-center'
             } ${
               mobileConfig.brightness === 'dimmed' ? 'brightness-90' :
               mobileConfig.brightness === 'dark' ? 'brightness-75' : 'brightness-100'
             }`}
+            onError={(e) => {
+              const target = e.currentTarget;
+              // Fallback between /uploads/ and /images/uploads/ or to default asset
+              if (target.src.includes('/uploads/') && !target.src.includes('/images/uploads/')) {
+                target.src = target.src.replace('/uploads/', '/images/uploads/');
+              } else if (target.src.includes('/images/uploads/') && !target.src.includes('/uploads/')) {
+                target.src = target.src.replace('/images/uploads/', '/uploads/');
+              } else if (!target.src.includes('/assets/merzouga.png')) {
+                target.src = '/assets/merzouga.png';
+              }
+            }}
             referrerPolicy="no-referrer"
           />
           {/* Subtle transparent gradient/overlay on the mobile Hero background to keep the text readable */}
           <div
-            className="absolute inset-0 transition-opacity duration-300"
+            className="absolute inset-0 transition-opacity duration-300 pointer-events-none"
             style={{
-              backgroundColor: `rgba(15, 23, 42, ${mobileConfig.overlayOpacity / 100})`,
-              backgroundImage: `linear-gradient(180deg, rgba(15, 23, 42, ${Math.max(0.2, (mobileConfig.overlayOpacity / 100) * 0.7)}) 0%, rgba(15, 23, 42, ${Math.min(0.92, (mobileConfig.overlayOpacity / 100) * 1.15)}) 100%)`
+              backgroundColor: `rgba(15, 23, 42, ${(mobileConfig.overlayOpacity || 50) / 100})`,
+              backgroundImage: `linear-gradient(180deg, rgba(15, 23, 42, ${Math.max(0.25, ((mobileConfig.overlayOpacity || 50) / 100) * 0.75)}) 0%, rgba(15, 23, 42, ${Math.min(0.92, ((mobileConfig.overlayOpacity || 50) / 100) * 1.25)}) 100%)`
             }}
           />
         </div>
@@ -155,6 +181,22 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
               </button>
             </div>
 
+            {/* Mobile Carousel Indicators (when multiple slides exist in CMS) */}
+            {slides.length > 1 && (
+              <div className="flex md:hidden items-center gap-1.5 pt-1">
+                {slides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setCurrentSlide(idx)}
+                    className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                      idx === currentSlide ? 'w-5 bg-white' : 'w-1.5 bg-white/40'
+                    }`}
+                    aria-label={`Diapositive ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            )}
 
             {/* Desktop Only Extra Details: Micro-stats & Explore by tags */}
             <div className="hidden md:block space-y-7">
@@ -230,6 +272,14 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                     src={slide.image}
                     alt={slide.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (target.src.includes('/uploads/') && !target.src.includes('/images/uploads/')) {
+                        target.src = target.src.replace('/uploads/', '/images/uploads/');
+                      } else if (target.src.includes('/images/uploads/') && !target.src.includes('/uploads/')) {
+                        target.src = target.src.replace('/images/uploads/', '/uploads/');
+                      }
+                    }}
                     referrerPolicy="no-referrer"
                   />
                   {/* Subtle dark gradient overlay for text readability */}

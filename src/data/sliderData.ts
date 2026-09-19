@@ -9,6 +9,7 @@ export interface HeroSlide {
   tag: string;
   subtitle: string;
   image: string;
+  mobileImage?: string;
   order: number;
   link?: string;
 }
@@ -21,11 +22,46 @@ interface CmsSlideRaw {
   subtitle?: string;
   description?: string;
   image?: string;
+  mobileImage?: string;
+  mobile_image?: string;
+  image_mobile?: string;
   photo?: string;
   imageUrl?: string;
   order?: number | string;
   link?: string;
   url?: string;
+}
+
+/**
+ * Normalizes image paths coming from Decap CMS or JSON files.
+ * Handles relative paths, public folder prefixes, and ensures clean absolute web paths.
+ */
+export function normalizeCmsImagePath(src?: string | null): string {
+  if (!src) return '';
+  let clean = String(src).trim();
+  if (!clean) return '';
+
+  // Return external URLs, data URLs or protocol-relative URLs as-is
+  if (/^(https?:\/\/|data:|\/\/)/i.test(clean)) {
+    return clean;
+  }
+
+  // Remove relative traversal prefixes: ./, ../, /../, etc.
+  clean = clean.replace(/^(\.\.?\/)+/, '');
+
+  // Strip public/ or /public/ prefix
+  if (clean.startsWith('public/')) {
+    clean = clean.slice('public/'.length);
+  } else if (clean.startsWith('/public/')) {
+    clean = clean.slice('/public/'.length);
+  }
+
+  // Ensure single leading slash
+  if (!clean.startsWith('/')) {
+    clean = '/' + clean;
+  }
+
+  return clean;
 }
 
 const DEFAULT_SLIDES: HeroSlide[] = [
@@ -100,7 +136,10 @@ export function loadCmsSlides(): HeroSlide[] {
       const title = (data.title || '').trim() || 'Séjour Découverte';
       const tag = (data.tag || data.univers || data.badge || '').trim() || 'Maroc Authentique';
       const subtitle = (data.subtitle || data.description || '').trim();
-      const image = (data.image || data.photo || data.imageUrl || '').trim();
+      const rawImage = (data.image || data.photo || data.imageUrl || '').trim();
+      const rawMobileImage = (data.mobileImage || (data as any).mobile_image || (data as any).image_mobile || '').trim();
+      const image = normalizeCmsImagePath(rawImage);
+      const mobileImage = rawMobileImage ? normalizeCmsImagePath(rawMobileImage) : undefined;
       const order = typeof data.order === 'number' ? data.order : Number(data.order) || idx + 1;
       const link = (data.link || data.url || '').trim() || undefined;
 
@@ -111,6 +150,7 @@ export function loadCmsSlides(): HeroSlide[] {
           tag,
           subtitle,
           image: image || DEFAULT_SLIDES[idx % DEFAULT_SLIDES.length].image,
+          mobileImage,
           order,
           link
         });
@@ -133,7 +173,10 @@ export function loadCmsSlides(): HeroSlide[] {
       const title = (data.title || '').trim() || 'Séjour Découverte';
       const tag = (data.tag || data.univers || data.badge || '').trim() || 'Maroc Authentique';
       const subtitle = (data.subtitle || data.description || '').trim();
-      const image = (data.image || data.photo || data.imageUrl || '').trim();
+      const rawImage = (data.image || data.photo || data.imageUrl || '').trim();
+      const rawMobileImage = (data.mobileImage || (data as any).mobile_image || (data as any).image_mobile || '').trim();
+      const image = normalizeCmsImagePath(rawImage);
+      const mobileImage = rawMobileImage ? normalizeCmsImagePath(rawMobileImage) : undefined;
       const order = typeof data.order === 'number' ? data.order : Number(data.order) || idx + 1;
       const link = (data.link || data.url || '').trim() || undefined;
 
@@ -144,6 +187,7 @@ export function loadCmsSlides(): HeroSlide[] {
           tag,
           subtitle,
           image: image || DEFAULT_SLIDES[idx % DEFAULT_SLIDES.length].image,
+          mobileImage,
           order,
           link
         });
@@ -170,7 +214,10 @@ export function loadCmsSlides(): HeroSlide[] {
       const title = (data.title || '').trim() || 'Séjour Découverte';
       const tag = (data.tag || data.univers || data.badge || '').trim() || 'Maroc Authentique';
       const subtitle = (data.subtitle || data.description || '').trim();
-      const image = (data.image || data.photo || data.imageUrl || '').trim();
+      const rawImage = (data.image || data.photo || data.imageUrl || '').trim();
+      const rawMobileImage = (data.mobileImage || (data as any).mobile_image || (data as any).image_mobile || '').trim();
+      const image = normalizeCmsImagePath(rawImage);
+      const mobileImage = rawMobileImage ? normalizeCmsImagePath(rawMobileImage) : undefined;
       const order = typeof data.order === 'number' ? data.order : Number(data.order) || idx + 10;
       const link = (data.link || data.url || '').trim() || undefined;
 
@@ -181,6 +228,7 @@ export function loadCmsSlides(): HeroSlide[] {
           tag,
           subtitle,
           image: image || DEFAULT_SLIDES[idx % DEFAULT_SLIDES.length].image,
+          mobileImage,
           order,
           link
         });

@@ -6,6 +6,8 @@
  * 3. Les actions : voir, charger, prévisualiser, remplacer, enregistrer, supprimer, rétablir par défaut
  */
 
+import { normalizeCmsImagePath } from '../data/sliderData';
+
 export interface HeroMobileConfig {
   image: string;
   position: 'center' | 'left' | 'right';
@@ -35,7 +37,7 @@ function loadFileConfig(): Partial<HeroMobileConfig> | null {
       const data = ((mod as { default?: any }).default || mod) as any;
       if (data && typeof data === 'object') {
         return {
-          image: typeof data.image === 'string' ? data.image.trim() : undefined,
+          image: typeof data.image === 'string' ? normalizeCmsImagePath(data.image) : undefined,
           position: data.position === 'left' || data.position === 'right' ? data.position : 'center',
           overlayOpacity: typeof data.overlayOpacity === 'number' ? Math.min(90, Math.max(0, data.overlayOpacity)) : undefined,
           brightness: data.brightness === 'dimmed' || data.brightness === 'dark' ? data.brightness : 'normal',
@@ -54,7 +56,7 @@ function loadFileConfig(): Partial<HeroMobileConfig> | null {
       const data = ((mod as { default?: any }).default || mod) as any;
       if (data && typeof data === 'object') {
         return {
-          image: typeof data.image === 'string' ? data.image.trim() : undefined,
+          image: typeof data.image === 'string' ? normalizeCmsImagePath(data.image) : undefined,
           position: data.position === 'left' || data.position === 'right' ? data.position : 'center',
           overlayOpacity: typeof data.overlayOpacity === 'number' ? Math.min(90, Math.max(0, data.overlayOpacity)) : undefined,
           brightness: data.brightness === 'dimmed' || data.brightness === 'dark' ? data.brightness : 'normal',
