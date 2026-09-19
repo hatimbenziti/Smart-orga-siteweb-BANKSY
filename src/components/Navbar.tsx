@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, Menu, X, Phone, CalendarCheck, MapPin, ChevronDown, Check } from 'lucide-react';
-import { WHATSAPP_DISPLAY } from '../data/tripsData';
+import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER, WHATSAPP_DISPLAY_2, WHATSAPP_NUMBER_2 } from '../data/tripsData';
 import { createGeneralWhatsAppUrl } from '../utils/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
 import { Language } from '../types';
@@ -70,15 +70,29 @@ export const Navbar: React.FC<NavbarProps> = () => {
             </span>
           </div>
 
-          <a
-            href={createGeneralWhatsAppUrl(undefined, language)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-slate-600 hover:text-emerald-700 transition-colors font-medium"
-          >
-            <Phone className="w-3 h-3 text-emerald-600" />
-            <span>{t.topWhatsApp} : <strong className="text-slate-900 font-bold">{WHATSAPP_DISPLAY}</strong></span>
-          </a>
+          <div className="flex items-center gap-1.5 text-slate-600 font-medium text-xs sm:text-sm">
+            <Phone className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span>{t.topWhatsApp.replace(/\s*:\s*$/, '')} :</span>
+            <span className="inline-flex items-center gap-1.5 font-bold text-slate-900">
+              <a
+                href={createGeneralWhatsAppUrl(undefined, language, WHATSAPP_NUMBER)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-emerald-700 transition-colors"
+              >
+                {WHATSAPP_DISPLAY}
+              </a>
+              <span className="text-slate-300 font-normal">/</span>
+              <a
+                href={createGeneralWhatsAppUrl(undefined, language, WHATSAPP_NUMBER_2)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-emerald-700 transition-colors"
+              >
+                {WHATSAPP_DISPLAY_2}
+              </a>
+            </span>
+          </div>
         </div>
       </div>
 
@@ -314,15 +328,26 @@ export const Navbar: React.FC<NavbarProps> = () => {
               </div>
             </div>
 
-            <a
-              href={createGeneralWhatsAppUrl(undefined, language)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-sm"
-            >
-              <MessageCircle className="w-4 h-4 fill-current" />
-              <span>{t.ctaWhatsApp} ({WHATSAPP_DISPLAY})</span>
-            </a>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <a
+                href={createGeneralWhatsAppUrl(undefined, language, WHATSAPP_NUMBER)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm shadow-sm"
+              >
+                <MessageCircle className="w-4 h-4 fill-current" />
+                <span>{t.ctaWhatsApp} ({WHATSAPP_DISPLAY})</span>
+              </a>
+              <a
+                href={createGeneralWhatsAppUrl(undefined, language, WHATSAPP_NUMBER_2)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs sm:text-sm shadow-sm"
+              >
+                <MessageCircle className="w-4 h-4 fill-current" />
+                <span>WhatsApp ({WHATSAPP_DISPLAY_2})</span>
+              </a>
+            </div>
           </div>
         </div>
       )}

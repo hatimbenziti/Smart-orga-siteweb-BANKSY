@@ -679,7 +679,11 @@ export function loadCmsFaq(): FAQItem[] {
  */
 export const FAQ_DATA: FAQItem[] = loadCmsFaq();
 
-export const WHATSAPP_NUMBER = '212690060366'; // Format international marocain (+212 690-060366)
-export const WHATSAPP_DISPLAY = '+212 690-060366';
+export const WHATSAPP_NUMBER = '212663400968'; // Numéro pour réservations & fiches voyages (+212 663-400968)
+export const WHATSAPP_DISPLAY = '+212 663-400968';
+export const WHATSAPP_FLOATING_NUMBER = '212690060366'; // Numéro dédié au bouton flottant en bas à droite (+212 690-060366)
+export const WHATSAPP_FLOATING_DISPLAY = '+212 690-060366';
+export const WHATSAPP_NUMBER_2 = '212690060366'; // Second numéro d'assistance
+export const WHATSAPP_DISPLAY_2 = '+212 690-060366';
 export const AGENCY_EMAIL = 'smartorga.travel@gmail.com';
 export const AGENCY_ADDRESS = 'Casablanca / Rabat, Maroc';

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MessageCircle, X } from 'lucide-react';
+import { WHATSAPP_FLOATING_NUMBER } from '../data/tripsData';
 import { createGeneralWhatsAppUrl } from '../utils/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -31,7 +32,7 @@ export const FloatingWhatsApp: React.FC = () => {
 
       {/* Floating Action Button */}
       <a
-        href={createGeneralWhatsAppUrl(undefined, language)}
+        href={createGeneralWhatsAppUrl(undefined, language, WHATSAPP_FLOATING_NUMBER)}
         target="_blank"
         rel="noopener noreferrer"
         className="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 hover:scale-105 active:scale-95 transition-all duration-200 group relative cursor-pointer"

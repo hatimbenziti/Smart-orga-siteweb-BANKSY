@@ -5,7 +5,7 @@ export const TRANSLATIONS = {
     // Top banner
     topAgency: "Départs Garantis de Casablanca & Rabat",
     topRegions: "Maroc : Désert, Plages, Montagnes & Cités Impériales",
-    topWhatsApp: "Assistance WhatsApp :",
+    topWhatsApp: "Assistance WhatsApp",
     
     // Navbar
     navSejours: "Nos Séjours",
@@ -230,7 +230,7 @@ export const TRANSLATIONS = {
     // Top banner
     topAgency: "انطلاقات مضمونة من الدار البيضاء والرباط",
     topRegions: "المغرب: الصحراء، الشواطئ، الجبال والمدن العريقة",
-    topWhatsApp: "المساعدة عبر واتساب:",
+    topWhatsApp: "المساعدة عبر واتساب",
 
     // Navbar
     navSejours: "رحلاتنا المنظمة",
@@ -455,7 +455,7 @@ export const TRANSLATIONS = {
     // Top banner
     topAgency: "Guaranteed Departures from Casablanca & Rabat",
     topRegions: "Morocco: Desert, Beaches, Mountains & Imperial Cities",
-    topWhatsApp: "WhatsApp Support:",
+    topWhatsApp: "WhatsApp Support",
 
     // Navbar
     navSejours: "Our Trips",

@@ -109,7 +109,7 @@ Merci de m'indiquer la marche à suivre pour l'acompte et l'organisation du dép
 /**
  * Builds WhatsApp URL for general inquiry / custom trip
  */
-export function createGeneralWhatsAppUrl(subject?: string, lang: Language = 'fr'): string {
+export function createGeneralWhatsAppUrl(subject?: string, lang: Language = 'fr', phoneNumber: string = WHATSAPP_NUMBER): string {
   let text = '';
   if (lang === 'ar') {
     text = subject
@@ -125,7 +125,7 @@ export function createGeneralWhatsAppUrl(subject?: string, lang: Language = 'fr'
       : `Bonjour Smart Orga ! Je cherche des renseignements pour un voyage organisé au Maroc. Pourriez-vous me renseigner sur vos prochains départs ?`;
   }
 
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+  return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
 }
 
 /**

@@ -1,6 +1,6 @@
 import React from 'react';
 import { MessageCircle, Mail, MapPin, Instagram, Facebook, ShieldCheck } from 'lucide-react';
-import { WHATSAPP_DISPLAY, AGENCY_EMAIL, AGENCY_ADDRESS } from '../data/tripsData';
+import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER, WHATSAPP_DISPLAY_2, WHATSAPP_NUMBER_2, AGENCY_EMAIL, AGENCY_ADDRESS } from '../data/tripsData';
 import { createGeneralWhatsAppUrl } from '../utils/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -204,14 +204,24 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTag }) => {
                   <span className="text-slate-900 font-semibold block">
                     {language === 'ar' ? 'دعم واتساب' : 'Support WhatsApp'}
                   </span>
-                  <a
-                    href={createGeneralWhatsAppUrl(undefined, language)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-emerald-600 transition-colors font-medium text-slate-800"
-                  >
-                    {WHATSAPP_DISPLAY}
-                  </a>
+                  <div className="flex flex-col gap-0.5">
+                    <a
+                      href={createGeneralWhatsAppUrl(undefined, language, WHATSAPP_NUMBER)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-emerald-600 transition-colors font-medium text-slate-800"
+                    >
+                      {WHATSAPP_DISPLAY}
+                    </a>
+                    <a
+                      href={createGeneralWhatsAppUrl(undefined, language, WHATSAPP_NUMBER_2)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-emerald-600 transition-colors font-medium text-slate-800"
+                    >
+                      {WHATSAPP_DISPLAY_2}
+                    </a>
+                  </div>
                 </div>
               </li>
               <li className="flex items-start gap-2.5">
