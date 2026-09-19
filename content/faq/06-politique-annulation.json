@@ -1,10 +1,10 @@
 {
   "question": "Que se passe-t-il en cas d'imprévu ou d'annulation ?",
-  "answer": "Si vous nous prévenez au moins 7 jours avant la date du départ, votre acompte est soit remboursé intégralement (hors frais bancaires), soit reporté sans aucuns frais sur un voyage ultérieur de votre choix valable pendant 12 mois.",
+  "answer": "En cas d’annulation du voyage par Smart Orga, notamment en raison de circonstances imprévues ou urgentes, l’intégralité des sommes versées par le client est remboursée.",
   "order": 6,
   "category": "Réservation",
-  "questionAr": "ما هي الشروط في حال الرغبة في إلغاء الحجز ؟",
-  "answerAr": "يمكنكم الإلغاء واسترداد العربون كاملاً حتى 5 إلى 7 أيام قبل موعد الانطلاق. في حال الإلغاء بين 48 و72 ساعة، يمكنكم ترحيل العربون إلى رحلة أخرى من اختياركم في غضون 6 إلى 12 شهراً.",
-  "questionEn": "What is the cancellation and refund policy?",
+  "questionAr": "ماذا يحدث في حالة وقوع ظرف طارئ أو إلغاء الرحلة؟",
+  "answerAr": "في حالة إلغاء الرحلة من طرف Smart Orga بسبب ظروف طارئة أو غير متوقعة، يتم إرجاع المبلغ الذي دفعه الزبون بالكامل.",
+  "questionEn": "What happens in case of an emergency or trip cancellation?",
   "answerEn": "Free cancellation with a full refund of your deposit is available up to 7 days before departure. Between 48 and 72 hours prior, your deposit can be rolled over to any future trip within 12 months."
 }
