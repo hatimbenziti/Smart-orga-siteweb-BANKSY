@@ -52,6 +52,15 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   const hasMobileImage = Boolean(mobileConfig.enabled && mobileConfig.image && mobileConfig.image.trim() !== '');
   const mobileHeroImageUrl = hasMobileImage ? normalizeCmsImagePath(mobileConfig.image) : '';
 
+  // 1. IMPRESSION ET VÉRIFICATION DE LA DATA (Console Log)
+  console.log('[Hero Component] Data verification:', {
+    mobileConfig,
+    activeSlide,
+    mobileHeroImageUrl,
+    hasMobileImage,
+    currentSlideImage: activeSlide?.image
+  });
+
   const tags = [
     { label: t.regionNature, raw: 'Nature & Randonnée' },
     { label: t.regionDesert, raw: 'Désert & Aventure' },
