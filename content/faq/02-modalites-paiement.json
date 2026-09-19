@@ -1,10 +1,10 @@
 {
   "question": "Quelles sont les modalités de paiement des arrhes ?",
-  "answer": "Pour garantir votre place dans le groupe, un acompte de 30% à 50% est demandé par virement bancaire sécurisé (Attijariwafa, CIH Bank, BCP) ou versement en agence. Le reliquat est réglé en espèces ou virement le jour du départ.",
+  "answer": "Pour confirmer votre réservation, un acompte de 50 % du montant total du voyage est demandé.\nLe solde de 50 % est réglé le jour du départ, au moment de monter dans le bus.",
   "order": 2,
   "category": "Réservation",
-  "questionAr": "ما هي شروط وطرق دفع العربون وتأكيد الحجز ؟",
-  "answerAr": "لتأكيد حجز مقعدكم مع المجموعة، يتم دفع تسبيق يتراوح بين 30% و50% عبر تحويل بنكي آمن (التجاري وفا بنك، بنك CIH، البنك الشعبي) أو إيداع مباشر. ويتم أداء المبلغ المتبقي نقداً أو بتحويل يوم الانطلاق.",
-  "questionEn": "What are the deposit and payment terms?",
-  "answerEn": "To secure your seat in the tour group, a 30% to 50% deposit is required via secure bank transfer (Attijariwafa, CIH Bank, BCP) or branch deposit. The remaining balance is paid in cash or transfer on departure day."
+  "questionAr": "ما هي طريقة الدفع لتأكيد الحجز؟",
+  "answerAr": "لتأكيد الحجز، يتم دفع تسبيق بنسبة 50% من المبلغ الإجمالي للرحلة.\nأما المبلغ المتبقي، فيتم دفعه يوم الرحلة عند الصعود إلى الحافلة.",
+  "questionEn": "What are the payment terms for booking?",
+  "answerEn": "To confirm your booking, a 50% deposit of the total trip price is required.\nThe remaining 50% is paid on the day of the trip when boarding the bus."
 }
