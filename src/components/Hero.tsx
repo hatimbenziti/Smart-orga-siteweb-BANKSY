@@ -52,6 +52,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
     : (normalizedMobileUrl?.startsWith('/uploads') ? `/images${normalizedMobileUrl}` : normalizedMobileUrl);
 
   const heroDesktopImage = activeSlide?.image ? normalizeCmsImagePath(activeSlide.image) : heroMobileImage;
+  const hasMobileHero = Boolean(mobileConfig.enabled !== false && heroMobileImage && heroMobileImage.trim() !== '');
 
   const tags = [
     { label: t.regionNature, raw: 'Nature & Randonnée' },
@@ -62,9 +63,12 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
     { label: t.regionCulture, raw: 'Culture & Patrimoine' }
   ];
 
-  // Auto carousel effect
+  // Auto carousel effect (Desktop/Tablet only: inactive on mobile devices < 768px)
   useEffect(() => {
     if (isPaused || slides.length <= 1) return;
+    // Do not auto-animate slides on mobile screens
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
+
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 4500);
@@ -85,19 +89,56 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
       <div className="hidden md:block absolute top-0 right-1/4 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl -z-10 pointer-events-none"></div>
       <div className="hidden md:block absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Background Hero Mobile (< 768px) identique à la capture d'écran */}
+      {hasMobileHero && (
+        <div className="block md:hidden absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+          <img
+            src={heroMobileImage}
+            alt={activeSlide?.title || "Hero Mobile Background"}
+            className={`w-full h-full object-cover transition-all duration-300 ${
+              mobileConfig.position === 'left' ? 'object-left' :
+              mobileConfig.position === 'right' ? 'object-right' : 'object-center'
+            } ${
+              mobileConfig.brightness === 'dimmed' ? 'brightness-95' :
+              mobileConfig.brightness === 'dark' ? 'brightness-90' : 'brightness-100'
+            }`}
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (target.src.includes('/uploads/') && !target.src.includes('/images/uploads/')) {
+                target.src = target.src.replace('/uploads/', '/images/uploads/');
+              } else if (target.src.includes('/images/uploads/') && !target.src.includes('/uploads/')) {
+                target.src = target.src.replace('/images/uploads/', '/uploads/');
+              } else if (!target.src.includes('/assets/merzouga.png')) {
+                target.src = '/assets/merzouga.png';
+              }
+            }}
+            referrerPolicy="no-referrer"
+          />
+          {/* Dégradé doux blanc/transparent en haut à gauche pour garantir la lisibilité parfaite du titre */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/70 to-transparent sm:via-white/50 pointer-events-none" />
+          {/* Overlay personnalisé si configuré */}
+          {mobileConfig.overlayOpacity > 0 && (
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{ backgroundColor: `rgba(255, 255, 255, ${Math.min(0.4, (mobileConfig.overlayOpacity / 100) * 0.35)})` }}
+            />
+          )}
+        </div>
+      )}
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
           {/* 1. Zone Texte (Left Column on Desktop, Top Column on Mobile) */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             {/* Top Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase bg-blue-50 border border-blue-200/80 text-blue-700 shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase bg-blue-50/90 backdrop-blur-xs border border-blue-200/80 text-blue-700 shadow-xs">
               <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
               <span>{t.heroBadge}</span>
             </div>
 
             {/* 1. Titre principal ("Voyagez en groupe...") */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 tracking-tight leading-[1.18]">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 tracking-tight leading-[1.18] max-w-xl">
               {t.heroTitlePrefix}{' '}
               <span className="inline-block text-blue-600">
                 {t.heroTitleHighlight}
@@ -105,48 +146,13 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
               {t.heroTitleSuffix}
             </h1>
 
-            {/* 2. IMAGE HERO MOBILE (Affichée uniquement sur Mobile < 768px, sous le titre et au-dessus des boutons) */}
-            {mobileConfig.enabled !== false && heroMobileImage && (
-              <div className="block md:hidden my-4 w-full overflow-hidden rounded-xl shadow-md border border-slate-100 relative group aspect-[16/10]">
-                <img
-                  src={heroMobileImage}
-                  alt={activeSlide?.title || "Hero Mobile"}
-                  className={`w-full h-full object-cover transition-all duration-300 ${
-                    mobileConfig.position === 'left' ? 'object-left' :
-                    mobileConfig.position === 'right' ? 'object-right' : 'object-center'
-                  } ${
-                    mobileConfig.brightness === 'dimmed' ? 'brightness-90' :
-                    mobileConfig.brightness === 'dark' ? 'brightness-75' : 'brightness-100'
-                  }`}
-                  onError={(e) => {
-                    const target = e.currentTarget;
-                    if (target.src.includes('/uploads/') && !target.src.includes('/images/uploads/')) {
-                      target.src = target.src.replace('/uploads/', '/images/uploads/');
-                    } else if (target.src.includes('/images/uploads/') && !target.src.includes('/uploads/')) {
-                      target.src = target.src.replace('/images/uploads/', '/uploads/');
-                    } else if (!target.src.includes('/assets/merzouga.png')) {
-                      target.src = '/assets/merzouga.png';
-                    }
-                  }}
-                  referrerPolicy="no-referrer"
-                />
-                {/* Overlay discret si activé dans les réglages */}
-                {mobileConfig.overlayOpacity > 0 && (
-                  <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{ backgroundColor: `rgba(15, 23, 42, ${mobileConfig.overlayOpacity / 100 * 0.4})` }}
-                  />
-                )}
-              </div>
-            )}
-
             {/* Subtitle (Desktop only) */}
             <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl hidden md:block">
               {t.heroSubtitle}
             </p>
 
-            {/* 3. Boutons d'action sous l'image */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
+            {/* 2. Boutons d'action */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
               <button
                 onClick={onDiscoverClick}
                 className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-sm sm:text-base shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2.5 cursor-pointer group"
@@ -157,29 +163,12 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
 
               <button
                 onClick={onPopularClick}
-                className="w-full sm:w-auto px-6 py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center justify-center gap-2 cursor-pointer bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 shadow-xs hover:border-slate-300"
+                className="w-full sm:w-auto px-6 py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center justify-center gap-2 cursor-pointer bg-white/95 backdrop-blur-xs hover:bg-slate-50 border border-slate-200 text-slate-800 shadow-xs hover:border-slate-300"
               >
                 <Sparkles className="w-4 h-4 text-amber-500" />
                 <span>{t.heroBtnPopular}</span>
               </button>
             </div>
-
-            {/* Mobile Carousel Indicators (when multiple slides exist in CMS) */}
-            {slides.length > 1 && (
-              <div className="flex md:hidden items-center gap-1.5 pt-1">
-                {slides.map((_, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setCurrentSlide(idx)}
-                    className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                      idx === currentSlide ? 'w-5 bg-blue-600' : 'w-1.5 bg-slate-300'
-                    }`}
-                    aria-label={`Diapositive ${idx + 1}`}
-                  />
-                ))}
-              </div>
-            )}
 
             {/* Desktop Only Extra Details: Micro-stats & Explore by tags */}
             <div className="hidden md:block space-y-7">

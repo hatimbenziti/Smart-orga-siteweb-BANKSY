@@ -420,11 +420,34 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
                 </div>
 
                 {/* Inner Screen Content */}
-                <div className="relative w-full h-full rounded-[26px] overflow-hidden bg-slate-50 flex flex-col justify-center px-4 py-8 select-none border border-slate-200">
+                <div className="relative w-full h-full rounded-[26px] overflow-hidden bg-slate-50 flex flex-col justify-start px-4 py-8 select-none border border-slate-200">
+                  {/* Real Mobile Hero Background */}
+                  {enabled && previewImage && (
+                    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                      <img
+                        src={previewImage}
+                        alt="Hero Mobile Preview"
+                        className={`w-full h-full object-cover ${
+                          position === 'left' ? 'object-left' :
+                          position === 'right' ? 'object-right' : 'object-center'
+                        } ${
+                          brightness === 'dimmed' ? 'brightness-95' :
+                          brightness === 'dark' ? 'brightness-90' : 'brightness-100'
+                        }`}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/70 to-transparent pointer-events-none" />
+                      {overlayOpacity > 0 && (
+                        <div
+                          className="absolute inset-0 pointer-events-none"
+                          style={{ backgroundColor: `rgba(255, 255, 255, ${Math.min(0.4, (overlayOpacity / 100) * 0.35)})` }}
+                        />
+                      )}
+                    </div>
+                  )}
 
-                  {/* Real Mobile Hero Content: Badge -> Headline -> Photo Block -> Action Buttons */}
-                  <div className="relative z-20 space-y-3">
-                    <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-[10px] font-bold tracking-wide uppercase shadow-xs">
+                  {/* Real Mobile Hero Content: Badge -> Headline -> Action Buttons */}
+                  <div className="relative z-20 space-y-3 mt-4">
+                    <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50/90 backdrop-blur-xs border border-blue-200/80 text-blue-700 text-[10px] font-bold tracking-wide uppercase shadow-xs">
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping"></span>
                       <span>VOYAGEZ EN TOUTE QUIÉTUDE</span>
                     </div>
@@ -437,41 +460,14 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
                       avec Smart Orga
                     </h1>
 
-                    {/* Image block directly below title */}
-                    {enabled && previewImage ? (
-                      <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden shadow-sm border border-slate-200">
-                        <img
-                          src={previewImage}
-                          alt="Hero Mobile Preview"
-                          className={`w-full h-full object-cover ${
-                            position === 'left' ? 'object-left' :
-                            position === 'right' ? 'object-right' : 'object-center'
-                          } ${
-                            brightness === 'dimmed' ? 'brightness-90' :
-                            brightness === 'dark' ? 'brightness-75' : 'brightness-100'
-                          }`}
-                        />
-                        {overlayOpacity > 0 && (
-                          <div
-                            className="absolute inset-0 pointer-events-none"
-                            style={{ backgroundColor: `rgba(15, 23, 42, ${overlayOpacity / 100 * 0.4})` }}
-                          />
-                        )}
-                      </div>
-                    ) : (
-                      <div className="w-full aspect-[16/10] rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-[10px] text-slate-400">
-                        (Aucune image sélectionnée)
-                      </div>
-                    )}
-
-                    {/* Action buttons below image */}
-                    <div className="flex flex-col gap-1.5 pt-0.5">
+                    {/* Action buttons */}
+                    <div className="flex flex-col gap-1.5 pt-2">
                       <div className="w-full py-2 rounded-lg bg-blue-600 text-white font-bold text-xs text-center shadow-xs flex items-center justify-center gap-1">
                         <span>Découvrez nos séjours</span>
                         <span>→</span>
                       </div>
 
-                      <div className="w-full py-2 rounded-lg bg-white text-slate-800 border border-slate-200 font-bold text-xs text-center shadow-xs flex items-center justify-center gap-1">
+                      <div className="w-full py-2 rounded-lg bg-white/95 backdrop-blur-xs text-slate-800 border border-slate-200 font-bold text-xs text-center shadow-xs flex items-center justify-center gap-1">
                         <Sparkles className="w-3 h-3 text-amber-500" />
                         <span>Voyages Populaires</span>
                       </div>
