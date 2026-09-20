@@ -3,5 +3,5 @@
   "position": "right",
   "overlayOpacity": 72,
   "brightness": "dark",
-  "enabled": false
+  "enabled": true
 }
