@@ -447,7 +447,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
               </span>
               <div className="flex items-center gap-1.5 font-bold text-slate-800 mt-1">
                 <Calendar className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span className="truncate">{nextDate}</span>
+                <span className="break-words leading-tight">{nextDate}</span>
               </div>
             </div>
             <div className="bg-white p-3 rounded-xl border border-slate-100 flex flex-col justify-between shadow-2xs">

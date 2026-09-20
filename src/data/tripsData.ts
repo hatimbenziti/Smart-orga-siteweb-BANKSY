@@ -456,47 +456,6 @@ export function getVoyageTimestamp(voyage: Trip): number {
 }
 
 /**
- * Tri intelligent basé sur le champ 'order' avec décalage automatique en cas d'égalité :
- * 1. Filtre les voyages actifs (archived === false).
- * 2. Trie la liste des voyages :
- *    - Priorité 1 : La valeur numérique du champ 'order' (de 1 à N).
- *    - Priorité 2 (Décalage automatique) : En cas d'égalité sur la valeur 'order' (ex: deux voyages avec 'order: 1'),
- *      le voyage le plus récent (selon date de modification/création ou champ 'date') passe automatiquement AVANT l'ancien.
- */
-export function sortVoyagesSmart(voyages: Trip[]): Trip[] {
-  // 1. Filtrer les voyages actifs
-  const activeVoyages = voyages.filter((v) => !v.archived);
-
-  // 2. Trier selon la priorité 1 (order) puis priorité 2 (décalage automatique par date)
-  return activeVoyages.sort((a, b) => {
-    // Priorité 1 : Valeur numérique du champ 'order' (1 à N)
-    const rawA = a.order !== undefined ? a.order : a.ordre;
-    const rawB = b.order !== undefined ? b.order : b.ordre;
-    const numA = typeof rawA === 'number' && rawA > 0 ? rawA : Number(rawA);
-    const numB = typeof rawB === 'number' && rawB > 0 ? rawB : Number(rawB);
-
-    const ordA = Number.isFinite(numA) && numA > 0 ? numA : 999;
-    const ordB = Number.isFinite(numB) && numB > 0 ? numB : 999;
-
-    if (ordA !== ordB) {
-      return ordA - ordB;
-    }
-
-    // Priorité 2 : En cas d'égalité sur 'order', le voyage le plus récent passe AVANT l'ancien
-    const timeA = getVoyageTimestamp(a);
-    const timeB = getVoyageTimestamp(b);
-
-    return timeB - timeA;
-  });
-}
-
-/**
- * Backwards compatible aliases
- */
-export const sortVoyagesByOrder = sortVoyagesSmart;
-export const sortTripsByOrderSettings = sortVoyagesSmart;
-
-/**
  * Dynamically loads the ordered list of trips from content/settings/order.json (if present)
  */
 export function getOrderItems(): string[] {
@@ -521,6 +480,54 @@ export function getOrderItems(): string[] {
 }
 
 export const getOrderSettings = getOrderItems;
+
+/**
+ * Tri centralisé basé strictement sur le fichier de configuration content/settings/order.json :
+ * 1. Filtre strictement les voyages actifs (archived === false).
+ *    Tous les voyages avec `archived: true` restent masqués du frontend,
+ *    qu'ils soient ou non présents dans order.json.
+ * 2. Trie la liste des voyages actifs selon leur position d'index dans le tableau `items` de order.json.
+ * 3. Gestion de secours (Fallback) : Si un voyage publié (non archivé) n'a pas encore été ajouté
+ *    dans order.json, il est automatiquement ajouté à la fin de la liste.
+ */
+export function sortVoyagesSmart(voyages: Trip[]): Trip[] {
+  // 1. Filtrer strictement les voyages actifs (archived: true reste masqué du frontend)
+  const activeVoyages = voyages.filter((v) => !v.archived);
+
+  // 2. Charger la liste d'ordre centralisée depuis content/settings/order.json
+  const orderItems = getOrderItems();
+  const orderMap = new Map<string, number>();
+  orderItems.forEach((slugOrId, index) => {
+    if (slugOrId) {
+      orderMap.set(slugOrId.toLowerCase(), index);
+    }
+  });
+
+  // 3. Trier selon la position dans order.json, fallback à la fin
+  return [...activeVoyages].sort((a, b) => {
+    const keyA = (a.slug || a.id || '').toLowerCase();
+    const keyB = (b.slug || b.id || '').toLowerCase();
+
+    const indexA = orderMap.has(keyA) ? orderMap.get(keyA)! : 999999;
+    const indexB = orderMap.has(keyB) ? orderMap.get(keyB)! : 999999;
+
+    if (indexA !== indexB) {
+      return indexA - indexB;
+    }
+
+    // En cas d'égalité sur le fallback (ex: deux voyages non listés dans order.json),
+    // départager par date de modification / création la plus récente
+    const timeA = getVoyageTimestamp(a);
+    const timeB = getVoyageTimestamp(b);
+    return timeB - timeA;
+  });
+}
+
+/**
+ * Backwards compatible aliases
+ */
+export const sortVoyagesByOrder = sortVoyagesSmart;
+export const sortTripsByOrderSettings = sortVoyagesSmart;
 
 /**
  * Dynamically loads all voyages from Decap CMS content/voyages/*.{json,md}

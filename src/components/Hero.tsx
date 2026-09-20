@@ -50,16 +50,11 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   // If it is ON and an image exists:
   // → use the uploaded image as the mobile Hero background.
   const hasMobileImage = Boolean(mobileConfig.enabled && mobileConfig.image && mobileConfig.image.trim() !== '');
-  const mobileHeroImageUrl = hasMobileImage ? normalizeCmsImagePath(mobileConfig.image) : '';
-
-  // 1. IMPRESSION ET VÉRIFICATION DE LA DATA (Console Log)
-  console.log('[Hero Component] Data verification:', {
-    mobileConfig,
-    activeSlide,
-    mobileHeroImageUrl,
-    hasMobileImage,
-    currentSlideImage: activeSlide?.image
-  });
+  const normalizedRawUrl = hasMobileImage ? normalizeCmsImagePath(mobileConfig.image) : '';
+  // Assure que l'URL d'image est toujours accessible avec le bon dossier public
+  const mobileHeroImageUrl = normalizedRawUrl?.startsWith('/images')
+    ? normalizedRawUrl
+    : (normalizedRawUrl?.startsWith('/uploads') ? `/images${normalizedRawUrl}` : normalizedRawUrl);
 
   const tags = [
     { label: t.regionNature, raw: 'Nature & Randonnée' },
