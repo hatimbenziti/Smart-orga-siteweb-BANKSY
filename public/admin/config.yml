@@ -192,6 +192,7 @@ collections:
               search_fields: ["title"]
               value_field: "{{slug}}"
               display_fields: ["title"]
+              options_length: 200
 
       # Réglage spécifique Image Hero Mobile (Uniquement smartphone < 768px)
       - file: "content/settings/hero_mobile.json"
