@@ -1,5 +1,6 @@
 import { Trip, Review, FAQItem, TripThematique } from '../types';
 import voyagesMeta from './voyagesMeta.json';
+import orderConfig from '@/content/settings/order.json';
 
 export const VALID_THEMATIQUES: TripThematique[] = [
   'Nature & Randonnée',
@@ -456,25 +457,18 @@ export function getVoyageTimestamp(voyage: Trip): number {
 }
 
 /**
- * Dynamically loads the ordered list of trips from content/settings/order.json (if present)
+ * Dynamically loads the ordered list of trips from content/settings/order.json
  */
 export function getOrderItems(): string[] {
-  try {
-    const settingsModules = import.meta.glob<Record<string, any>>('/content/settings/order.json', { eager: true });
-    for (const mod of Object.values(settingsModules)) {
-      const data = ((mod as { default?: any }).default || mod) as any;
-      if (data && Array.isArray(data.items)) {
-        return data.items
-          .map((item: any) => {
-            if (typeof item === 'string') return item.trim();
-            if (item && typeof item === 'object') return (item.voyage || item.slug || item.trip || '').trim();
-            return '';
-          })
-          .filter(Boolean);
-      }
-    }
-  } catch (e) {
-    console.warn('Could not read content/settings/order.json:', e);
+  const items = (orderConfig as { items?: any[] })?.items;
+  if (Array.isArray(items)) {
+    return items
+      .map((item: any) => {
+        if (typeof item === 'string') return item.trim();
+        if (item && typeof item === 'object') return (item.voyage || item.slug || item.trip || '').trim();
+        return '';
+      })
+      .filter(Boolean);
   }
   return [];
 }
@@ -484,42 +478,38 @@ export const getOrderSettings = getOrderItems;
 /**
  * Tri centralisé basé strictement sur le fichier de configuration content/settings/order.json :
  * 1. Filtre strictement les voyages actifs (archived === false).
- *    Tous les voyages avec `archived: true` restent masqués du frontend,
- *    qu'ils soient ou non présents dans order.json.
- * 2. Trie la liste des voyages actifs selon leur position d'index dans le tableau `items` de order.json.
- * 3. Gestion de secours (Fallback) : Si un voyage publié (non archivé) n'a pas encore été ajouté
- *    dans order.json, il est automatiquement ajouté à la fin de la liste.
+ * 2. Remplace le tri actuel par une correspondance exacte avec l'index du tableau orderConfig.items
+ * 3. Si un voyage publié n'est pas encore dans order.json, le placer à la fin (index 999).
  */
 export function sortVoyagesSmart(voyages: Trip[]): Trip[] {
-  // 1. Filtrer strictement les voyages actifs (archived: true reste masqué du frontend)
+  // 1. Filtrer les voyages actifs
   const activeVoyages = voyages.filter((v) => !v.archived);
 
-  // 2. Charger la liste d'ordre centralisée depuis content/settings/order.json
-  const orderItems = getOrderItems();
-  const orderMap = new Map<string, number>();
-  orderItems.forEach((slugOrId, index) => {
-    if (slugOrId) {
-      orderMap.set(slugOrId.toLowerCase(), index);
+  // 2. Liste ordonnée depuis orderConfig
+  const orderedSlugs: string[] = getOrderItems();
+
+  // 3. Algorithme de tri des voyages
+  return activeVoyages.sort((a, b) => {
+    // Récupère la position du voyage dans le tableau order.json
+    const keyA = a.slug || a.title;
+    const keyB = b.slug || b.title;
+
+    let indexA = orderedSlugs.indexOf(keyA);
+    let indexB = orderedSlugs.indexOf(keyB);
+
+    // Recherche insensible à la casse si correspondance exacte non trouvée
+    if (indexA === -1) {
+      indexA = orderedSlugs.findIndex((s) => s.toLowerCase() === keyA.toLowerCase());
     }
-  });
-
-  // 3. Trier selon la position dans order.json, fallback à la fin
-  return [...activeVoyages].sort((a, b) => {
-    const keyA = (a.slug || a.id || '').toLowerCase();
-    const keyB = (b.slug || b.id || '').toLowerCase();
-
-    const indexA = orderMap.has(keyA) ? orderMap.get(keyA)! : 999999;
-    const indexB = orderMap.has(keyB) ? orderMap.get(keyB)! : 999999;
-
-    if (indexA !== indexB) {
-      return indexA - indexB;
+    if (indexB === -1) {
+      indexB = orderedSlugs.findIndex((s) => s.toLowerCase() === keyB.toLowerCase());
     }
 
-    // En cas d'égalité sur le fallback (ex: deux voyages non listés dans order.json),
-    // départager par date de modification / création la plus récente
-    const timeA = getVoyageTimestamp(a);
-    const timeB = getVoyageTimestamp(b);
-    return timeB - timeA;
+    // Si un voyage n'est pas encore dans order.json, le placer à la fin
+    const posA = indexA === -1 ? 999 : indexA;
+    const posB = indexB === -1 ? 999 : indexB;
+
+    return posA - posB;
   });
 }
 
