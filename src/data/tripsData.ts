@@ -479,10 +479,12 @@ export const getOrderSettings = getOrderItems;
  * Tri centralisé basé strictement sur le fichier de configuration content/settings/order.json :
  * 1. Filtre strictement les voyages actifs (archived === false).
  * 2. Remplace le tri actuel par une correspondance exacte avec l'index du tableau orderConfig.items
- * 3. Si un voyage publié n'est pas encore dans order.json, le placer à la fin (index 999).
+ * 3. SYNCHRONISATION AUTOMATIQUE : Si un voyage actif présent dans content/voyages n'apparaît PAS encore
+ *    dans order.json, il est automatiquement ajouté à la fin de la liste d'affichage (pos = 999).
+ *    Aucun voyage créé dans le CMS ne risque ainsi d'être ignoré ou oublié sur le site public.
  */
 export function sortVoyagesSmart(voyages: Trip[]): Trip[] {
-  // 1. Filtrer les voyages actifs
+  // 1. Filtrer les voyages actifs (les archivés restent masqués)
   const activeVoyages = voyages.filter((v) => !v.archived);
 
   // 2. Liste ordonnée depuis orderConfig
@@ -509,7 +511,15 @@ export function sortVoyagesSmart(voyages: Trip[]): Trip[] {
     const posA = indexA === -1 ? 999 : indexA;
     const posB = indexB === -1 ? 999 : indexB;
 
-    return posA - posB;
+    if (posA !== posB) {
+      return posA - posB;
+    }
+
+    // En cas d'égalité sur les voyages non encore ordonnés (pos 999),
+    // afficher le plus récent en premier
+    const timeA = getVoyageTimestamp(a);
+    const timeB = getVoyageTimestamp(b);
+    return timeB - timeA;
   });
 }
 
