@@ -38,23 +38,20 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   // Active slide from Decap CMS collection
   const activeSlide = slides[currentSlide] || slides[0];
 
-  // Mobile Hero Background Connection (Settings from Admin Dashboard: "Image Hero — Mobile")
-  // 1. Mobile Hero image
-  // 2. "Activer l'image sur mobile" (enabled)
-  // 3. Image position (position: 'center' | 'left' | 'right')
-  // 4. Overlay intensity (overlayOpacity: 0 à 90)
-  // 5. Brightness (brightness: 'normal' | 'dimmed' | 'dark')
-  //
-  // If "Activer l'image sur mobile" is OFF (or image is empty):
-  // → use the existing default Hero background.
-  // If it is ON and an image exists:
-  // → use the uploaded image as the mobile Hero background.
-  const hasMobileImage = Boolean(mobileConfig.enabled && mobileConfig.image && mobileConfig.image.trim() !== '');
-  const normalizedRawUrl = hasMobileImage ? normalizeCmsImagePath(mobileConfig.image) : '';
-  // Assure que l'URL d'image est toujours accessible avec le bon dossier public
-  const mobileHeroImageUrl = normalizedRawUrl?.startsWith('/images')
-    ? normalizedRawUrl
-    : (normalizedRawUrl?.startsWith('/uploads') ? `/images${normalizedRawUrl}` : normalizedRawUrl);
+  // Mobile Hero Image Connection (CMS: content/settings/hero_mobile.json)
+  // Priority order:
+  // 1. Image specifically configured in hero_mobile.json (or localStorage override)
+  // 2. Fallback to active slide image from CMS slider
+  const rawMobileImg = (mobileConfig.image && mobileConfig.image.trim() !== '')
+    ? mobileConfig.image
+    : (activeSlide?.image || '');
+
+  const normalizedMobileUrl = rawMobileImg ? normalizeCmsImagePath(rawMobileImg) : '';
+  const heroMobileImage = normalizedMobileUrl?.startsWith('/images')
+    ? normalizedMobileUrl
+    : (normalizedMobileUrl?.startsWith('/uploads') ? `/images${normalizedMobileUrl}` : normalizedMobileUrl);
+
+  const heroDesktopImage = activeSlide?.image ? normalizeCmsImagePath(activeSlide.image) : heroMobileImage;
 
   const tags = [
     { label: t.regionNature, raw: 'Nature & Randonnée' },
@@ -84,46 +81,6 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-[#F8FAFC] pt-6 pb-6 sm:pt-8 sm:pb-16 lg:pt-14 lg:pb-24">
-      {/* MOBILE HERO BACKGROUND IMAGE (ONLY on screens < 768px, strictly hidden on Tablet and Desktop) */}
-      {hasMobileImage && (
-        <div 
-          className="block md:hidden absolute inset-0 -z-10 overflow-hidden pointer-events-none"
-          aria-hidden="true"
-        >
-          <img
-            src={mobileHeroImageUrl}
-            alt={activeSlide?.title || "Hero Mobile Background"}
-            className={`w-full h-full object-cover transition-all duration-500 ${
-              mobileConfig.position === 'left' ? 'object-left' :
-              mobileConfig.position === 'right' ? 'object-right' : 'object-center'
-            } ${
-              mobileConfig.brightness === 'dimmed' ? 'brightness-90' :
-              mobileConfig.brightness === 'dark' ? 'brightness-75' : 'brightness-100'
-            }`}
-            onError={(e) => {
-              const target = e.currentTarget;
-              // Fallback between /uploads/ and /images/uploads/ or to default asset
-              if (target.src.includes('/uploads/') && !target.src.includes('/images/uploads/')) {
-                target.src = target.src.replace('/uploads/', '/images/uploads/');
-              } else if (target.src.includes('/images/uploads/') && !target.src.includes('/uploads/')) {
-                target.src = target.src.replace('/images/uploads/', '/uploads/');
-              } else if (!target.src.includes('/assets/merzouga.png')) {
-                target.src = '/assets/merzouga.png';
-              }
-            }}
-            referrerPolicy="no-referrer"
-          />
-          {/* Subtle transparent gradient/overlay on the mobile Hero background to keep the text readable */}
-          <div
-            className="absolute inset-0 transition-opacity duration-300 pointer-events-none"
-            style={{
-              backgroundColor: `rgba(15, 23, 42, ${(mobileConfig.overlayOpacity || 50) / 100})`,
-              backgroundImage: `linear-gradient(180deg, rgba(15, 23, 42, ${Math.max(0.25, ((mobileConfig.overlayOpacity || 50) / 100) * 0.75)}) 0%, rgba(15, 23, 42, ${Math.min(0.92, ((mobileConfig.overlayOpacity || 50) / 100) * 1.25)}) 100%)`
-            }}
-          />
-        </div>
-      )}
-
       {/* Subtle background decoration (Desktop & Tablet only) */}
       <div className="hidden md:block absolute top-0 right-1/4 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl -z-10 pointer-events-none"></div>
       <div className="hidden md:block absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl -z-10 pointer-events-none"></div>
@@ -131,45 +88,68 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
-          {/* Left Column: Text & CTAs */}
-          <div className="lg:col-span-7 space-y-4 sm:space-y-7">
+          {/* 1. Zone Texte (Left Column on Desktop, Top Column on Mobile) */}
+          <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             {/* Top Badge */}
-            <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase transition-all ${
-              hasMobileImage 
-                ? 'bg-white/95 md:bg-blue-50 border border-white/80 md:border-blue-200/80 text-blue-700 shadow-sm backdrop-blur-md' 
-                : 'bg-blue-50 border border-blue-200/80 text-blue-700 shadow-xs'
-            }`}>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase bg-blue-50 border border-blue-200/80 text-blue-700 shadow-xs">
               <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
               <span>{t.heroBadge}</span>
             </div>
 
-            {/* Main Title */}
-            <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold tracking-tight leading-[1.18] transition-colors ${
-              hasMobileImage 
-                ? 'text-white md:text-slate-900 drop-shadow-md md:drop-shadow-none' 
-                : 'text-slate-900'
-            }`}>
+            {/* 1. Titre principal ("Voyagez en groupe...") */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 tracking-tight leading-[1.18]">
               {t.heroTitlePrefix}{' '}
-              <span className={`inline-block drop-shadow-xs ${
-                hasMobileImage 
-                  ? 'text-blue-400 md:text-blue-600 drop-shadow-md md:drop-shadow-none' 
-                  : 'text-blue-600'
-              }`}>
+              <span className="inline-block text-blue-600">
                 {t.heroTitleHighlight}
               </span>{' '}
               {t.heroTitleSuffix}
             </h1>
+
+            {/* 2. IMAGE HERO MOBILE (Affichée uniquement sur Mobile < 768px, sous le titre et au-dessus des boutons) */}
+            {mobileConfig.enabled !== false && heroMobileImage && (
+              <div className="block md:hidden my-4 w-full overflow-hidden rounded-xl shadow-md border border-slate-100 relative group aspect-[16/10]">
+                <img
+                  src={heroMobileImage}
+                  alt={activeSlide?.title || "Hero Mobile"}
+                  className={`w-full h-full object-cover transition-all duration-300 ${
+                    mobileConfig.position === 'left' ? 'object-left' :
+                    mobileConfig.position === 'right' ? 'object-right' : 'object-center'
+                  } ${
+                    mobileConfig.brightness === 'dimmed' ? 'brightness-90' :
+                    mobileConfig.brightness === 'dark' ? 'brightness-75' : 'brightness-100'
+                  }`}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src.includes('/uploads/') && !target.src.includes('/images/uploads/')) {
+                      target.src = target.src.replace('/uploads/', '/images/uploads/');
+                    } else if (target.src.includes('/images/uploads/') && !target.src.includes('/uploads/')) {
+                      target.src = target.src.replace('/images/uploads/', '/uploads/');
+                    } else if (!target.src.includes('/assets/merzouga.png')) {
+                      target.src = '/assets/merzouga.png';
+                    }
+                  }}
+                  referrerPolicy="no-referrer"
+                />
+                {/* Overlay discret si activé dans les réglages */}
+                {mobileConfig.overlayOpacity > 0 && (
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{ backgroundColor: `rgba(15, 23, 42, ${mobileConfig.overlayOpacity / 100 * 0.4})` }}
+                  />
+                )}
+              </div>
+            )}
 
             {/* Subtitle (Desktop only) */}
             <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl hidden md:block">
               {t.heroSubtitle}
             </p>
 
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3 pt-0 sm:pt-1">
+            {/* 3. Boutons d'action sous l'image */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
               <button
                 onClick={onDiscoverClick}
-                className="px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-sm sm:text-base shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2.5 cursor-pointer group"
+                className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-sm sm:text-base shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2.5 cursor-pointer group"
               >
                 <span>{t.heroBtnDiscover}</span>
                 <ArrowRight className={`w-4 h-4 transition-transform ${isRTL ? 'group-hover:-translate-x-1 rotate-180' : 'group-hover:translate-x-1'}`} />
@@ -177,11 +157,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
 
               <button
                 onClick={onPopularClick}
-                className={`px-6 py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center gap-2 cursor-pointer ${
-                  hasMobileImage
-                    ? 'bg-white/95 hover:bg-white text-slate-900 border border-white/80 shadow-md backdrop-blur-sm'
-                    : 'bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 shadow-xs hover:border-slate-300'
-                }`}
+                className="w-full sm:w-auto px-6 py-3 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center justify-center gap-2 cursor-pointer bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 shadow-xs hover:border-slate-300"
               >
                 <Sparkles className="w-4 h-4 text-amber-500" />
                 <span>{t.heroBtnPopular}</span>
@@ -197,9 +173,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                     type="button"
                     onClick={() => setCurrentSlide(idx)}
                     className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                      idx === currentSlide 
-                        ? (hasMobileImage ? 'w-5 bg-white' : 'w-5 bg-blue-600') 
-                        : (hasMobileImage ? 'w-1.5 bg-white/40' : 'w-1.5 bg-slate-300')
+                      idx === currentSlide ? 'w-5 bg-blue-600' : 'w-1.5 bg-slate-300'
                     }`}
                     aria-label={`Diapositive ${idx + 1}`}
                   />
@@ -263,7 +237,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
 
           </div>
 
-          {/* Right Column: Automated Landscape Slider / Carousel */}
+          {/* Right Column: Automated Landscape Slider / Carousel (DESKTOP only >= 768px) */}
           <div
             className="hidden md:block lg:col-span-5 relative"
             onMouseEnter={() => setIsPaused(true)}
@@ -278,7 +252,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                   }`}
                 >
                   <img
-                    src={slide.image}
+                    src={slide.image || heroDesktopImage}
                     alt={slide.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     onError={(e) => {
