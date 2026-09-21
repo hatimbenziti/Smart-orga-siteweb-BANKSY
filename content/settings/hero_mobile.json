@@ -1,7 +1,7 @@
 {
-  "image": "/uploads/heroy.png",
+  "image": "/uploads/46232.png",
   "position": "center",
-  "overlayOpacity": 71,
-  "brightness": "dark",
+  "overlayOpacity": 10,
+  "brightness": "normal",
   "enabled": true
 }
