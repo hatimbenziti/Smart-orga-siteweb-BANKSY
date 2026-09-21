@@ -2,7 +2,7 @@
   "image": "/uploads/1784472111064-cropped-1784472103025-dakhla-maroc.jpg",
   "position": "left",
   "fit": "cover",
-  "overlayOpacity": 0,
+  "overlayOpacity": 90,
   "brightness": "normal",
   "enabled": true
 }
