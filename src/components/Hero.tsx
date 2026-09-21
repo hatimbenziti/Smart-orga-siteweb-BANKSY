@@ -155,23 +155,23 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                 {t.heroTitleSuffix}
               </h1>
 
-              {/* Tagline Mobile (Destinations Authentiques — Expériences Inoubliables) - Extra Light */}
+              {/* Tagline Mobile (Destinations Authentiques — Expériences Inoubliables) - Medium / 500 */}
               <div className="md:hidden pt-1.5 space-y-0.5">
-                <div className="text-[10px] sm:text-[11px] font-extralight tracking-[0.22em] text-slate-800 uppercase">
+                <div className="text-[10px] sm:text-[11px] font-medium tracking-[0.22em] text-slate-800 uppercase">
                   {t.heroTagline1 || "DESTINATIONS AUTHENTIQUES"}
                 </div>
-                <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-extralight tracking-[0.22em] text-slate-800 uppercase">
-                  <span className="w-5 h-[1px] bg-slate-700/70 inline-block shrink-0"></span>
+                <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-medium tracking-[0.22em] text-slate-800 uppercase">
+                  <span className="w-5 h-[1.5px] bg-slate-700/80 inline-block shrink-0"></span>
                   <span>{t.heroTagline2 || "EXPÉRIENCES INOUBLIABLES"}</span>
                 </div>
               </div>
 
-              {/* 3 Piliers Expérience Mobile (Nature, Voyages en groupe, Découverte) - Compact & Groupé à gauche */}
+              {/* 3 Piliers Expérience Mobile (Nature, Voyages en groupe, Découverte) - Compact & Groupé à gauche - Medium / 500 */}
               <div className="md:hidden grid grid-cols-3 w-[58%] min-w-[185px] max-w-[215px] pt-2 pb-0.5">
                 {/* 1. Nature & Aventure */}
                 <div className="flex flex-col items-center text-center px-1">
                   <Mountain className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
-                  <span className="text-[8px] font-light uppercase leading-tight text-slate-800 tracking-wide">
+                  <span className="text-[8px] font-medium uppercase leading-tight text-slate-800 tracking-wide">
                     NATURE<br />& AVENTURE
                   </span>
                 </div>
@@ -179,7 +179,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                 {/* 2. Voyages en groupe */}
                 <div className="flex flex-col items-center text-center px-1 border-x border-slate-300/80">
                   <Users className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
-                  <span className="text-[8px] font-light uppercase leading-tight text-slate-800 tracking-wide">
+                  <span className="text-[8px] font-medium uppercase leading-tight text-slate-800 tracking-wide">
                     VOYAGES<br />EN GROUPE
                   </span>
                 </div>
@@ -187,7 +187,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                 {/* 3. Découverte & Culture */}
                 <div className="flex flex-col items-center text-center px-1">
                   <Palmtree className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
-                  <span className="text-[8px] font-light uppercase leading-tight text-slate-800 tracking-wide">
+                  <span className="text-[8px] font-medium uppercase leading-tight text-slate-800 tracking-wide">
                     DÉCOUVERTE<br />& CULTURE
                   </span>
                 </div>

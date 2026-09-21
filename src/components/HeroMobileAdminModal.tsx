@@ -548,11 +548,11 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
 
                     {/* Tagline mockup */}
                     <div className="pt-0.5 space-y-0.5">
-                      <div className="text-[7px] font-extralight tracking-[0.2em] text-slate-800 uppercase">
+                      <div className="text-[7px] font-medium tracking-[0.2em] text-slate-800 uppercase">
                         DESTINATIONS AUTHENTIQUES
                       </div>
-                      <div className="flex items-center gap-1 text-[7px] font-extralight tracking-[0.2em] text-slate-800 uppercase">
-                        <span className="w-3 h-[0.75px] bg-slate-700/60 inline-block shrink-0"></span>
+                      <div className="flex items-center gap-1 text-[7px] font-medium tracking-[0.2em] text-slate-800 uppercase">
+                        <span className="w-3 h-[1px] bg-slate-700/80 inline-block shrink-0"></span>
                         <span>EXPÉRIENCES INOUBLIABLES</span>
                       </div>
                     </div>
@@ -561,19 +561,19 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
                     <div className="grid grid-cols-3 w-[62%] min-w-[155px] max-w-[170px] pt-1">
                       <div className="flex flex-col items-center text-center px-0.5">
                         <Mountain className="w-3.5 h-3.5 text-blue-700/80 mb-0.5" strokeWidth={1.4} />
-                        <span className="text-[6px] font-light uppercase leading-tight text-slate-800">
+                        <span className="text-[6px] font-medium uppercase leading-tight text-slate-800">
                           NATURE<br />& AVENTURE
                         </span>
                       </div>
                       <div className="flex flex-col items-center text-center px-0.5 border-x border-slate-300/80">
                         <Users className="w-3.5 h-3.5 text-blue-700/80 mb-0.5" strokeWidth={1.4} />
-                        <span className="text-[6px] font-light uppercase leading-tight text-slate-800">
+                        <span className="text-[6px] font-medium uppercase leading-tight text-slate-800">
                           VOYAGES<br />EN GROUPE
                         </span>
                       </div>
                       <div className="flex flex-col items-center text-center px-0.5">
                         <Palmtree className="w-3.5 h-3.5 text-blue-700/80 mb-0.5" strokeWidth={1.4} />
-                        <span className="text-[6px] font-light uppercase leading-tight text-slate-800">
+                        <span className="text-[6px] font-medium uppercase leading-tight text-slate-800">
                           DÉCOUVERTE<br />& CULTURE
                         </span>
                       </div>
