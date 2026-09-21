@@ -1,6 +1,6 @@
 {
-  "image": "/uploads/heroy-cloud-copyyyy.png",
-  "position": "left",
+  "image": "/uploads/heroy.png",
+  "position": "center",
   "fit": "cover",
   "overlayOpacity": 90,
   "brightness": "normal",
