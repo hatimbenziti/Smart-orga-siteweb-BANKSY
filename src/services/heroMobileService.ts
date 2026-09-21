@@ -11,6 +11,8 @@ import heroMobileJson from '../../content/settings/hero_mobile.json';
 
 export interface HeroMobileConfig {
   image: string;
+  image_ar?: string; // Image distincte pour la version arabe
+  flip_ar?: boolean; // Inverser / miroir horizontal en arabe pour s'adapter au RTL
   position: 'center' | 'left' | 'right';
   fit?: 'contain' | 'cover'; // 'contain' = taille exacte / proportions d'origine sans couper ; 'cover' = remplir l'écran
   overlayOpacity: number; // Valeur en pourcentage (0 à 100)
@@ -21,6 +23,8 @@ export interface HeroMobileConfig {
 
 export const DEFAULT_HERO_MOBILE_CONFIG: HeroMobileConfig = {
   image: '/uploads/heroy.png',
+  image_ar: '',
+  flip_ar: true,
   position: 'center',
   fit: 'cover',
   overlayOpacity: 100,
@@ -40,6 +44,8 @@ function parseRawHeroConfig(data: any): Partial<HeroMobileConfig> | null {
 
   return {
     image: typeof data.image === 'string' ? normalizeCmsImagePath(data.image) : undefined,
+    image_ar: typeof data.image_ar === 'string' ? normalizeCmsImagePath(data.image_ar) : (typeof data.imageAr === 'string' ? normalizeCmsImagePath(data.imageAr) : undefined),
+    flip_ar: typeof data.flip_ar === 'boolean' ? data.flip_ar : (typeof data.flipAr === 'boolean' ? data.flipAr : true),
     position: data.position === 'left' || data.position === 'right' ? data.position : 'center',
     fit: data.fit === 'contain' ? 'contain' : 'cover',
     overlayOpacity: rawOp !== undefined ? Math.min(100, Math.max(0, rawOp)) : undefined,

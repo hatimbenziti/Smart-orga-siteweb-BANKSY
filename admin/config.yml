@@ -193,12 +193,25 @@ collections:
         label: "Image Hero — Mobile"
         name: "hero_mobile"
         fields:
-          - label: "Image d'arrière-plan Mobile"
+          - label: "Image d'arrière-plan Mobile (Français / Anglais)"
             name: "image"
             widget: "image"
             default: "/assets/merzouga.png"
             required: false
-            hint: "Image de fond affichée UNIQUEMENT sur mobile (smartphone < 768px). Ne modifie PAS la version ordinateur (Desktop) ni tablette."
+            hint: "Image de fond affichée sur mobile en Français et Anglais."
+
+          - label: "Image Mobile spécifique Arabe (Optionnel)"
+            name: "image_ar"
+            widget: "image"
+            required: false
+            hint: "Image différente dédiée à la version Arabe. Si laissée vide, l'image principale est utilisée avec option miroir."
+
+          - label: "Inverser l'image en Arabe (Effet Miroir Horizontal)"
+            name: "flip_ar"
+            widget: "boolean"
+            default: true
+            required: false
+            hint: "Inverse horizontalement l'image en langue Arabe pour placer le sujet à gauche et libérer la droite pour le texte RTL."
 
           - label: "Position de l'image"
             name: "position"

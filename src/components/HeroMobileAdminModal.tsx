@@ -548,11 +548,11 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
 
                     {/* Tagline mockup */}
                     <div className="pt-0.5 space-y-0.5">
-                      <div className="text-[7.5px] font-bold tracking-wider text-slate-900 uppercase">
+                      <div className="text-[7px] font-extralight tracking-[0.2em] text-slate-800 uppercase">
                         DESTINATIONS AUTHENTIQUES
                       </div>
-                      <div className="flex items-center gap-1 text-[7.5px] font-bold tracking-wider text-slate-900 uppercase">
-                        <span className="w-3 h-[1px] bg-slate-800 inline-block shrink-0"></span>
+                      <div className="flex items-center gap-1 text-[7px] font-extralight tracking-[0.2em] text-slate-800 uppercase">
+                        <span className="w-3 h-[0.75px] bg-slate-700/60 inline-block shrink-0"></span>
                         <span>EXPÉRIENCES INOUBLIABLES</span>
                       </div>
                     </div>
@@ -560,28 +560,28 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
                     {/* 3 Piliers mockup */}
                     <div className="grid grid-cols-3 w-[75%] max-w-[200px] pt-1">
                       <div className="flex flex-col items-center text-center pr-1">
-                        <Mountain className="w-3.5 h-3.5 text-blue-700 mb-0.5" strokeWidth={1.8} />
-                        <span className="text-[6.5px] font-extrabold uppercase leading-tight text-slate-900">
+                        <Mountain className="w-3.5 h-3.5 text-blue-700/80 mb-0.5" strokeWidth={1.4} />
+                        <span className="text-[6px] font-light uppercase leading-tight text-slate-800">
                           NATURE<br />& AVENTURE
                         </span>
                       </div>
-                      <div className="flex flex-col items-center text-center px-1 border-x border-slate-300">
-                        <Users className="w-3.5 h-3.5 text-blue-700 mb-0.5" strokeWidth={1.8} />
-                        <span className="text-[6.5px] font-extrabold uppercase leading-tight text-slate-900">
+                      <div className="flex flex-col items-center text-center px-1 border-x border-slate-300/80">
+                        <Users className="w-3.5 h-3.5 text-blue-700/80 mb-0.5" strokeWidth={1.4} />
+                        <span className="text-[6px] font-light uppercase leading-tight text-slate-800">
                           VOYAGES<br />EN GROUPE
                         </span>
                       </div>
                       <div className="flex flex-col items-center text-center pl-1">
-                        <Palmtree className="w-3.5 h-3.5 text-blue-700 mb-0.5" strokeWidth={1.8} />
-                        <span className="text-[6.5px] font-extrabold uppercase leading-tight text-slate-900">
+                        <Palmtree className="w-3.5 h-3.5 text-blue-700/80 mb-0.5" strokeWidth={1.4} />
+                        <span className="text-[6px] font-light uppercase leading-tight text-slate-800">
                           DÉCOUVERTE<br />& CULTURE
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Action buttons (Bas gauche compacts) */}
-                  <div className="relative z-20 flex flex-col items-start gap-1 mt-auto mb-2 pt-1.5">
+                  {/* Action buttons (Bas gauche compacts et rehaussés) */}
+                  <div className="relative z-20 flex flex-col items-start gap-1 mt-auto mb-5 pt-1">
                     <div className="w-[62%] py-1.5 px-2.5 rounded-lg bg-blue-600 text-white font-bold text-[10px] text-center shadow-xs flex items-center justify-center gap-1">
                       <span className="truncate">Découvrir nos séjours</span>
                       <span>→</span>

@@ -39,15 +39,15 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   const activeSlide = slides[currentSlide] || slides[0];
 
   // Mobile Hero Image Connection (CMS: content/settings/hero_mobile.json)
-  // Priority order:
-  // 1. Image specifically configured in hero_mobile.json (or localStorage override)
-  // 2. Fallback to active slide image from CMS slider
-  const rawMobileImg = (mobileConfig.image && mobileConfig.image.trim() !== '')
-    ? mobileConfig.image
-    : (activeSlide?.image || '/uploads/heroy.png');
+  // Supports separate Arabic image or horizontal flip (mirror) for Arabic RTL layout
+  const rawMobileImg = isRTL && mobileConfig.image_ar && mobileConfig.image_ar.trim() !== ''
+    ? mobileConfig.image_ar
+    : ((mobileConfig.image && mobileConfig.image.trim() !== '') ? mobileConfig.image : (activeSlide?.image || '/uploads/heroy.png'));
 
   const normalizedMobileUrl = rawMobileImg ? normalizeCmsImagePath(rawMobileImg) : '/uploads/heroy.png';
   const heroMobileImage = normalizedMobileUrl || '/uploads/heroy.png';
+
+  const shouldFlipMobileImage = isRTL && (mobileConfig.flip_ar !== false);
 
   const heroDesktopImage = activeSlide?.image ? normalizeCmsImagePath(activeSlide.image) : heroMobileImage;
   const hasMobileHero = Boolean(mobileConfig.enabled !== false && heroMobileImage && heroMobileImage.trim() !== '');
@@ -109,6 +109,8 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
             } ${
               mobileConfig.brightness === 'dimmed' ? 'brightness-90' :
               mobileConfig.brightness === 'dark' ? 'brightness-75' : 'brightness-100'
+            } ${
+              shouldFlipMobileImage ? '-scale-x-100' : ''
             }`}
             style={{
               opacity: Math.min(1, Math.max(0.1, (mobileConfig.opacity ?? mobileConfig.overlayOpacity ?? 100) / 100))
@@ -153,39 +155,39 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                 {t.heroTitleSuffix}
               </h1>
 
-              {/* Tagline Mobile (Destinations Authentiques — Expériences Inoubliables) */}
-              <div className="md:hidden pt-1 space-y-0.5">
-                <div className="text-[11px] font-bold tracking-[0.18em] text-slate-900 uppercase">
+              {/* Tagline Mobile (Destinations Authentiques — Expériences Inoubliables) - Extra Light */}
+              <div className="md:hidden pt-1.5 space-y-0.5">
+                <div className="text-[10px] sm:text-[11px] font-extralight tracking-[0.22em] text-slate-800 uppercase">
                   {t.heroTagline1 || "DESTINATIONS AUTHENTIQUES"}
                 </div>
-                <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.18em] text-slate-900 uppercase">
-                  <span className="w-6 h-[1.5px] bg-slate-800 inline-block shrink-0"></span>
+                <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-extralight tracking-[0.22em] text-slate-800 uppercase">
+                  <span className="w-5 h-[1px] bg-slate-700/70 inline-block shrink-0"></span>
                   <span>{t.heroTagline2 || "EXPÉRIENCES INOUBLIABLES"}</span>
                 </div>
               </div>
 
-              {/* 3 Piliers Expérience Mobile (Nature, Voyages en groupe, Découverte) */}
-              <div className="md:hidden grid grid-cols-3 w-[72%] max-w-[280px] pt-2 pb-1">
+              {/* 3 Piliers Expérience Mobile (Nature, Voyages en groupe, Découverte) - Extra Light */}
+              <div className="md:hidden grid grid-cols-3 w-[72%] max-w-[280px] pt-2 pb-0.5">
                 {/* 1. Nature & Aventure */}
                 <div className="flex flex-col items-center text-center pr-2">
-                  <Mountain className="w-5 h-5 text-blue-700 mb-1" strokeWidth={1.8} />
-                  <span className="text-[8.5px] font-extrabold uppercase leading-tight text-slate-900 tracking-tight">
+                  <Mountain className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
+                  <span className="text-[8px] font-light uppercase leading-tight text-slate-800 tracking-wide">
                     NATURE<br />& AVENTURE
                   </span>
                 </div>
 
                 {/* 2. Voyages en groupe */}
-                <div className="flex flex-col items-center text-center px-2 border-x border-slate-300">
-                  <Users className="w-5 h-5 text-blue-700 mb-1" strokeWidth={1.8} />
-                  <span className="text-[8.5px] font-extrabold uppercase leading-tight text-slate-900 tracking-tight">
+                <div className="flex flex-col items-center text-center px-2 border-x border-slate-300/80">
+                  <Users className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
+                  <span className="text-[8px] font-light uppercase leading-tight text-slate-800 tracking-wide">
                     VOYAGES<br />EN GROUPE
                   </span>
                 </div>
 
                 {/* 3. Découverte & Culture */}
                 <div className="flex flex-col items-center text-center pl-2">
-                  <Palmtree className="w-5 h-5 text-blue-700 mb-1" strokeWidth={1.8} />
-                  <span className="text-[8.5px] font-extrabold uppercase leading-tight text-slate-900 tracking-tight">
+                  <Palmtree className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
+                  <span className="text-[8px] font-light uppercase leading-tight text-slate-800 tracking-wide">
                     DÉCOUVERTE<br />& CULTURE
                   </span>
                 </div>
@@ -197,8 +199,8 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
               </p>
             </div>
 
-            {/* 2. Boutons d'action - Alignés à gauche sur mobile comme sur l'image de référence */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 mt-auto mb-5 sm:mb-0 pt-2 sm:pt-2">
+            {/* 2. Boutons d'action - Glissés vers le haut avec mb-11 sm:mb-0 */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 mt-auto mb-11 sm:mb-0 pt-1 sm:pt-2">
               <button
                 onClick={onDiscoverClick}
                 className="w-[58%] min-w-[180px] max-w-[225px] sm:w-auto px-4 sm:px-7 py-2.5 sm:py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs sm:text-base shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer group"
