@@ -1,8 +1,8 @@
 {
-  "image": "/uploads/heroy-final.png",
-  "position": "center",
+  "image": "/uploads/1784472111064-cropped-1784472103025-dakhla-maroc.jpg",
+  "position": "left",
   "fit": "cover",
-  "overlayOpacity": 90,
-  "brightness": null,
+  "overlayOpacity": 0,
+  "brightness": "normal",
   "enabled": true
 }
