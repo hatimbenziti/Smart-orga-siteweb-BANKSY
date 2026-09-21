@@ -558,20 +558,20 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
                     </div>
 
                     {/* 3 Piliers mockup */}
-                    <div className="grid grid-cols-3 w-[75%] max-w-[200px] pt-1">
-                      <div className="flex flex-col items-center text-center pr-1">
+                    <div className="grid grid-cols-3 w-[62%] min-w-[155px] max-w-[170px] pt-1">
+                      <div className="flex flex-col items-center text-center px-0.5">
                         <Mountain className="w-3.5 h-3.5 text-blue-700/80 mb-0.5" strokeWidth={1.4} />
                         <span className="text-[6px] font-light uppercase leading-tight text-slate-800">
                           NATURE<br />& AVENTURE
                         </span>
                       </div>
-                      <div className="flex flex-col items-center text-center px-1 border-x border-slate-300/80">
+                      <div className="flex flex-col items-center text-center px-0.5 border-x border-slate-300/80">
                         <Users className="w-3.5 h-3.5 text-blue-700/80 mb-0.5" strokeWidth={1.4} />
                         <span className="text-[6px] font-light uppercase leading-tight text-slate-800">
                           VOYAGES<br />EN GROUPE
                         </span>
                       </div>
-                      <div className="flex flex-col items-center text-center pl-1">
+                      <div className="flex flex-col items-center text-center px-0.5">
                         <Palmtree className="w-3.5 h-3.5 text-blue-700/80 mb-0.5" strokeWidth={1.4} />
                         <span className="text-[6px] font-light uppercase leading-tight text-slate-800">
                           DÉCOUVERTE<br />& CULTURE
@@ -581,7 +581,7 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
                   </div>
 
                   {/* Action buttons (Bas gauche compacts et rehaussés) */}
-                  <div className="relative z-20 flex flex-col items-start gap-1 mt-auto mb-5 pt-1">
+                  <div className="relative z-20 flex flex-col items-start gap-1 mt-2.5 mb-7 pt-0">
                     <div className="w-[62%] py-1.5 px-2.5 rounded-lg bg-blue-600 text-white font-bold text-[10px] text-center shadow-xs flex items-center justify-center gap-1">
                       <span className="truncate">Découvrir nos séjours</span>
                       <span>→</span>

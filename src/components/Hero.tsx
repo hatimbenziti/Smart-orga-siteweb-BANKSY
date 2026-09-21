@@ -137,7 +137,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
           {/* 1. Zone Texte (Left Column on Desktop, Top Column on Mobile) */}
-          <div className="lg:col-span-7 flex flex-col justify-between min-h-[440px] sm:min-h-0 space-y-3.5 sm:space-y-6">
+          <div className="lg:col-span-7 flex flex-col justify-between min-h-[410px] sm:min-h-0 space-y-3.5 sm:space-y-6">
             {/* Top Block : Badge + Titre principal + Tagline & Piliers mobile */}
             <div className="space-y-3 sm:space-y-4 pt-1 sm:pt-0">
               {/* Top Badge */}
@@ -166,10 +166,10 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                 </div>
               </div>
 
-              {/* 3 Piliers Expérience Mobile (Nature, Voyages en groupe, Découverte) - Extra Light */}
-              <div className="md:hidden grid grid-cols-3 w-[72%] max-w-[280px] pt-2 pb-0.5">
+              {/* 3 Piliers Expérience Mobile (Nature, Voyages en groupe, Découverte) - Compact & Groupé à gauche */}
+              <div className="md:hidden grid grid-cols-3 w-[58%] min-w-[185px] max-w-[215px] pt-2 pb-0.5">
                 {/* 1. Nature & Aventure */}
-                <div className="flex flex-col items-center text-center pr-2">
+                <div className="flex flex-col items-center text-center px-1">
                   <Mountain className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
                   <span className="text-[8px] font-light uppercase leading-tight text-slate-800 tracking-wide">
                     NATURE<br />& AVENTURE
@@ -177,7 +177,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                 </div>
 
                 {/* 2. Voyages en groupe */}
-                <div className="flex flex-col items-center text-center px-2 border-x border-slate-300/80">
+                <div className="flex flex-col items-center text-center px-1 border-x border-slate-300/80">
                   <Users className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
                   <span className="text-[8px] font-light uppercase leading-tight text-slate-800 tracking-wide">
                     VOYAGES<br />EN GROUPE
@@ -185,7 +185,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                 </div>
 
                 {/* 3. Découverte & Culture */}
-                <div className="flex flex-col items-center text-center pl-2">
+                <div className="flex flex-col items-center text-center px-1">
                   <Palmtree className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
                   <span className="text-[8px] font-light uppercase leading-tight text-slate-800 tracking-wide">
                     DÉCOUVERTE<br />& CULTURE
@@ -199,8 +199,8 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
               </p>
             </div>
 
-            {/* 2. Boutons d'action - Glissés vers le haut avec mb-11 sm:mb-0 */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 mt-auto mb-11 sm:mb-0 pt-1 sm:pt-2">
+            {/* 2. Boutons d'action - Rehaussés de 20-30px plus proches des 3 éléments */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 mt-3.5 sm:mt-auto mb-16 sm:mb-0 pt-0 sm:pt-2">
               <button
                 onClick={onDiscoverClick}
                 className="w-[58%] min-w-[180px] max-w-[225px] sm:w-auto px-4 sm:px-7 py-2.5 sm:py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs sm:text-base shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer group"
