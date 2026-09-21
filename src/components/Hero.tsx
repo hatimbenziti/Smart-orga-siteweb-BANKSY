@@ -44,12 +44,10 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   // 2. Fallback to active slide image from CMS slider
   const rawMobileImg = (mobileConfig.image && mobileConfig.image.trim() !== '')
     ? mobileConfig.image
-    : (activeSlide?.image || '');
+    : (activeSlide?.image || '/uploads/heroy.png');
 
-  const normalizedMobileUrl = rawMobileImg ? normalizeCmsImagePath(rawMobileImg) : '';
-  const heroMobileImage = normalizedMobileUrl?.startsWith('/images')
-    ? normalizedMobileUrl
-    : (normalizedMobileUrl?.startsWith('/uploads') ? `/images${normalizedMobileUrl}` : normalizedMobileUrl);
+  const normalizedMobileUrl = rawMobileImg ? normalizeCmsImagePath(rawMobileImg) : '/uploads/heroy.png';
+  const heroMobileImage = normalizedMobileUrl || '/uploads/heroy.png';
 
   const heroDesktopImage = activeSlide?.image ? normalizeCmsImagePath(activeSlide.image) : heroMobileImage;
   const hasMobileHero = Boolean(mobileConfig.enabled !== false && heroMobileImage && heroMobileImage.trim() !== '');
@@ -84,14 +82,22 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/50 to-[#F8FAFC] pt-6 pb-6 sm:pt-8 sm:pb-16 lg:pt-14 lg:pb-24">
+    <section className="relative overflow-hidden pt-6 pb-6 sm:pt-8 sm:pb-16 lg:pt-14 lg:pb-24">
+      {/* Background base Desktop / Tablet */}
+      <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-white via-slate-50/50 to-[#F8FAFC] pointer-events-none -z-10" />
+
       {/* Subtle background decoration (Desktop & Tablet only) */}
       <div className="hidden md:block absolute top-0 right-1/4 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl -z-10 pointer-events-none"></div>
       <div className="hidden md:block absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
-      {/* Background Hero Mobile (< 768px) identique à la capture d'écran */}
+      {/* Fallback background Mobile si aucune image personnalisée active */}
+      {!hasMobileHero && (
+        <div className="block md:hidden absolute inset-0 bg-gradient-to-b from-white via-slate-50/50 to-[#F8FAFC] pointer-events-none z-0" />
+      )}
+
+      {/* Background Hero Mobile (< 768px) affiché derrière le texte uniquement sur mobile */}
       {hasMobileHero && (
-        <div className="block md:hidden absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="block md:hidden absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <img
             src={heroMobileImage}
             alt={activeSlide?.title || "Hero Mobile Background"}
@@ -99,30 +105,36 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
               mobileConfig.position === 'left' ? 'object-left' :
               mobileConfig.position === 'right' ? 'object-right' : 'object-center'
             } ${
-              mobileConfig.brightness === 'dimmed' ? 'brightness-95' :
-              mobileConfig.brightness === 'dark' ? 'brightness-90' : 'brightness-100'
+              mobileConfig.brightness === 'dimmed' ? 'brightness-90' :
+              mobileConfig.brightness === 'dark' ? 'brightness-75' : 'brightness-100'
             }`}
             onError={(e) => {
               const target = e.currentTarget;
-              if (target.src.includes('/uploads/') && !target.src.includes('/images/uploads/')) {
-                target.src = target.src.replace('/uploads/', '/images/uploads/');
-              } else if (target.src.includes('/images/uploads/') && !target.src.includes('/uploads/')) {
+              if (target.src.includes('/images/uploads/')) {
                 target.src = target.src.replace('/images/uploads/', '/uploads/');
-              } else if (!target.src.includes('/assets/merzouga.png')) {
-                target.src = '/assets/merzouga.png';
+              } else if (target.src.includes('/uploads/') && !target.src.includes('/images/uploads/')) {
+                target.src = target.src.replace('/uploads/', '/images/uploads/');
+              } else if (!target.src.includes('/uploads/heroy.png')) {
+                target.src = '/uploads/heroy.png';
               }
             }}
             referrerPolicy="no-referrer"
           />
-          {/* Dégradé doux blanc/transparent en haut à gauche pour garantir la lisibilité parfaite du titre */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/70 to-transparent sm:via-white/50 pointer-events-none" />
+
+          {/* Dégradé subtil protecteur de lisibilité pour le texte et le badge */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/75 via-white/35 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/60 via-white/20 to-transparent pointer-events-none" />
+
           {/* Overlay personnalisé si configuré */}
           {mobileConfig.overlayOpacity > 0 && (
             <div
               className="absolute inset-0 pointer-events-none"
-              style={{ backgroundColor: `rgba(255, 255, 255, ${Math.min(0.4, (mobileConfig.overlayOpacity / 100) * 0.35)})` }}
+              style={{ backgroundColor: `rgba(255, 255, 255, ${Math.min(0.45, (mobileConfig.overlayOpacity / 100) * 0.4)})` }}
             />
           )}
+
+          {/* Transition douce vers le bas */}
+          <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-slate-50/90 to-transparent pointer-events-none" />
         </div>
       )}
 

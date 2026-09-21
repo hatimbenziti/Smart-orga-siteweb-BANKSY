@@ -18,10 +18,10 @@ export interface HeroMobileConfig {
 }
 
 export const DEFAULT_HERO_MOBILE_CONFIG: HeroMobileConfig = {
-  image: '/assets/merzouga.png',
+  image: '/uploads/heroy.png',
   position: 'center',
-  overlayOpacity: 50,
-  brightness: 'normal',
+  overlayOpacity: 70,
+  brightness: 'dark',
   enabled: true
 };
 
@@ -90,8 +90,15 @@ export function getHeroMobileConfig(): HeroMobileConfig {
     }
   }
 
+  // Si une ancienne image est en cache ou si le fichier a été configuré avec heroy.png
+  const localImg = localConfig.image;
+  const isStaleLocal = localImg && localImg.includes('0.7588255303774318');
+  const activeImage = (localImg && !isStaleLocal)
+    ? localImg
+    : (fileConfig.image || DEFAULT_HERO_MOBILE_CONFIG.image);
+
   return {
-    image: localConfig.image !== undefined ? localConfig.image : (fileConfig.image || DEFAULT_HERO_MOBILE_CONFIG.image),
+    image: activeImage,
     position: localConfig.position || fileConfig.position || DEFAULT_HERO_MOBILE_CONFIG.position,
     overlayOpacity: typeof localConfig.overlayOpacity === 'number'
       ? localConfig.overlayOpacity
