@@ -13,7 +13,10 @@ import {
   Sparkles, 
   AlertCircle,
   SunMedium,
-  Maximize2
+  Maximize2,
+  Mountain,
+  Palmtree,
+  Users
 } from 'lucide-react';
 import { 
   getHeroMobileConfig, 
@@ -529,23 +532,56 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
                   )}
 
                   {/* Real Mobile Hero Content: Badge -> Headline (Haut) */}
-                  <div className="relative z-20 space-y-2.5 mt-2.5">
-                    <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50/90 backdrop-blur-xs border border-blue-200/80 text-blue-700 text-[10px] font-bold tracking-wide uppercase shadow-xs">
+                  <div className="relative z-20 space-y-2 mt-2">
+                    <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50/90 backdrop-blur-xs border border-blue-200/80 text-blue-700 text-[9px] font-bold tracking-wide uppercase shadow-xs">
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping"></span>
                       <span>VOYAGEZ EN TOUTE QUIÉTUDE</span>
                     </div>
 
-                    <h1 className="text-base font-extrabold text-slate-900 leading-tight mt-1.5">
+                    <h1 className="text-sm font-extrabold text-slate-900 leading-tight mt-1">
                       Voyagez en groupe et{' '}
                       <span className="text-blue-600">
                         Créez des souvenirs
                       </span>{' '}
                       avec Smart Orga
                     </h1>
+
+                    {/* Tagline mockup */}
+                    <div className="pt-0.5 space-y-0.5">
+                      <div className="text-[7.5px] font-bold tracking-wider text-slate-900 uppercase">
+                        DESTINATIONS AUTHENTIQUES
+                      </div>
+                      <div className="flex items-center gap-1 text-[7.5px] font-bold tracking-wider text-slate-900 uppercase">
+                        <span className="w-3 h-[1px] bg-slate-800 inline-block shrink-0"></span>
+                        <span>EXPÉRIENCES INOUBLIABLES</span>
+                      </div>
+                    </div>
+
+                    {/* 3 Piliers mockup */}
+                    <div className="grid grid-cols-3 w-[75%] max-w-[200px] pt-1">
+                      <div className="flex flex-col items-center text-center pr-1">
+                        <Mountain className="w-3.5 h-3.5 text-blue-700 mb-0.5" strokeWidth={1.8} />
+                        <span className="text-[6.5px] font-extrabold uppercase leading-tight text-slate-900">
+                          NATURE<br />& AVENTURE
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center text-center px-1 border-x border-slate-300">
+                        <Users className="w-3.5 h-3.5 text-blue-700 mb-0.5" strokeWidth={1.8} />
+                        <span className="text-[6.5px] font-extrabold uppercase leading-tight text-slate-900">
+                          VOYAGES<br />EN GROUPE
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center text-center pl-1">
+                        <Palmtree className="w-3.5 h-3.5 text-blue-700 mb-0.5" strokeWidth={1.8} />
+                        <span className="text-[6.5px] font-extrabold uppercase leading-tight text-slate-900">
+                          DÉCOUVERTE<br />& CULTURE
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Action buttons (Bas gauche compacts) */}
-                  <div className="relative z-20 flex flex-col items-start gap-1.5 mt-auto mb-3 pt-3">
+                  <div className="relative z-20 flex flex-col items-start gap-1 mt-auto mb-2 pt-1.5">
                     <div className="w-[62%] py-1.5 px-2.5 rounded-lg bg-blue-600 text-white font-bold text-[10px] text-center shadow-xs flex items-center justify-center gap-1">
                       <span className="truncate">Découvrir nos séjours</span>
                       <span>→</span>

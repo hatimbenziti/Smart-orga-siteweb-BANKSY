@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { loadCmsSlides, HeroSlide, normalizeCmsImagePath } from '../data/sliderData';
-import { ChevronLeft, ChevronRight, Sparkles, Compass, Users, Award, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sparkles, Compass, Users, Award, ArrowRight, Mountain, Palmtree } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getHeroMobileConfig, subscribeHeroMobile, refreshHeroMobileConfigFromRemote, HeroMobileConfig } from '../services/heroMobileService';
 
@@ -82,7 +82,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
   };
 
   return (
-    <section className={`relative overflow-hidden pt-3 pb-6 sm:pt-8 sm:pb-16 lg:pt-14 lg:pb-24 ${hasMobileHero ? 'min-h-[450px] sm:min-h-[520px] flex flex-col justify-between' : ''}`}>
+    <section className={`relative overflow-hidden pt-3 pb-6 sm:pt-8 sm:pb-16 lg:pt-14 lg:pb-24 ${hasMobileHero ? 'min-h-[500px] sm:min-h-[520px] flex flex-col justify-between' : ''}`}>
       {/* Background base Desktop / Tablet */}
       <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-white via-slate-50/50 to-[#F8FAFC] pointer-events-none -z-10" />
 
@@ -135,23 +135,61 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
           {/* 1. Zone Texte (Left Column on Desktop, Top Column on Mobile) */}
-          <div className="lg:col-span-7 flex flex-col justify-between min-h-[380px] sm:min-h-0 space-y-4 sm:space-y-6">
-            {/* Top Block : Badge + Titre principal */}
-            <div className="space-y-3.5 sm:space-y-4 pt-2 sm:pt-0">
+          <div className="lg:col-span-7 flex flex-col justify-between min-h-[440px] sm:min-h-0 space-y-3.5 sm:space-y-6">
+            {/* Top Block : Badge + Titre principal + Tagline & Piliers mobile */}
+            <div className="space-y-3 sm:space-y-4 pt-1 sm:pt-0">
               {/* Top Badge */}
               <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase bg-blue-50/90 backdrop-blur-xs border border-blue-200/80 text-blue-700 shadow-xs">
                 <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
                 <span>{t.heroBadge}</span>
               </div>
 
-              {/* 1. Titre principal ("Voyagez en groupe...") - Glissé légèrement vers le bas sur mobile */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 tracking-tight leading-[1.16] max-w-xl mt-2 sm:mt-0">
+              {/* 1. Titre principal ("Voyagez en groupe...") */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 tracking-tight leading-[1.16] max-w-xl mt-1.5 sm:mt-0">
                 {t.heroTitlePrefix}{' '}
                 <span className="inline-block text-blue-600">
                   {t.heroTitleHighlight}
                 </span>{' '}
                 {t.heroTitleSuffix}
               </h1>
+
+              {/* Tagline Mobile (Destinations Authentiques — Expériences Inoubliables) */}
+              <div className="md:hidden pt-1 space-y-0.5">
+                <div className="text-[11px] font-bold tracking-[0.18em] text-slate-900 uppercase">
+                  {t.heroTagline1 || "DESTINATIONS AUTHENTIQUES"}
+                </div>
+                <div className="flex items-center gap-2 text-[11px] font-bold tracking-[0.18em] text-slate-900 uppercase">
+                  <span className="w-6 h-[1.5px] bg-slate-800 inline-block shrink-0"></span>
+                  <span>{t.heroTagline2 || "EXPÉRIENCES INOUBLIABLES"}</span>
+                </div>
+              </div>
+
+              {/* 3 Piliers Expérience Mobile (Nature, Voyages en groupe, Découverte) */}
+              <div className="md:hidden grid grid-cols-3 w-[72%] max-w-[280px] pt-2 pb-1">
+                {/* 1. Nature & Aventure */}
+                <div className="flex flex-col items-center text-center pr-2">
+                  <Mountain className="w-5 h-5 text-blue-700 mb-1" strokeWidth={1.8} />
+                  <span className="text-[8.5px] font-extrabold uppercase leading-tight text-slate-900 tracking-tight">
+                    NATURE<br />& AVENTURE
+                  </span>
+                </div>
+
+                {/* 2. Voyages en groupe */}
+                <div className="flex flex-col items-center text-center px-2 border-x border-slate-300">
+                  <Users className="w-5 h-5 text-blue-700 mb-1" strokeWidth={1.8} />
+                  <span className="text-[8.5px] font-extrabold uppercase leading-tight text-slate-900 tracking-tight">
+                    VOYAGES<br />EN GROUPE
+                  </span>
+                </div>
+
+                {/* 3. Découverte & Culture */}
+                <div className="flex flex-col items-center text-center pl-2">
+                  <Palmtree className="w-5 h-5 text-blue-700 mb-1" strokeWidth={1.8} />
+                  <span className="text-[8.5px] font-extrabold uppercase leading-tight text-slate-900 tracking-tight">
+                    DÉCOUVERTE<br />& CULTURE
+                  </span>
+                </div>
+              </div>
 
               {/* Subtitle (Desktop only) */}
               <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl hidden md:block">
@@ -160,7 +198,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
             </div>
 
             {/* 2. Boutons d'action - Alignés à gauche sur mobile comme sur l'image de référence */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 mt-auto mb-6 sm:mb-0 pt-3 sm:pt-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 mt-auto mb-5 sm:mb-0 pt-2 sm:pt-2">
               <button
                 onClick={onDiscoverClick}
                 className="w-[58%] min-w-[180px] max-w-[225px] sm:w-auto px-4 sm:px-7 py-2.5 sm:py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs sm:text-base shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer group"
