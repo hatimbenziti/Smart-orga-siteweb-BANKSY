@@ -12,6 +12,7 @@ import heroMobileJson from '../../content/settings/hero_mobile.json';
 export interface HeroMobileConfig {
   image: string;
   position: 'center' | 'left' | 'right';
+  fit?: 'contain' | 'cover'; // 'contain' = taille exacte / proportions d'origine sans couper ; 'cover' = remplir l'écran
   overlayOpacity: number; // Valeur en pourcentage (0 à 100)
   opacity?: number; // Opacité directe de l'image (0 à 100)
   brightness: 'normal' | 'dimmed' | 'dark';
@@ -21,6 +22,7 @@ export interface HeroMobileConfig {
 export const DEFAULT_HERO_MOBILE_CONFIG: HeroMobileConfig = {
   image: '/uploads/heroy.png',
   position: 'center',
+  fit: 'cover',
   overlayOpacity: 100,
   opacity: 100,
   brightness: 'normal',
@@ -39,6 +41,7 @@ function parseRawHeroConfig(data: any): Partial<HeroMobileConfig> | null {
   return {
     image: typeof data.image === 'string' ? normalizeCmsImagePath(data.image) : undefined,
     position: data.position === 'left' || data.position === 'right' ? data.position : 'center',
+    fit: data.fit === 'contain' ? 'contain' : 'cover',
     overlayOpacity: rawOp !== undefined ? Math.min(100, Math.max(0, rawOp)) : undefined,
     opacity: rawOp !== undefined ? Math.min(100, Math.max(0, rawOp)) : undefined,
     brightness: data.brightness === 'dimmed' || data.brightness === 'dark' ? data.brightness : 'normal',
@@ -156,6 +159,7 @@ export function saveHeroMobileConfig(config: Partial<HeroMobileConfig>): HeroMob
   const updated: HeroMobileConfig = {
     ...current,
     ...config,
+    fit: config.fit || current.fit || 'cover',
     overlayOpacity: rawOp !== undefined ? Math.min(100, Math.max(0, rawOp)) : current.overlayOpacity,
     opacity: rawOp !== undefined ? Math.min(100, Math.max(0, rawOp)) : (current.opacity ?? current.overlayOpacity)
   };

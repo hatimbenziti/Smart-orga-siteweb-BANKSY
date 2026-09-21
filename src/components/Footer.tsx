@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageCircle, Mail, MapPin, Instagram, Facebook, ShieldCheck, Smartphone } from 'lucide-react';
+import { MessageCircle, Mail, MapPin, Instagram, Facebook, ShieldCheck } from 'lucide-react';
 import { WHATSAPP_DISPLAY, WHATSAPP_NUMBER, WHATSAPP_DISPLAY_2, WHATSAPP_NUMBER_2, AGENCY_EMAIL, AGENCY_ADDRESS } from '../data/tripsData';
 import { createGeneralWhatsAppUrl } from '../utils/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
@@ -7,10 +7,9 @@ import { useLanguage } from '../context/LanguageContext';
 interface FooterProps {
   onOpenSurMesure?: () => void;
   onSelectTag: (tag: string) => void;
-  onOpenHeroAdmin?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onSelectTag, onOpenHeroAdmin }) => {
+export const Footer: React.FC<FooterProps> = ({ onSelectTag }) => {
   const { language, t } = useLanguage();
 
   const scrollTo = (id: string) => {
@@ -257,20 +256,6 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTag, onOpenHeroAdmin }) 
             <span className="hover:text-slate-600 transition-colors cursor-pointer">{t.footerData}</span>
             <span>•</span>
             <span className="text-blue-600 font-medium">{t.footerMadeIn}</span>
-            {onOpenHeroAdmin && (
-              <>
-                <span>•</span>
-                <button
-                  type="button"
-                  onClick={onOpenHeroAdmin}
-                  className="inline-flex items-center gap-1.5 text-slate-400 hover:text-blue-600 transition-colors font-medium cursor-pointer"
-                  title="Gestionnaire Image Hero Mobile"
-                >
-                  <Smartphone className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Image Hero — Mobile</span>
-                </button>
-              </>
-            )}
           </div>
         </div>
       </div>

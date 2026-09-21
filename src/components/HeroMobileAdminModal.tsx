@@ -12,7 +12,8 @@ import {
   Layers, 
   Sparkles, 
   AlertCircle,
-  SunMedium
+  SunMedium,
+  Maximize2
 } from 'lucide-react';
 import { 
   getHeroMobileConfig, 
@@ -32,6 +33,7 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
   const [config, setConfig] = useState<HeroMobileConfig>(getHeroMobileConfig());
   const [previewImage, setPreviewImage] = useState<string>(config.image);
   const [position, setPosition] = useState<'center' | 'left' | 'right'>(config.position);
+  const [fit, setFit] = useState<'contain' | 'cover'>(config.fit || 'cover');
   const [overlayOpacity, setOverlayOpacity] = useState<number>(config.overlayOpacity);
   const [brightness, setBrightness] = useState<'normal' | 'dimmed' | 'dark'>(config.brightness);
   const [enabled, setEnabled] = useState<boolean>(config.enabled);
@@ -46,6 +48,7 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
       setConfig(current);
       setPreviewImage(current.image);
       setPosition(current.position);
+      setFit(current.fit || 'cover');
       setOverlayOpacity(current.overlayOpacity);
       setBrightness(current.brightness);
       setEnabled(current.enabled);
@@ -99,6 +102,7 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
     const updated = saveHeroMobileConfig({
       image: previewImage,
       position,
+      fit,
       overlayOpacity,
       brightness,
       enabled
@@ -117,6 +121,7 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
       setConfig(def);
       setPreviewImage(def.image);
       setPosition(def.position);
+      setFit(def.fit || 'cover');
       setOverlayOpacity(def.overlayOpacity);
       setBrightness(def.brightness);
       setEnabled(def.enabled);
@@ -292,13 +297,63 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
               </div>
             </div>
 
-            {/* 3. Opacité & Netteté de l'image (10% à 100%) */}
+            {/* 3. Dimensionnement / Format d'affichage (Taille exacte vs Remplir l'écran) */}
+            <div className="space-y-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                  <Maximize2 className="w-4 h-4 text-blue-600" />
+                  <span>3. Format d'affichage & Taille de l'image</span>
+                </label>
+                <span className="text-xs font-bold text-blue-600">
+                  {fit === 'contain' ? 'Taille 100% exacte (Sans couper)' : 'Remplir l\'écran (Cover)'}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFit('contain')}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    fit === 'contain'
+                      ? 'bg-blue-50 border-blue-600 text-blue-900 shadow-xs'
+                      : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="text-xs font-bold flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${fit === 'contain' ? 'bg-blue-600' : 'bg-slate-300'}`} />
+                    Taille exacte (Contain)
+                  </div>
+                  <div className="text-[11px] text-slate-500 mt-1 leading-snug">
+                    Affiche 100% de l'image dans ses dimensions réelles. Rien n'est rogné ni coupé.
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setFit('cover')}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    fit === 'cover'
+                      ? 'bg-blue-50 border-blue-600 text-blue-900 shadow-xs'
+                      : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="text-xs font-bold flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${fit === 'cover' ? 'bg-blue-600' : 'bg-slate-300'}`} />
+                    Remplir l'écran (Cover)
+                  </div>
+                  <div className="text-[11px] text-slate-500 mt-1 leading-snug">
+                    Étend l'image pour recouvrir tout l'arrière-plan de l'écran mobile.
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* 4. Opacité & Netteté de l'image (10% à 100%) */}
             <div className="space-y-4 pt-2 border-t border-slate-100">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
                     <Sliders className="w-4 h-4 text-blue-600" />
-                    <span>3. Opacité & Netteté de l'image : {overlayOpacity}%</span>
+                    <span>4. Opacité & Netteté de l'image : {overlayOpacity}%</span>
                   </label>
                   <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                     overlayOpacity === 100 
@@ -448,14 +503,16 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
                 </div>
 
                 {/* Inner Screen Content */}
-                <div className="relative w-full h-full rounded-[26px] overflow-hidden bg-slate-50 flex flex-col justify-start px-4 py-8 select-none border border-slate-200">
+                <div className="relative w-full h-full rounded-[26px] overflow-hidden bg-slate-50 flex flex-col justify-between px-4 py-5 select-none border border-slate-200">
                   {/* Real Mobile Hero Background */}
                   {enabled && previewImage && (
-                    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none w-full h-full">
                       <img
                         src={previewImage}
                         alt="Hero Mobile Preview"
-                        className={`w-full h-full object-cover transition-opacity duration-200 ${
+                        className={`w-full h-full ${
+                          fit === 'cover' ? 'object-cover' : 'object-contain'
+                        } transition-all duration-200 ${
                           position === 'left' ? 'object-left' :
                           position === 'right' ? 'object-right' : 'object-center'
                         } ${
@@ -471,32 +528,32 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
                     </div>
                   )}
 
-                  {/* Real Mobile Hero Content: Badge -> Headline -> Action Buttons */}
-                  <div className="relative z-20 space-y-3 mt-4">
-                    <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50/90 backdrop-blur-xs border border-blue-200/80 text-blue-700 text-[10px] font-bold tracking-wide uppercase shadow-xs">
+                  {/* Real Mobile Hero Content: Badge -> Headline (Haut) */}
+                  <div className="relative z-20 space-y-2.5 mt-2.5">
+                    <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50/90 backdrop-blur-xs border border-blue-200/80 text-blue-700 text-[10px] font-bold tracking-wide uppercase shadow-xs">
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping"></span>
                       <span>VOYAGEZ EN TOUTE QUIÉTUDE</span>
                     </div>
 
-                    <h1 className="text-base font-extrabold text-slate-900 leading-tight">
+                    <h1 className="text-base font-extrabold text-slate-900 leading-tight mt-1.5">
                       Voyagez en groupe et{' '}
                       <span className="text-blue-600">
                         Créez des souvenirs
                       </span>{' '}
                       avec Smart Orga
                     </h1>
+                  </div>
 
-                    {/* Action buttons */}
-                    <div className="flex flex-col gap-1.5 pt-2">
-                      <div className="w-full py-2 rounded-lg bg-blue-600 text-white font-bold text-xs text-center shadow-xs flex items-center justify-center gap-1">
-                        <span>Découvrez nos séjours</span>
-                        <span>→</span>
-                      </div>
+                  {/* Action buttons (Bas gauche compacts) */}
+                  <div className="relative z-20 flex flex-col items-start gap-1.5 mt-auto mb-3 pt-3">
+                    <div className="w-[62%] py-1.5 px-2.5 rounded-lg bg-blue-600 text-white font-bold text-[10px] text-center shadow-xs flex items-center justify-center gap-1">
+                      <span className="truncate">Découvrir nos séjours</span>
+                      <span>→</span>
+                    </div>
 
-                      <div className="w-full py-2 rounded-lg bg-white/95 backdrop-blur-xs text-slate-800 border border-slate-200 font-bold text-xs text-center shadow-xs flex items-center justify-center gap-1">
-                        <Sparkles className="w-3 h-3 text-amber-500" />
-                        <span>Voyages Populaires</span>
-                      </div>
+                    <div className="w-[62%] py-1.5 px-2.5 rounded-lg bg-white/95 backdrop-blur-xs text-slate-800 border border-slate-200 font-bold text-[10px] text-center shadow-xs flex items-center justify-center gap-1">
+                      <Sparkles className="w-2.5 h-2.5 text-amber-500 shrink-0" />
+                      <span className="truncate">Voyages Populaires</span>
                     </div>
                   </div>
 

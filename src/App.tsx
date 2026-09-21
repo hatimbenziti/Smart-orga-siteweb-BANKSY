@@ -337,7 +337,6 @@ export default function App() {
       <Footer
         onOpenSurMesure={() => setIsSurMesureOpen(true)}
         onSelectTag={handleSelectTag}
-        onOpenHeroAdmin={() => setIsHeroAdminOpen(true)}
       />
 
       {/* Floating WhatsApp Action Button */}

@@ -216,6 +216,16 @@ collections:
             default: "center"
             hint: "Cadrage de l'image sur l'écran du smartphone."
 
+          - label: "Format d'affichage (Taille de l'image)"
+            name: "fit"
+            widget: "select"
+            options:
+              - { label: "Remplir l'écran (Couvrir tout le fond mobile sans bordures blanches)", value: "cover" }
+              - { label: "Taille exacte / Proportions réelles (Sans couper)", value: "contain" }
+            default: "cover"
+            required: false
+            hint: "Choisissez 'Remplir l'écran' pour que l'image s'étende sur toute la largeur et hauteur sans laisser de bandes blanches."
+
           - label: "Intensité du voile d'assombrissement / Overlay (%)"
             name: "overlayOpacity"
             widget: "number"

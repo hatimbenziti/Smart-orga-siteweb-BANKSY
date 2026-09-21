@@ -1,6 +1,7 @@
 {
   "image": "/uploads/heroy-cloud.png",
   "position": "center",
+  "fit": "cover",
   "overlayOpacity": 90,
   "brightness": null,
   "enabled": true

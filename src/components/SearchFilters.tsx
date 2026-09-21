@@ -56,7 +56,30 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
     filters.category !== 'all';
 
   return (
-    <div className="bg-white rounded-2xl shadow-xs border border-slate-200/80 p-3.5 sm:p-7 space-y-3.5 sm:space-y-6">
+    <div className="bg-white rounded-2xl shadow-xs border border-slate-200/80 p-3.5 sm:p-7 space-y-3 sm:space-y-6">
+      {/* Mobile-only Search Bar for Voyages */}
+      <div className="md:hidden relative">
+        <Search className={`w-4 h-4 absolute ${isRTL ? 'right-3.5' : 'left-3.5'} top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none`} />
+        <input
+          id="search-keyword-mobile"
+          type="text"
+          value={filters.searchQuery}
+          onChange={handleSearchChange}
+          placeholder={t.filterSearchPlaceholder || "Rechercher un voyage, une destination..."}
+          className={`w-full ${isRTL ? 'pr-10 pl-9' : 'pl-10 pr-9'} py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-xs`}
+        />
+        {filters.searchQuery && (
+          <button
+            type="button"
+            onClick={() => onChange({ ...filters, searchQuery: '' })}
+            className={`absolute ${isRTL ? 'left-2.5' : 'right-2.5'} top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center text-xs transition-colors cursor-pointer`}
+            aria-label="Effacer la recherche"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        )}
+      </div>
+
       {/* Mobile-only compact control row: Destination + Price Filter Button */}
       <div className="md:hidden flex items-center gap-2">
         <div className="relative flex-1">
