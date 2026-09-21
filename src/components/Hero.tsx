@@ -108,6 +108,9 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
               mobileConfig.brightness === 'dimmed' ? 'brightness-90' :
               mobileConfig.brightness === 'dark' ? 'brightness-75' : 'brightness-100'
             }`}
+            style={{
+              opacity: Math.min(1, Math.max(0.1, (mobileConfig.opacity ?? mobileConfig.overlayOpacity ?? 100) / 100))
+            }}
             onError={(e) => {
               const target = e.currentTarget;
               if (target.src.includes('/images/uploads/')) {
@@ -121,19 +124,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
             referrerPolicy="no-referrer"
           />
 
-          {/* Dégradé subtil protecteur de lisibilité pour le texte et le badge */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/75 via-white/35 to-transparent pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-r from-white/60 via-white/20 to-transparent pointer-events-none" />
-
-          {/* Overlay personnalisé si configuré */}
-          {mobileConfig.overlayOpacity > 0 && (
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{ backgroundColor: `rgba(255, 255, 255, ${Math.min(0.45, (mobileConfig.overlayOpacity / 100) * 0.4)})` }}
-            />
-          )}
-
-          {/* Transition douce vers le bas */}
+          {/* Transition douce vers le bas pour fondre naturellement avec les filtres */}
           <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-slate-50/90 to-transparent pointer-events-none" />
         </div>
       )}

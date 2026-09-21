@@ -292,29 +292,57 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
               </div>
             </div>
 
-            {/* 3. Overlay Opacity Slider & Brightness */}
+            {/* 3. Opacité & Netteté de l'image (10% à 100%) */}
             <div className="space-y-4 pt-2 border-t border-slate-100">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
                     <Sliders className="w-4 h-4 text-blue-600" />
-                    <span>3. Voile assombrissant (Overlay) : {overlayOpacity}%</span>
+                    <span>3. Opacité & Netteté de l'image : {overlayOpacity}%</span>
                   </label>
-                  <span className="text-xs text-slate-500">
-                    {overlayOpacity < 35 ? 'Léger' : overlayOpacity < 65 ? 'Équilibré (Recommandé)' : 'Fort'}
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                    overlayOpacity === 100 
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                      : overlayOpacity >= 75 
+                        ? 'bg-blue-50 text-blue-700' 
+                        : 'bg-slate-100 text-slate-600'
+                  }`}>
+                    {overlayOpacity === 100 ? '100% - Clean & Nette' : overlayOpacity >= 75 ? 'Haute netteté' : overlayOpacity >= 50 ? 'Modérée' : 'Estompée'}
                   </span>
                 </div>
+
                 <input
                   type="range"
-                  min="0"
-                  max="90"
+                  min="10"
+                  max="100"
                   step="5"
                   value={overlayOpacity}
                   onChange={(e) => setOverlayOpacity(Number(e.target.value))}
-                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                 />
+
+                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                  <span>10% (très estompée)</span>
+                  <div className="flex gap-1.5">
+                    {[50, 70, 85, 100].map((val) => (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => setOverlayOpacity(val)}
+                        className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-colors cursor-pointer ${
+                          overlayOpacity === val
+                            ? 'bg-blue-600 text-white shadow-xs'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }`}
+                      >
+                        {val === 100 ? '100% (Clean)' : `${val}%`}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <p className="text-[11px] text-slate-500">
-                  Garantit que le texte blanc et les boutons restent parfaitement lisibles quel que soit le contraste de la photo.
+                  À 100%, l'image apparaît dans sa netteté et clarté maximale sans aucun voile. Ajustez selon votre goût pour doser la présence de la photo.
                 </p>
               </div>
 
@@ -427,21 +455,19 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
                       <img
                         src={previewImage}
                         alt="Hero Mobile Preview"
-                        className={`w-full h-full object-cover ${
+                        className={`w-full h-full object-cover transition-opacity duration-200 ${
                           position === 'left' ? 'object-left' :
                           position === 'right' ? 'object-right' : 'object-center'
                         } ${
-                          brightness === 'dimmed' ? 'brightness-95' :
-                          brightness === 'dark' ? 'brightness-90' : 'brightness-100'
+                          brightness === 'dimmed' ? 'brightness-90' :
+                          brightness === 'dark' ? 'brightness-75' : 'brightness-100'
                         }`}
+                        style={{
+                          opacity: Math.min(1, Math.max(0.1, overlayOpacity / 100))
+                        }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/70 to-transparent pointer-events-none" />
-                      {overlayOpacity > 0 && (
-                        <div
-                          className="absolute inset-0 pointer-events-none"
-                          style={{ backgroundColor: `rgba(255, 255, 255, ${Math.min(0.4, (overlayOpacity / 100) * 0.35)})` }}
-                        />
-                      )}
+                      {/* Transition subtile vers le bas de l'écran */}
+                      <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-slate-50/90 to-transparent pointer-events-none" />
                     </div>
                   )}
 
