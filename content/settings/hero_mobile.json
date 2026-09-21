@@ -1,7 +1,7 @@
 {
   "image": "/uploads/46232.png",
-  "position": "left",
-  "overlayOpacity": 70,
+  "position": "center",
+  "overlayOpacity": 90,
   "brightness": "normal",
   "enabled": true
 }
