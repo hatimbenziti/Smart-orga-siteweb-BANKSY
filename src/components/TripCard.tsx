@@ -88,13 +88,13 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
           {/* Destination location line */}
           <div className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">
             <MapPin className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-blue-500/90 shrink-0" />
-            <span className="truncate">{destination}</span>
+            <span className="break-words whitespace-normal sm:truncate">{destination}</span>
           </div>
 
           {/* Title */}
           <h3
             onClick={() => onOpenDetails(trip)}
-            className="text-base sm:text-lg font-extrabold sm:font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug cursor-pointer line-clamp-3 sm:line-clamp-2 min-h-[3.75rem] sm:min-h-[3.25rem] flex items-start"
+            className="text-base sm:text-lg font-extrabold sm:font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug cursor-pointer break-words whitespace-normal line-clamp-none sm:line-clamp-2 min-h-0 sm:min-h-[3.25rem] flex items-start"
           >
             {title}
           </h3>
@@ -103,7 +103,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
           <div className="mt-2 sm:mt-2.5 flex items-center justify-between text-[11px] sm:text-xs text-slate-600 bg-slate-50/90 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border border-slate-100">
             <div className="flex items-center gap-1.5 min-w-0">
               <Calendar className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              <span className="font-semibold text-slate-700 truncate">{nextDate}</span>
+              <span className="font-semibold text-slate-700 break-words whitespace-normal sm:truncate">{nextDate}</span>
             </div>
             <div className="flex items-center gap-1 text-[10px] sm:text-[11px] font-medium text-slate-500 shrink-0">
               <Users className="w-3 h-3 text-slate-400" />
@@ -119,7 +119,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
             {highlights.slice(0, 3).map((item, index) => (
               <div key={index} className="flex items-start gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-slate-600 leading-snug">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                <span className="line-clamp-1">{item}</span>
+                <span className="break-words whitespace-normal line-clamp-none sm:line-clamp-1">{item}</span>
               </div>
             ))}
           </div>
