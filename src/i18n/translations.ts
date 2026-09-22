@@ -225,9 +225,10 @@ export const TRANSLATIONS = {
     floatAgentHelp: "Besoin d'aide pour choisir votre séjour ou vérifier une date ? Écrivez-nous !",
 
     // Footer
-    footerDesc: "Groupe de voyage marocain spécialiste des voyages organisés en groupe et sur-mesure. Vivez la magie du désert de Merzouga, la fraîcheur de Dakhla et la beauté des villes impériales dans le plus grand confort.",
-    footerDestTitle: "Destinations Clés",
+    footerDesc: "Groupe de voyage marocain spécialisé dans les voyages organisés et sur mesure. Découvrez le Maroc autrement, entre désert, océan et villes impériales.",
+    footerDestTitle: "Destinations",
     footerNavTitle: "Navigation",
+    footerNavTeam: "Notre Équipe",
     footerContactTitle: "Contact & Réservations",
     footerLicence: "Organisation de Séjours & Transport Touristique au Maroc",
     footerRights: "Smart Orga Maroc. Tous droits réservés.",
@@ -460,9 +461,10 @@ export const TRANSLATIONS = {
     floatAgentHelp: "هل تحتاج مساعدة لاختيار رحلتك أو التأكد من المقاعد؟ راسلنا الآن !",
 
     // Footer
-    footerDesc: "مجموعة رحلات مغربية متخصصة في الرحلات المنظمة الجماعية والخاصة. عش متعة الصحراء في مرزوكة، وسحر الداخلة، وعراقة المدن المغربية براحة تامة.",
-    footerDestTitle: "أبرز الوجهات",
-    footerNavTitle: "روابط سريعة",
+    footerDesc: "مجموعة رحلات مغربية متخصصة في الرحلات المنظمة وعلى المقاس. اكتشفوا المغرب بطريقة مختلفة، بين الصحراء والمحيط والمدن العريقة.",
+    footerDestTitle: "الوجهات",
+    footerNavTitle: "التنقل",
+    footerNavTeam: "فريقنا",
     footerContactTitle: "التواصل والحجز",
     footerLicence: "تنظيم الرحلات والأسفار والنقل السياحي بالمغرب",
     footerRights: "سمارت أورغا المغرب. جميع الحقوق محفوظة.",
@@ -695,9 +697,10 @@ export const TRANSLATIONS = {
     floatAgentHelp: "Need help picking your trip or checking dates? Message us right away!",
 
     // Footer
-    footerDesc: "Moroccan travel group specialized in organized group tours and tailor-made expeditions. Experience Merzouga desert, Dakhla lagoons, and imperial cities in supreme comfort.",
-    footerDestTitle: "Key Destinations",
-    footerNavTitle: "Quick Links",
+    footerDesc: "Moroccan travel agency specialized in organized and tailor-made tours. Discover Morocco differently, between desert, ocean and imperial cities.",
+    footerDestTitle: "Destinations",
+    footerNavTitle: "Navigation",
+    footerNavTeam: "Our Team",
     footerContactTitle: "Contact & Booking",
     footerLicence: "Tour Operator & Tourist Transport Morocco",
     footerRights: "Smart Orga Morocco. All rights reserved.",

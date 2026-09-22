@@ -168,6 +168,17 @@ export default function App() {
     scrollToSejours();
   };
 
+  const handleSelectCategory = (category: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      category,
+      regionTag: 'all',
+      destination: 'all',
+      searchQuery: ''
+    }));
+    scrollToSejours();
+  };
+
   const handleDiscoverClick = () => {
     scrollToSejours();
   };
@@ -337,6 +348,7 @@ export default function App() {
       <Footer
         onOpenSurMesure={() => setIsSurMesureOpen(true)}
         onSelectTag={handleSelectTag}
+        onSelectCategory={handleSelectCategory}
       />
 
       {/* Floating WhatsApp Action Button */}

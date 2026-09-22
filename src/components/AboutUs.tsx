@@ -84,8 +84,8 @@ export const AboutUs: React.FC = () => {
   ];
 
   return (
-    <section id="qui-sommes-nous" className="py-12 sm:py-24 bg-white border-b border-slate-100 scroll-mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-16">
+    <section id="qui-sommes-nous" className="pt-12 pb-3 sm:py-24 bg-white border-b border-slate-100 scroll-mt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-16">
         
         {/* Header - Matching Image 2 */}
         <div className="text-center max-w-3xl mx-auto space-y-3">

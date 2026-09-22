@@ -135,7 +135,7 @@ export const InstagramGallery: React.FC = () => {
   }, []);
 
   return (
-    <section id="instagram-gallery-section" className="py-16 sm:py-24 bg-white border-b border-slate-100 scroll-mt-20 overflow-hidden relative">
+    <section id="instagram-gallery-section" className="pt-6 pb-16 sm:py-24 bg-white border-b border-slate-100 scroll-mt-20 overflow-hidden relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
         {/* Section Header */}
