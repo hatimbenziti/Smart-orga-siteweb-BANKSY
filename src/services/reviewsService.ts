@@ -270,3 +270,138 @@ export async function fetchGoogleReviews(options?: {
     return FALLBACK_REVIEWS;
   }
 }
+
+export interface SubmitReviewInput {
+  name: string;
+  city: string;
+  trip: string;
+  rating: number;
+  comment: string;
+  honeypot?: string;
+}
+
+const RATE_LIMIT_KEY = 'smartorga_review_last_submit';
+const RATE_LIMIT_COOLDOWN_MS = 60 * 1000; // 60 seconds cooldown between submissions
+
+/**
+ * Submits a new client review to Google Sheets via Google Apps Script (POST).
+ * Strictly sets Published = false to ensure no review appears without team validation.
+ */
+export async function submitReview(
+  input: SubmitReviewInput
+): Promise<{ success: boolean; message: string }> {
+  // 1. Anti-bot honeypot check
+  if (input.honeypot && input.honeypot.trim().length > 0) {
+    // Silently succeed for bots
+    return { success: true, message: 'Merci pour votre avis !' };
+  }
+
+  // 2. Client-side validation
+  const name = (input.name || '').trim();
+  const city = (input.city || '').trim();
+  const trip = (input.trip || '').trim();
+  const rating = Math.min(5, Math.max(1, Math.round(Number(input.rating) || 5)));
+  const comment = (input.comment || '').trim();
+
+  if (!name) {
+    throw new Error('Veuillez renseigner votre nom.');
+  }
+  if (!city) {
+    throw new Error('Veuillez renseigner votre ville.');
+  }
+  if (!trip) {
+    throw new Error('Veuillez indiquer le voyage effectué.');
+  }
+  if (!comment) {
+    throw new Error('Veuillez écrire un commentaire.');
+  }
+  if (comment.length < 10) {
+    throw new Error('Votre commentaire doit contenir au moins 10 caractères.');
+  }
+
+  // 3. Simple anti-spam / rate-limiting check
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      const lastSubmit = localStorage.getItem(RATE_LIMIT_KEY);
+      if (lastSubmit) {
+        const timeDiff = Date.now() - parseInt(lastSubmit, 10);
+        if (timeDiff < RATE_LIMIT_COOLDOWN_MS) {
+          const waitSeconds = Math.ceil((RATE_LIMIT_COOLDOWN_MS - timeDiff) / 1000);
+          throw new Error(
+            `Veuillez patienter encore ${waitSeconds} seconde${
+              waitSeconds > 1 ? 's' : ''
+            } avant de soumettre un nouvel avis.`
+          );
+        }
+      }
+    } catch (e: any) {
+      if (e.message && e.message.includes('patienter')) {
+        throw e;
+      }
+    }
+  }
+
+  // 4. Construct payload. Security: Published is ALWAYS strictly false!
+  const payload = {
+    Name: name,
+    City: city,
+    Trip: trip,
+    Rating: rating,
+    Comment: comment,
+    Date: new Date().toISOString(),
+    Published: false // Forced false
+  };
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout
+
+    // We send as text/plain to prevent CORS preflight OPTIONS blocking on Google Apps Script
+    const response = await fetch(GOOGLE_SCRIPT_REVIEWS_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify(payload),
+      redirect: 'follow',
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    // Save timestamp to prevent spam
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        localStorage.setItem(RATE_LIMIT_KEY, String(Date.now()));
+      } catch {
+        // Ignore localStorage error
+      }
+    }
+
+    if (response.ok) {
+      const jsonRes = await response.json().catch(() => null);
+      if (jsonRes && jsonRes.status === 'error') {
+        throw new Error(jsonRes.message || "Erreur lors de l'enregistrement de votre avis.");
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Votre avis a été envoyé avec succès et sera publié après validation.'
+    };
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      throw new Error('La connexion a expiré. Veuillez vérifier votre connexion internet et réessayer.');
+    }
+    // If it's a validation error or known error, pass it through
+    if (error.message && !error.message.includes('Failed to fetch')) {
+      throw error;
+    }
+
+    // Google Apps Script redirect may trigger an opaque/redirect response in some browser contexts.
+    // If it's a generic fetch error after sending, record the rate limit so we don't spam.
+    console.error('[reviewsService] Error sending review:', error);
+    throw new Error("Impossible d'envoyer votre avis pour le moment. Veuillez réessayer ultérieurement.");
+  }
+}
+

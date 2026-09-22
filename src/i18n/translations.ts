@@ -141,6 +141,7 @@ export const TRANSLATIONS = {
     reviewsTitle: "Ils ont voyagé avec nous",
     reviewsSubtitle: "Découvrez les expériences de notre communauté de voyageurs",
     reviewsAvg: "Avis vérifiés de nos voyageurs",
+    reviewsLeaveBtn: "Laisser un avis",
 
     // FAQ
     faqBadge: "Tout Ce Que Vous Devez Savoir",
@@ -377,6 +378,7 @@ export const TRANSLATIONS = {
     reviewsTitle: "سافروا معنا وشاركونا تجاربهم",
     reviewsSubtitle: "اكتشفوا تجارب وآراء مجتمع مسافري سمارت أورغا",
     reviewsAvg: "تقييمات موثقة من مسافرينا",
+    reviewsLeaveBtn: "أضف تقييمك",
 
     // FAQ
     faqBadge: "كل ما تحتاج معرفته",
@@ -613,6 +615,7 @@ export const TRANSLATIONS = {
     reviewsTitle: "They Traveled With Us",
     reviewsSubtitle: "Discover the experiences of our travel community",
     reviewsAvg: "Verified reviews from our travelers",
+    reviewsLeaveBtn: "Leave a Review",
 
     // FAQ
     faqBadge: "Everything You Need to Know",

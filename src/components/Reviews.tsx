@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Star, Quote, ChevronLeft, ChevronRight, CheckCircle, MessageSquare } from 'lucide-react';
+import { Star, Quote, ChevronLeft, ChevronRight, CheckCircle, MessageSquare, PenLine } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { fetchGoogleReviews, ClientReview } from '../services/reviewsService';
+import { ReviewModal } from './ReviewModal';
 
 export const Reviews: React.FC = () => {
   const { language, t, isRTL } = useLanguage();
   const [reviews, setReviews] = useState<ClientReview[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Fetch reviews on mount or language switch
@@ -350,6 +352,24 @@ export const Reviews: React.FC = () => {
             )}
           </div>
         )}
+
+        {/* Action Button: Laisser un avis */}
+        <div className="flex justify-center mt-8 sm:mt-10">
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-800 hover:text-blue-600 font-semibold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all duration-200 active:scale-95 cursor-pointer group"
+          >
+            <PenLine className="w-4 h-4 text-blue-600 group-hover:rotate-6 transition-transform" />
+            <span>{t.reviewsLeaveBtn || 'Laisser un avis'}</span>
+          </button>
+        </div>
+
+        {/* Modal Formulaire Avis Voyageurs */}
+        <ReviewModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
 
       </div>
     </section>
