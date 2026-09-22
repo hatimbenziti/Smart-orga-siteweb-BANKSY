@@ -8,10 +8,32 @@ export const Reviews: React.FC = () => {
   const { language, t, isRTL } = useLanguage();
   const [reviews, setReviews] = useState<ClientReview[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(3);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedPhoto, setSelectedPhoto] = useState<{ url: string; author: string; trip: string } | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Touch coordinates for mobile swipe
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  // Update items per page on window resize (Desktop: 3, Tablet: 2, Mobile: 1)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setItemsPerPage(1);
+      } else if (window.innerWidth < 1024) {
+        setItemsPerPage(2);
+      } else {
+        setItemsPerPage(3);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Fetch reviews on mount or language switch
   useEffect(() => {
@@ -40,43 +62,65 @@ export const Reviews: React.FC = () => {
     };
   }, [language]);
 
-  // Synchronize active dot when user scrolls/swipes
-  const handleScroll = () => {
-    const el = scrollContainerRef.current;
-    if (!el || reviews.length === 0) return;
+  // Compute total pages
+  const totalPages = Math.max(1, Math.ceil(reviews.length / itemsPerPage));
 
-    const scrollLeft = Math.abs(el.scrollLeft);
-    const cardWidth = el.firstElementChild ? (el.firstElementChild as HTMLElement).offsetWidth : 300;
-    const gap = 24; // gap-6 = 24px
-    const index = Math.round(scrollLeft / (cardWidth + gap));
-    setActiveIndex(Math.min(Math.max(0, index), reviews.length - 1));
-  };
-
-  const scrollToReview = (index: number) => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-
-    const children = el.children;
-    if (children[index]) {
-      (children[index] as HTMLElement).scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'start'
-      });
-      setActiveIndex(index);
+  // Clamp currentPage if totalPages changes (e.g. on resize or reviews update)
+  useEffect(() => {
+    if (currentPage >= totalPages) {
+      setCurrentPage(Math.max(0, totalPages - 1));
     }
+  }, [totalPages, currentPage]);
+
+  // Infinite loop navigation
+  const handleNext = () => {
+    if (totalPages <= 1) return;
+    setCurrentPage((prev) => (prev + 1) % totalPages);
   };
 
   const handlePrev = () => {
-    if (reviews.length === 0) return;
-    const nextIdx = Math.max(0, activeIndex - 1);
-    scrollToReview(nextIdx);
+    if (totalPages <= 1) return;
+    setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
   };
 
-  const handleNext = () => {
-    if (reviews.length === 0) return;
-    const nextIdx = Math.min(reviews.length - 1, activeIndex + 1);
-    scrollToReview(nextIdx);
+  // Automatic slide rotation every 5 seconds (with pause on hover)
+  useEffect(() => {
+    if (totalPages <= 1 || isPaused) return;
+
+    const timer = setInterval(() => {
+      setCurrentPage((prev) => (prev + 1) % totalPages);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [totalPages, isPaused]);
+
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+
+    // Only trigger if horizontal swipe is prominent (> 45px and more horizontal than vertical)
+    if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX < 0) {
+        // Swiped left -> next slide (or prev if RTL)
+        if (isRTL) handlePrev();
+        else handleNext();
+      } else {
+        // Swiped right -> prev slide (or next if RTL)
+        if (isRTL) handleNext();
+        else handlePrev();
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
   };
 
   // Generate color palette for traveler avatar initials based on name
@@ -127,7 +171,7 @@ export const Reviews: React.FC = () => {
             </p>
           </div>
 
-          {/* Average Rating Badge & Controls */}
+          {/* Average Rating Badge & Navigation Controls */}
           <div className="flex items-center gap-3 shrink-0">
             <div className="bg-white px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3">
               <div className="flex items-center gap-1">
@@ -143,32 +187,24 @@ export const Reviews: React.FC = () => {
               </div>
             </div>
 
-            {/* Navigation buttons for desktop */}
-            {reviews.length > 1 && (
-              <div className="hidden sm:flex items-center gap-2">
+            {/* Previous / Next buttons */}
+            {totalPages > 1 && (
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={isRTL ? handleNext : handlePrev}
-                  disabled={activeIndex === 0}
-                  className={`p-2.5 rounded-xl border border-slate-200 transition-all duration-200 flex items-center justify-center cursor-pointer ${
-                    activeIndex === 0
-                      ? 'bg-slate-100 text-slate-400 cursor-not-allowed opacity-50'
-                      : 'bg-white text-slate-700 hover:bg-slate-50 hover:text-blue-600 shadow-xs active:scale-95'
-                  }`}
+                  className="p-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-blue-600 shadow-xs active:scale-95 transition-all duration-200 flex items-center justify-center cursor-pointer"
                   aria-label="Avis précédent"
+                  title="Page précédente"
                 >
                   <ChevronLeft className="w-5 h-5 rtl:rotate-180" />
                 </button>
                 <button
                   type="button"
                   onClick={isRTL ? handlePrev : handleNext}
-                  disabled={activeIndex >= reviews.length - 1}
-                  className={`p-2.5 rounded-xl border border-slate-200 transition-all duration-200 flex items-center justify-center cursor-pointer ${
-                    activeIndex >= reviews.length - 1
-                      ? 'bg-slate-100 text-slate-400 cursor-not-allowed opacity-50'
-                      : 'bg-white text-slate-700 hover:bg-slate-50 hover:text-blue-600 shadow-xs active:scale-95'
-                  }`}
+                  className="p-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-blue-600 shadow-xs active:scale-95 transition-all duration-200 flex items-center justify-center cursor-pointer"
                   aria-label="Avis suivant"
+                  title="Page suivante"
                 >
                   <ChevronRight className="w-5 h-5 rtl:rotate-180" />
                 </button>
@@ -212,188 +248,184 @@ export const Reviews: React.FC = () => {
           </div>
         )}
 
-        {/* Reviews Carousel (Mobile & Desktop) */}
+        {/* Automatic Carousel Slider */}
         {!isLoading && reviews.length > 0 && (
-          <div className="relative">
-            {/* Scrollable track with touch snap support */}
-            <div
-              ref={scrollContainerRef}
-              onScroll={handleScroll}
-              className={`flex gap-6 pb-2 pt-1 px-1 -mx-1 no-scrollbar items-stretch ${
-                reviews.length === 1
-                  ? 'justify-center'
-                  : reviews.length === 2
-                  ? 'sm:justify-center overflow-x-auto snap-x snap-mandatory'
-                  : 'overflow-x-auto snap-x snap-mandatory scroll-smooth'
-              }`}
-              style={{
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none'
-              }}
-            >
-              {reviews.map((rev, index) => {
-                const isCurrent = activeIndex === index;
-                return (
-                  <div
-                    key={rev.id || index}
-                    className={`shrink-0 flex flex-col ${
-                      reviews.length === 1
-                        ? 'w-full max-w-lg sm:max-w-xl'
-                        : 'snap-center w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]'
-                    }`}
-                  >
-                    <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between h-full relative group">
-                      
-                      {/* Top Row: Stars + Date + Decorative Quote Icon */}
-                      <div className="space-y-3.5">
-                        <div className="flex items-center justify-between gap-2">
-                          {/* 5 Stars */}
-                          <div className="flex items-center gap-1">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`w-4 h-4 ${
-                                  i < rev.rating
-                                    ? 'text-amber-400 fill-amber-400'
-                                    : 'text-slate-200 fill-slate-200'
-                                }`}
-                              />
-                            ))}
-                          </div>
+          <div
+            className="relative"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* Overflow hidden viewport */}
+            <div className="overflow-hidden py-1 px-1 -mx-1">
+              <div
+                className="flex transition-transform duration-700 ease-in-out"
+                style={{
+                  transform: isRTL
+                    ? `translateX(${currentPage * 100}%)`
+                    : `translateX(-${currentPage * 100}%)`
+                }}
+              >
+                {Array.from({ length: totalPages }).map((_, pageIndex) => {
+                  const pageReviews = reviews.slice(
+                    pageIndex * itemsPerPage,
+                    (pageIndex + 1) * itemsPerPage
+                  );
 
-                          <div className="flex items-center gap-2">
-                            {rev.date && (
-                              <span className="text-[11px] font-medium text-slate-400 tracking-tight">
-                                {rev.date}
-                              </span>
-                            )}
-                            <Quote className="w-6 h-6 text-blue-500/15 group-hover:text-blue-500/25 transition-colors shrink-0" />
-                          </div>
-                        </div>
+                  return (
+                    <div
+                      key={pageIndex}
+                      className="w-full shrink-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch"
+                    >
+                      {pageReviews.map((rev, revIdx) => (
+                        <div
+                          key={rev.id || `${pageIndex}-${revIdx}`}
+                          className="flex flex-col h-full"
+                        >
+                          <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between h-full relative group">
+                            
+                            {/* Top Row: Stars + Date + Decorative Quote Icon */}
+                            <div className="space-y-3.5">
+                              <div className="flex items-center justify-between gap-2">
+                                {/* 5 Stars */}
+                                <div className="flex items-center gap-1">
+                                  {[...Array(5)].map((_, i) => (
+                                    <Star
+                                      key={i}
+                                      className={`w-4 h-4 ${
+                                        i < rev.rating
+                                          ? 'text-amber-400 fill-amber-400'
+                                          : 'text-slate-200 fill-slate-200'
+                                      }`}
+                                    />
+                                  ))}
+                                </div>
 
-                        {/* Comment Body */}
-                        <div className="relative pt-1">
-                          <p className="text-slate-700 text-sm sm:text-[15px] leading-relaxed line-clamp-4 select-text">
-                            « {rev.comment} »
-                          </p>
-                        </div>
+                                <div className="flex items-center gap-2">
+                                  {rev.date && (
+                                    <span className="text-[11px] font-medium text-slate-400 tracking-tight">
+                                      {rev.date}
+                                    </span>
+                                  )}
+                                  <Quote className="w-6 h-6 text-blue-500/15 group-hover:text-blue-500/25 transition-colors shrink-0" />
+                                </div>
+                              </div>
 
-                        {/* Photo du voyageur (Affichée uniquement si présente) */}
-                        {rev.photo && (
-                          <div className="pt-2">
-                            <div
-                              onClick={() => setSelectedPhoto({ url: rev.photo!, author: rev.name, trip: rev.trip })}
-                              className="relative overflow-hidden rounded-xl border border-slate-100/90 shadow-2xs group/photo cursor-pointer bg-slate-50"
-                              title="Cliquer pour agrandir la photo"
-                            >
-                              <img
-                                src={rev.photo}
-                                alt={`Photo partagée par ${rev.name} - ${rev.trip}`}
-                                className="w-full h-36 sm:h-40 object-cover rounded-xl group-hover/photo:scale-102 transition-transform duration-300"
-                                loading="lazy"
-                                onError={(e) => {
-                                  // En cas d'erreur de chargement, cacher le bloc photo sans casser la carte
-                                  (e.currentTarget.parentElement as HTMLElement)?.style.setProperty('display', 'none');
-                                }}
-                              />
-                              <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                                <span className="px-2.5 py-1 rounded-full bg-slate-900/80 text-white text-[11px] font-medium flex items-center gap-1.5 shadow-md backdrop-blur-xs">
-                                  <Eye className="w-3.5 h-3.5" />
-                                  <span>Agrandir</span>
-                                </span>
+                              {/* Comment Body */}
+                              <div className="relative pt-1">
+                                <p className="text-slate-700 text-sm sm:text-[15px] leading-relaxed line-clamp-4 select-text">
+                                  « {rev.comment} »
+                                </p>
+                              </div>
+
+                              {/* Photo du voyageur (Affichée uniquement si présente) */}
+                              {rev.photo && (
+                                <div className="pt-2">
+                                  <div
+                                    onClick={() =>
+                                      setSelectedPhoto({
+                                        url: rev.photo!,
+                                        author: rev.name,
+                                        trip: rev.trip
+                                      })
+                                    }
+                                    className="relative overflow-hidden rounded-xl border border-slate-100/90 shadow-2xs group/photo cursor-pointer bg-slate-50"
+                                    title="Cliquer pour agrandir la photo"
+                                  >
+                                    <img
+                                      src={rev.photo}
+                                      alt={`Photo partagée par ${rev.name} - ${rev.trip}`}
+                                      className="w-full h-36 sm:h-40 object-cover rounded-xl group-hover/photo:scale-102 transition-transform duration-300"
+                                      loading="lazy"
+                                      onError={(e) => {
+                                        // En cas d'erreur de chargement, cacher le bloc photo
+                                        (e.currentTarget.parentElement as HTMLElement)?.style.setProperty(
+                                          'display',
+                                          'none'
+                                        );
+                                      }}
+                                    />
+                                    <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                      <span className="px-2.5 py-1 rounded-full bg-slate-900/80 text-white text-[11px] font-medium flex items-center gap-1.5 shadow-md backdrop-blur-xs">
+                                        <Eye className="w-3.5 h-3.5" />
+                                        <span>Agrandir</span>
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Bottom Author Row */}
+                            <div className="pt-5 mt-4 border-t border-slate-100/90 flex items-center gap-3.5">
+                              {/* Initials Avatar */}
+                              <div
+                                className={`w-11 h-11 rounded-full bg-gradient-to-tr ${getAvatarGradient(
+                                  rev.name
+                                )} flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs shrink-0 select-none`}
+                              >
+                                {getInitials(rev.name)}
+                              </div>
+
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1.5">
+                                  <h4 className="font-bold text-slate-900 text-sm sm:text-base truncate">
+                                    {rev.name}
+                                  </h4>
+                                  <span
+                                    title="Avis vérifié"
+                                    className="inline-flex items-center text-blue-600"
+                                  >
+                                    <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+                                  </span>
+                                </div>
+
+                                <div className="text-[12px] text-slate-500 truncate flex items-center gap-1.5 mt-0.5">
+                                  {rev.city && <span>{rev.city}</span>}
+                                  {rev.city && rev.trip && <span>•</span>}
+                                  {rev.trip && (
+                                    <span className="text-blue-600 font-medium truncate">
+                                      {rev.trip}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
-                      </div>
 
-                      {/* Bottom Author Row */}
-                      <div className="pt-5 mt-4 border-t border-slate-100/90 flex items-center gap-3.5">
-                        {/* Initials Avatar */}
-                        <div
-                          className={`w-11 h-11 rounded-full bg-gradient-to-tr ${getAvatarGradient(
-                            rev.name
-                          )} flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs shrink-0 select-none`}
-                        >
-                          {getInitials(rev.name)}
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5">
-                            <h4 className="font-bold text-slate-900 text-sm sm:text-base truncate">
-                              {rev.name}
-                            </h4>
-                            <span title="Avis vérifié" className="inline-flex items-center text-blue-600">
-                              <CheckCircle className="w-3.5 h-3.5 shrink-0" />
-                            </span>
-                          </div>
-
-                          <div className="text-[12px] text-slate-500 truncate flex items-center gap-1.5 mt-0.5">
-                            {rev.city && <span>{rev.city}</span>}
-                            {rev.city && rev.trip && <span>•</span>}
-                            {rev.trip && (
-                              <span className="text-blue-600 font-medium truncate">
-                                {rev.trip}
-                              </span>
-                            )}
                           </div>
                         </div>
-                      </div>
-
+                      ))}
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Mobile Touch Pagination Dots & Quick Controls */}
-            {reviews.length > 1 && (
-              <div className="flex items-center justify-between sm:justify-center gap-3 mt-4 pt-1">
-                {/* Mobile Prev Arrow */}
-                <button
-                  type="button"
-                  onClick={isRTL ? handleNext : handlePrev}
-                  disabled={activeIndex === 0}
-                  className="sm:hidden p-2 rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed shadow-2xs active:scale-95"
-                  aria-label="Avis précédent"
-                >
-                  <ChevronLeft className="w-4 h-4 rtl:rotate-180" />
-                </button>
-
-                {/* Pagination Indicators (Dots) */}
-                <div className="flex items-center gap-1.5">
-                  {reviews.map((_, dotIdx) => (
-                    <button
-                      key={dotIdx}
-                      type="button"
-                      onClick={() => scrollToReview(dotIdx)}
-                      className={`h-2 transition-all duration-300 rounded-full cursor-pointer ${
-                        activeIndex === dotIdx
-                          ? 'w-6 bg-blue-600'
-                          : 'w-2 bg-slate-300 hover:bg-slate-400'
-                      }`}
-                      aria-label={`Aller à l'avis ${dotIdx + 1}`}
-                    />
-                  ))}
-                </div>
-
-                {/* Mobile Next Arrow */}
-                <button
-                  type="button"
-                  onClick={isRTL ? handlePrev : handleNext}
-                  disabled={activeIndex >= reviews.length - 1}
-                  className="sm:hidden p-2 rounded-xl border border-slate-200 bg-white text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed shadow-2xs active:scale-95"
-                  aria-label="Avis suivant"
-                >
-                  <ChevronRight className="w-4 h-4 rtl:rotate-180" />
-                </button>
+            {/* Pagination Indicators (Dots) */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-6">
+                {Array.from({ length: totalPages }).map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setCurrentPage(idx)}
+                    className={`h-2 transition-all duration-300 rounded-full cursor-pointer ${
+                      currentPage === idx
+                        ? 'w-7 bg-blue-600 shadow-2xs'
+                        : 'w-2 bg-slate-300 hover:bg-slate-400'
+                    }`}
+                    aria-label={`Aller à la page ${idx + 1}`}
+                    title={`Page ${idx + 1}`}
+                  />
+                ))}
               </div>
             )}
           </div>
         )}
 
         {/* Action Button: Laisser un avis */}
-        <div className="flex justify-center mt-5 sm:mt-6">
+        <div className="flex justify-center mt-6 sm:mt-8">
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
@@ -455,4 +487,6 @@ export const Reviews: React.FC = () => {
     </section>
   );
 };
+
 export default Reviews;
+
