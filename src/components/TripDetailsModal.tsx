@@ -83,9 +83,14 @@ interface TripDetailsModalProps {
   onBook: (trip: Trip) => void;
 }
 
-export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClose, onBook }) => {
+interface TripDetailsModalContentProps {
+  trip: Trip;
+  onClose: () => void;
+  onBook: (trip: Trip) => void;
+}
+
+const TripDetailsModalContent: React.FC<TripDetailsModalContentProps> = ({ trip, onClose, onBook }) => {
   const { language, t, isRTL } = useLanguage();
-  if (!trip) return null;
 
   const title = getTripTitle(trip, language);
   const destination = getTripDestination(trip, language);
@@ -612,3 +617,10 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
     </div>
   );
 };
+
+export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClose, onBook }) => {
+  if (!trip) return null;
+  return <TripDetailsModalContent trip={trip} onClose={onClose} onBook={onBook} />;
+};
+
+export default TripDetailsModal;

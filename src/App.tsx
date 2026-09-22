@@ -359,19 +359,23 @@ export default function App() {
       <FloatingWhatsApp />
 
       {/* Modals */}
-      <TripDetailsModal
-        trip={selectedTripForDetails}
-        onClose={() => setSelectedTripForDetails(null)}
-        onBook={(trip) => {
-          setSelectedTripForDetails(null);
-          setSelectedTripForBooking(trip);
-        }}
-      />
+      {selectedTripForDetails && (
+        <TripDetailsModal
+          trip={selectedTripForDetails}
+          onClose={() => setSelectedTripForDetails(null)}
+          onBook={(trip) => {
+            setSelectedTripForDetails(null);
+            setSelectedTripForBooking(trip);
+          }}
+        />
+      )}
 
-      <BookingModal
-        trip={selectedTripForBooking}
-        onClose={() => setSelectedTripForBooking(null)}
-      />
+      {selectedTripForBooking && (
+        <BookingModal
+          trip={selectedTripForBooking}
+          onClose={() => setSelectedTripForBooking(null)}
+        />
+      )}
 
       <SurMesureModal
         isOpen={isSurMesureOpen}

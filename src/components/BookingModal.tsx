@@ -10,9 +10,13 @@ interface BookingModalProps {
   onClose: () => void;
 }
 
-export const BookingModal: React.FC<BookingModalProps> = ({ trip, onClose }) => {
+interface BookingModalContentProps {
+  trip: Trip;
+  onClose: () => void;
+}
+
+const BookingModalContent: React.FC<BookingModalContentProps> = ({ trip, onClose }) => {
   const { language, t } = useLanguage();
-  if (!trip) return null;
 
   const tripTitle = getTripTitle(trip, language);
   const tripDuration = getTripDuration(trip, language);
@@ -214,3 +218,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({ trip, onClose }) => 
     </div>
   );
 };
+
+export const BookingModal: React.FC<BookingModalProps> = ({ trip, onClose }) => {
+  if (!trip) return null;
+  return <BookingModalContent trip={trip} onClose={onClose} />;
+};
+
+export default BookingModal;
