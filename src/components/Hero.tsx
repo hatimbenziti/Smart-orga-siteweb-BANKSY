@@ -171,12 +171,16 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
 
               {/* 1. Titre principal ("Voyagez en groupe...") */}
               {isRTL ? (
-                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[3.15rem] font-extrabold text-slate-900 leading-[1.38] sm:leading-[1.42] max-w-xl mt-1.5 sm:mt-0 tracking-normal">
-                  <span className="block">{t.heroTitlePrefix}</span>
-                  <span className="block text-blue-600 my-1 sm:my-1.5">
+                <h1 className="max-w-xl mt-1.5 sm:mt-0 tracking-normal text-start">
+                  <span className="block text-xl sm:text-3xl md:text-4xl lg:text-[2.65rem] font-extrabold text-slate-900 leading-[1.32] sm:leading-[1.36]">
+                    {t.heroTitlePrefix}
+                  </span>
+                  <span className="block text-base sm:text-xl md:text-2xl lg:text-[1.85rem] font-bold text-blue-600 mt-1 sm:my-1.5 leading-[1.38]">
                     {t.heroTitleHighlight}
                   </span>
-                  <span className="block">{t.heroTitleSuffix}</span>
+                  <span className="block text-base sm:text-xl md:text-2xl lg:text-[1.85rem] font-bold text-slate-900 leading-[1.38]">
+                    {t.heroTitleSuffix}
+                  </span>
                 </h1>
               ) : (
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 tracking-tight leading-[1.16] max-w-xl mt-1.5 sm:mt-0">

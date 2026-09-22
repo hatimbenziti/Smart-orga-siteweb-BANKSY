@@ -255,9 +255,9 @@ export const TRANSLATIONS = {
 
     // Hero
     heroBadge: "سافروا براحة واطمئنان",
-    heroTitlePrefix: "سافروا معًا، واكتشفوا المغرب",
-    heroTitleHighlight: "وعيشوا لحظات تستحق أن تُحكى",
-    heroTitleSuffix: "مع سمارت أورغا",
+    heroTitlePrefix: "لأن أجمل الذكريات تبدأ بخطوة… دعونا نخطوها معًا",
+    heroTitleHighlight: "لا نبحث عن رحلة عابرة",
+    heroTitleSuffix: "بل عن لحظة تستحق أن تبقى",
     heroTagline1: "وجهات أصيلة، وتجارب تبقى في الذاكرة",
     heroTagline2: "",
     heroPillarNature: "طبيعة ومغامرات",
