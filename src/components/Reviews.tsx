@@ -102,13 +102,13 @@ export const Reviews: React.FC = () => {
   return (
     <section
       id="avis"
-      className="py-16 sm:py-20 lg:py-24 bg-[#F8FAFC] border-b border-slate-200/80 scroll-mt-20 overflow-hidden"
+      className="py-10 sm:py-12 md:py-14 bg-[#F8FAFC] border-b border-slate-200/80 scroll-mt-20 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-12 gap-6">
-          <div className="space-y-3 max-w-2xl">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-8 gap-4">
+          <div className="space-y-2 max-w-2xl">
             {/* Small label above */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50/90 border border-blue-200/80 text-blue-700 text-xs font-bold uppercase tracking-wider shadow-2xs">
               <MessageSquare className="w-3.5 h-3.5 text-blue-600 shrink-0" />
@@ -121,14 +121,14 @@ export const Reviews: React.FC = () => {
             </h2>
 
             {/* Subtitle */}
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               {t.reviewsSubtitle || 'Découvrez les expériences de notre communauté de voyageurs'}
             </p>
           </div>
 
           {/* Average Rating Badge & Controls */}
-          <div className="flex items-center gap-4 shrink-0">
-            <div className="bg-white px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3.5">
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="bg-white px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-3">
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" />
@@ -218,7 +218,13 @@ export const Reviews: React.FC = () => {
             <div
               ref={scrollContainerRef}
               onScroll={handleScroll}
-              className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 pt-1 px-1 -mx-1 no-scrollbar items-stretch"
+              className={`flex gap-6 pb-2 pt-1 px-1 -mx-1 no-scrollbar items-stretch ${
+                reviews.length === 1
+                  ? 'justify-center'
+                  : reviews.length === 2
+                  ? 'sm:justify-center overflow-x-auto snap-x snap-mandatory'
+                  : 'overflow-x-auto snap-x snap-mandatory scroll-smooth'
+              }`}
               style={{
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none'
@@ -229,7 +235,11 @@ export const Reviews: React.FC = () => {
                 return (
                   <div
                     key={rev.id || index}
-                    className="snap-center shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] flex flex-col"
+                    className={`shrink-0 flex flex-col ${
+                      reviews.length === 1
+                        ? 'w-full max-w-lg sm:max-w-xl'
+                        : 'snap-center w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]'
+                    }`}
                   >
                     <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between h-full relative group">
                       
@@ -354,11 +364,11 @@ export const Reviews: React.FC = () => {
         )}
 
         {/* Action Button: Laisser un avis */}
-        <div className="flex justify-center mt-8 sm:mt-10">
+        <div className="flex justify-center mt-5 sm:mt-6">
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-800 hover:text-blue-600 font-semibold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all duration-200 active:scale-95 cursor-pointer group"
+            className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-800 hover:text-blue-600 font-semibold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all duration-200 active:scale-95 cursor-pointer group"
           >
             <PenLine className="w-4 h-4 text-blue-600 group-hover:rotate-6 transition-transform" />
             <span>{t.reviewsLeaveBtn || 'Laisser un avis'}</span>

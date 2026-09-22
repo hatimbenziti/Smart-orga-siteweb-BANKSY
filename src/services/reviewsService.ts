@@ -354,9 +354,9 @@ export async function submitReview(
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
-    // We send as text/plain to prevent CORS preflight OPTIONS blocking on Google Apps Script
+    // We send as text/plain;charset=utf-8 to prevent CORS preflight OPTIONS blocking on Google Apps Script
     const response = await fetch(GOOGLE_SCRIPT_REVIEWS_URL, {
       method: 'POST',
       headers: {
@@ -369,7 +369,44 @@ export async function submitReview(
 
     clearTimeout(timeoutId);
 
-    // Save timestamp to prevent spam
+    if (!response.ok) {
+      throw new Error(`Le serveur a renvoyé une erreur (${response.status}).`);
+    }
+
+    const responseText = await response.text();
+    let jsonRes: any = null;
+
+    try {
+      jsonRes = JSON.parse(responseText);
+    } catch {
+      // If the response is not JSON, check if Google returned a known error message
+      if (responseText.includes('Script function not found: doPost')) {
+        throw new Error(
+          "La fonction 'doPost' n'a pas été trouvée dans votre déploiement Google Apps Script. Veuillez vérifier votre déploiement."
+        );
+      }
+      throw new Error("Réponse inattendue de Google Apps Script. L'avis n'a pas pu être confirmé.");
+    }
+
+    // Check if response indicates success (supports { success: true } or { status: 'success' })
+    const isSuccess = Boolean(
+      jsonRes && (
+        jsonRes.success === true ||
+        jsonRes.success === 'true' ||
+        jsonRes.status === 'success' ||
+        jsonRes.status === 'ok'
+      )
+    );
+
+    if (jsonRes && (jsonRes.success === false || jsonRes.status === 'error' || jsonRes.error)) {
+      throw new Error(jsonRes.message || jsonRes.error || "Une erreur est survenue lors de l'enregistrement de votre avis.");
+    }
+
+    if (!isSuccess) {
+      throw new Error("L'avis n'a pas pu être enregistré avec succès.");
+    }
+
+    // Save timestamp to prevent spam only after confirmed success
     if (typeof window !== 'undefined' && window.localStorage) {
       try {
         localStorage.setItem(RATE_LIMIT_KEY, String(Date.now()));
@@ -378,30 +415,30 @@ export async function submitReview(
       }
     }
 
-    if (response.ok) {
-      const jsonRes = await response.json().catch(() => null);
-      if (jsonRes && jsonRes.status === 'error') {
-        throw new Error(jsonRes.message || "Erreur lors de l'enregistrement de votre avis.");
-      }
-    }
-
     return {
       success: true,
-      message: 'Votre avis a été envoyé avec succès et sera publié après validation.'
+      message: jsonRes.message || 'Votre avis a été envoyé avec succès et sera publié après validation.'
     };
   } catch (error: any) {
     if (error.name === 'AbortError') {
-      throw new Error('La connexion a expiré. Veuillez vérifier votre connexion internet et réessayer.');
-    }
-    // If it's a validation error or known error, pass it through
-    if (error.message && !error.message.includes('Failed to fetch')) {
-      throw error;
+      throw new Error('La connexion a expiré (délai dépassé). Veuillez vérifier votre connexion internet et réessayer.');
     }
 
-    // Google Apps Script redirect may trigger an opaque/redirect response in some browser contexts.
-    // If it's a generic fetch error after sending, record the rate limit so we don't spam.
-    console.error('[reviewsService] Error sending review:', error);
-    throw new Error("Impossible d'envoyer votre avis pour le moment. Veuillez réessayer ultérieurement.");
+    const msg = error.message || '';
+    // Never show CORS or low-level network errors directly to the user
+    if (
+      msg.includes('Failed to fetch') ||
+      msg.includes('NetworkError') ||
+      msg.includes('Load failed') ||
+      msg.includes('CORS') ||
+      msg.includes('preflight') ||
+      msg.includes('Access-Control-Allow-Origin')
+    ) {
+      console.error('[reviewsService] Network/CORS error:', error);
+      throw new Error("Impossible d'envoyer votre avis pour le moment. Veuillez réessayer ultérieurement.");
+    }
+
+    throw error;
   }
 }
 
