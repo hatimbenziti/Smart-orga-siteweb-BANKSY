@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { MapPin, Compass, ShieldCheck, HeartHandshake, Leaf, ChevronRight, ChevronLeft, X } from 'lucide-react';
+import { MapPin, Compass, ShieldCheck, HeartHandshake, Leaf, ChevronRight, ChevronLeft, X, Instagram } from 'lucide-react';
 
 interface TeamMember {
   id: number;
@@ -9,6 +9,7 @@ interface TeamMember {
   bio: string;
   specialty: string;
   photo: string;
+  instagram: string;
 }
 
 export const AboutUs: React.FC = () => {
@@ -33,6 +34,7 @@ export const AboutUs: React.FC = () => {
       bio: t.teamMember1Bio,
       specialty: t.teamMember1Specialty,
       photo: '/assets/salah.png',
+      instagram: 'https://www.instagram.com/salaheddine_fennan?stkn=MXhrOWxxMGc1aDExNQ==',
     },
     {
       id: 2,
@@ -41,6 +43,7 @@ export const AboutUs: React.FC = () => {
       bio: t.teamMember2Bio,
       specialty: t.teamMember2Specialty,
       photo: '/assets/chaimaa.png',
+      instagram: 'https://www.instagram.com/smart_orga?stkn=OWZyb3o2OWwwMGFl',
     },
     {
       id: 3,
@@ -49,6 +52,7 @@ export const AboutUs: React.FC = () => {
       bio: t.teamMember3Bio,
       specialty: t.teamMember3Specialty,
       photo: '/assets/hatim.png',
+      instagram: 'https://www.instagram.com/hatimbenziti?stkn=MXFzMmp4a2V5eTViag==',
     },
     {
       id: 4,
@@ -57,6 +61,7 @@ export const AboutUs: React.FC = () => {
       bio: t.teamMember4Bio,
       specialty: t.teamMember4Specialty,
       photo: '/assets/wissal.jpeg',
+      instagram: 'https://www.instagram.com/wissal_belachqer?stkn=MWVhMjByd3BjNnZxOQ==',
     },
   ];
 
@@ -103,46 +108,76 @@ export const AboutUs: React.FC = () => {
         {/* Mobile Team View (< sm) - Horizontal Compact Cards */}
         <div className="sm:hidden space-y-3">
           {teamMembers.map((member) => (
-            <button
+            <div
               key={member.id}
-              type="button"
               onClick={() => setSelectedMember(member)}
-              className="w-full text-start bg-white rounded-2xl border border-slate-200/90 p-3.5 shadow-xs hover:border-blue-200 active:scale-[0.99] transition-all flex items-center gap-3.5 group cursor-pointer focus:outline-hidden"
+              className="w-full text-start bg-white rounded-2xl border border-slate-200/90 p-3.5 shadow-xs hover:border-blue-200 active:scale-[0.99] transition-all group cursor-pointer focus:outline-hidden"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedMember(member);
+                }
+              }}
               aria-haspopup="dialog"
             >
-              {/* Circular Avatar (64px) */}
-              <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 ring-2 ring-slate-100 group-hover:ring-blue-100 shadow-xs">
-                <img
-                  src={member.photo}
-                  alt={member.name}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
-                />
+              {/* Main Information Row: Avatar + Full Text Block + Independent Navigation Arrow */}
+              <div className="flex items-center gap-3.5">
+                {/* Circular Avatar */}
+                <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 ring-2 ring-slate-100 group-hover:ring-blue-100 shadow-xs">
+                  <img
+                    src={member.photo}
+                    alt={member.name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+
+                {/* Text Information - Full width priority, no truncating of role */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                    {member.name}
+                  </h3>
+                  <p className="text-xs font-semibold text-blue-600 mt-0.5 leading-snug break-words">
+                    {member.role}
+                  </p>
+                  <p className="text-[11px] text-slate-600 leading-relaxed mt-1 line-clamp-2">
+                    {member.bio}
+                  </p>
+                </div>
+
+                {/* Independent Arrow Indicator */}
+                <div className="shrink-0 text-slate-400 group-hover:text-blue-500 transition-colors">
+                  {isRTL ? (
+                    <ChevronLeft className="w-4 h-4" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4" />
+                  )}
+                </div>
               </div>
 
-              {/* Text Information */}
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
-                  {member.name}
-                </h3>
-                <p className="text-xs font-semibold text-blue-600 mt-0.5 truncate">
-                  {member.role}
-                </p>
-                <p className="text-[11px] text-slate-600 leading-relaxed mt-1 line-clamp-2">
-                  {member.bio}
-                </p>
-              </div>
+              {/* Dedicated Discreet Bottom Zone: Specialty & Instagram Link */}
+              <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                <div className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 min-w-0">
+                  <MapPin className="w-3 h-3 text-blue-500 shrink-0" />
+                  <span className="truncate">{member.specialty}</span>
+                </div>
 
-              {/* Subtle Arrow Indicator */}
-              <div className="shrink-0 text-slate-400 group-hover:text-blue-500 transition-colors">
-                {isRTL ? (
-                  <ChevronLeft className="w-4 h-4" />
-                ) : (
-                  <ChevronRight className="w-4 h-4" />
-                )}
+                <a
+                  href={member.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  aria-label={`Instagram - ${member.name}`}
+                  className="w-7 h-7 rounded-full bg-slate-50 hover:bg-pink-50 border border-slate-200/80 hover:border-pink-200 text-pink-500 hover:text-pink-600 flex items-center justify-center transition-colors shadow-2xs shrink-0 cursor-pointer active:scale-95"
+                  title="Instagram"
+                >
+                  <Instagram className="w-3.5 h-3.5 text-pink-500" />
+                </a>
               </div>
-            </button>
+            </div>
           ))}
         </div>
 
@@ -207,12 +242,22 @@ export const AboutUs: React.FC = () => {
                   {selectedMember.role}
                 </p>
 
-                {/* Professional Badge: Streamlined pill on a single line where possible */}
-                <div className="mt-1.5 max-w-full">
+                {/* Professional Badge & Instagram: Streamlined pill on a single line */}
+                <div className="mt-1.5 max-w-full flex items-center justify-center gap-2">
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50/70 text-blue-900 border border-blue-100/80 shadow-2xs leading-normal">
                     <MapPin className="w-3 h-3 text-blue-600 shrink-0" />
                     <span>{selectedMember.specialty}</span>
                   </span>
+                  <a
+                    href={selectedMember.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Instagram - ${selectedMember.name}`}
+                    className="w-7 h-7 rounded-full bg-slate-50 hover:bg-pink-50 border border-slate-200/80 hover:border-pink-200 text-pink-500 hover:text-pink-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
+                    title="Instagram"
+                  >
+                    <Instagram className="w-3.5 h-3.5 text-pink-500" />
+                  </a>
                 </div>
 
                 {/* Subtle Horizontal Divider */}
@@ -238,8 +283,20 @@ export const AboutUs: React.FC = () => {
           {teamMembers.map((member) => (
             <div
               key={member.id}
-              className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-6 sm:p-8 text-center shadow-xs hover:shadow-xl hover:border-blue-200 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center group"
+              className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-6 sm:p-8 text-center shadow-xs hover:shadow-xl hover:border-blue-200 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center group relative"
             >
+              {/* Instagram link icon */}
+              <a
+                href={member.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Instagram - ${member.name}`}
+                className="absolute top-4 right-4 rtl:right-auto rtl:left-4 w-8 h-8 rounded-full bg-slate-50 hover:bg-pink-50 border border-slate-200/80 hover:border-pink-200 text-pink-500 hover:text-pink-600 flex items-center justify-center transition-all duration-200 shadow-2xs hover:shadow-xs cursor-pointer z-10 group/insta"
+                title="Instagram"
+              >
+                <Instagram className="w-4 h-4 text-pink-500 group-hover/insta:scale-110 transition-transform" />
+              </a>
+
               {/* Circular Avatar */}
               <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden mb-5 ring-4 ring-slate-100 group-hover:ring-blue-100 shadow-sm transition-all shrink-0">
                 <img
