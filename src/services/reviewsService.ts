@@ -11,6 +11,8 @@ export interface GoogleSheetReviewRaw {
   Comment?: string;
   Date?: string;
   Published?: boolean | string | number;
+  Photo?: string;
+  photo?: string;
 }
 
 export interface ClientReview {
@@ -23,6 +25,7 @@ export interface ClientReview {
   date: string;
   rawDate?: string;
   published: boolean;
+  photo?: string;
 }
 
 const GOOGLE_SCRIPT_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbwQ2WCjexaE9N3eX26qpKTSOb3f5mgnLXc-_cL0vpyDi-fA_qNCALINpNS5clY-uXQ9zw/exec';
@@ -157,6 +160,34 @@ function saveCachedReviews(items: ClientReview[]): void {
 }
 
 /**
+ * Normalizes a Google Drive image URL (whether uc?export=view or drive.google.com/file/d/...)
+ * into a direct high-speed CDN image URL (lh3.googleusercontent.com/d/...) for error-free display.
+ */
+export function formatDriveImageUrl(url?: string): string {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (!trimmed) return '';
+
+  // Already a direct or external image URL
+  if (trimmed.startsWith('https://lh3.googleusercontent.com/d/')) return trimmed;
+  if (trimmed.startsWith('data:image/')) return trimmed;
+
+  // Match /file/d/{fileId}
+  const fileIdMatch1 = trimmed.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (fileIdMatch1 && fileIdMatch1[1]) {
+    return `https://lh3.googleusercontent.com/d/${fileIdMatch1[1]}`;
+  }
+
+  // Match id={fileId}
+  const fileIdMatch2 = trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (fileIdMatch2 && fileIdMatch2[1]) {
+    return `https://lh3.googleusercontent.com/d/${fileIdMatch2[1]}`;
+  }
+
+  return trimmed;
+}
+
+/**
  * Normalizes raw Google Sheet item to ClientReview.
  */
 function normalizeRawReview(item: GoogleSheetReviewRaw, index: number, language: string = 'fr'): ClientReview | null {
@@ -185,6 +216,10 @@ function normalizeRawReview(item: GoogleSheetReviewRaw, index: number, language:
     ? rawName.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
     : 'Voyageur Smart Orga';
 
+  // Photo URL if provided
+  const rawPhoto = typeof item.Photo === 'string' ? item.Photo.trim() : (typeof item.photo === 'string' ? item.photo.trim() : '');
+  const photoUrl = rawPhoto ? formatDriveImageUrl(rawPhoto) : undefined;
+
   return {
     id: `gsheet-rev-${index}-${encodeURIComponent(rawName).slice(0, 12)}`,
     name: formattedName,
@@ -194,7 +229,8 @@ function normalizeRawReview(item: GoogleSheetReviewRaw, index: number, language:
     comment: rawComment,
     date: formatReviewDate(item.Date, language),
     rawDate: item.Date || '',
-    published: true
+    published: true,
+    photo: photoUrl
   };
 }
 
@@ -277,6 +313,7 @@ export interface SubmitReviewInput {
   trip: string;
   rating: number;
   comment: string;
+  photo?: string | null; // Optional Base64 data URL
   honeypot?: string;
 }
 
@@ -289,7 +326,7 @@ const RATE_LIMIT_COOLDOWN_MS = 60 * 1000; // 60 seconds cooldown between submiss
  */
 export async function submitReview(
   input: SubmitReviewInput
-): Promise<{ success: boolean; message: string }> {
+): Promise<{ success: boolean; message: string; photoUrl?: string }> {
   // 1. Anti-bot honeypot check
   if (input.honeypot && input.honeypot.trim().length > 0) {
     // Silently succeed for bots
@@ -302,6 +339,7 @@ export async function submitReview(
   const trip = (input.trip || '').trim();
   const rating = Math.min(5, Math.max(1, Math.round(Number(input.rating) || 5)));
   const comment = (input.comment || '').trim();
+  const photo = (input.photo || '').trim();
 
   if (!name) {
     throw new Error('Veuillez renseigner votre nom.');
@@ -349,7 +387,8 @@ export async function submitReview(
     Rating: rating,
     Comment: comment,
     Date: new Date().toISOString(),
-    Published: false // Forced false
+    Published: false, // Forced false
+    Photo: photo // Base64 data URL or empty string
   };
 
   try {
@@ -417,7 +456,8 @@ export async function submitReview(
 
     return {
       success: true,
-      message: jsonRes.message || 'Votre avis a été envoyé avec succès et sera publié après validation.'
+      message: jsonRes.message || 'Votre avis a été envoyé avec succès et sera publié après validation.',
+      photoUrl: jsonRes.photoUrl || ''
     };
   } catch (error: any) {
     if (error.name === 'AbortError') {

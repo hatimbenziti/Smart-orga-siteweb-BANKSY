@@ -1,42 +1,39 @@
 /**
  * =========================================================================
- * GOOGLE APPS SCRIPT - SMART ORGA AVIS CLIENTS (REVIEWS)
+ * GOOGLE APPS SCRIPT - SMART ORGA AVIS CLIENTS AVEC GESTION PHOTO GOOGLE DRIVE
  * =========================================================================
  * 
- * ⚠️ PROCÉDURE DE DÉPLOIEMENT OBLIGATOIRE (TRÈS IMPORTANT) :
+ * ⚠️ PROCÉDURE DE DÉPLOIEMENT OBLIGATOIRE DANS GOOGLE APPS SCRIPT :
  * 
- * Dans Google Apps Script, cliquer simplement sur "Enregistrer" (Ctrl+S) 
- * NE MET PAS À JOUR l'URL Web App /exec ! 
- * Vous devez obligatoirement publier une NOUVELLE VERSION :
+ * 1. Ouvrez votre Google Sheets Smart Orga.
+ * 2. Allez dans : Extensions > Apps Script.
+ * 3. Remplacez TOUT le code du fichier Code.gs par le code ci-dessous.
+ * 4. Cliquez sur l'icône de disquette pour ENREGISTRER (Ctrl + S).
+ * 5. Cliquez en haut à droite sur : DÉPLOYER > GÉRER LES DÉPLOIEMENTS.
+ * 6. Dans la fenêtre, cliquez sur le CRAYON (Modifier) à côté de votre déploiement actif.
+ * 7. Dans la liste déroulante "Version", choisissez impérativement : « NOUVELLE VERSION ».
+ * 8. Vérifiez que "Qui a accès" est bien configuré sur : « Tout le monde » (Anyone).
+ * 9. Cliquez sur le bouton bleu DÉPLOYER (acceptez les autorisations Drive si Google le demande).
  * 
- * 1. Dans Google Sheets, allez dans : Extensions > Apps Script.
- * 2. Remplacez TOUT le code existant par le code ci-dessous.
- * 3. Cliquez sur l'icône de disquette pour ENREGISTRER (Ctrl+S).
- * 4. Cliquez en haut à droite sur : DÉPLOYER > GÉRER LES DÉPLOIEMENTS.
- * 5. Dans la fenêtre qui s'ouvre, cliquez sur le CRAYON (Modifier) à côté de votre déploiement actif.
- * 6. Dans la liste déroulante "Version", choisissez impérativement : NOUVELLE VERSION.
- * 7. Vérifiez que "Qui a accès" est bien réglé sur : "Tout le monde" (Anyone).
- * 8. Cliquez sur le bouton bleu DÉPLOYER.
- * 
- * L'URL reste strictement la même :
+ * URL DU DÉPLOIEMENT :
  * https://script.google.com/macros/s/AKfycbwQ2WCjexaE9N3eX26qpKTSOb3f5mgnLXc-_cL0vpyDi-fA_qNCALINpNS5clY-uXQ9zw/exec
  */
 
 /**
  * GET : 
- * 1. Si aucun paramètre d'ajout : Récupère les avis validés dont Published === true
- * 2. Si paramètres d'avis présents : Ajoute le nouvel avis avec Published = false (Fallback sécurisé)
+ * 1. Récupère les avis validés dont Published === true (avec leur photo si présente).
+ * 2. Fallback de sécurité si un ajout est envoyé en GET.
  */
 function doGet(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
-    // Si des paramètres d'ajout d'avis sont reçus en GET
+    // Si des paramètres d'ajout d'avis sont reçus
     if (e && e.parameter && (e.parameter.action === "addReview" || (e.parameter.Name && e.parameter.Comment))) {
       return handleAddReview(sheet, e.parameter);
     }
 
-    // Sinon : Comportement normal -> Récupération des avis publiés
+    // Récupération des avis publiés
     var data = sheet.getDataRange().getValues();
 
     if (!data || data.length <= 1) {
@@ -55,6 +52,7 @@ function doGet(e) {
     var commentIdx = findHeaderIndex(headers, ["comment", "avis", "commentaire"]);
     var dateIdx = findHeaderIndex(headers, ["date"]);
     var publishedIdx = findHeaderIndex(headers, ["published", "publie", "publié", "actif"]);
+    var photoIdx = findHeaderIndex(headers, ["photo", "image", "photourl", "imageurl"]);
 
     var reviews = [];
 
@@ -62,7 +60,7 @@ function doGet(e) {
       var row = data[i];
       var rawPublished = publishedIdx !== -1 ? row[publishedIdx] : false;
 
-      // Filtrer STRICTEMENT les avis validés
+      // Filtrer STRICTEMENT les avis validés (Published === true)
       var isPublished = (
         rawPublished === true ||
         String(rawPublished).trim().toLowerCase() === "true" ||
@@ -74,6 +72,7 @@ function doGet(e) {
       if (isPublished) {
         var rawComment = commentIdx !== -1 ? String(row[commentIdx] || "").trim() : "";
         var rawName = nameIdx !== -1 ? String(row[nameIdx] || "").trim() : "";
+        var rawPhoto = photoIdx !== -1 ? String(row[photoIdx] || "").trim() : "";
 
         if (rawComment || rawName) {
           reviews.push({
@@ -83,7 +82,8 @@ function doGet(e) {
             Rating: ratingIdx !== -1 && !isNaN(row[ratingIdx]) ? Number(row[ratingIdx]) : 5,
             Comment: rawComment,
             Date: dateIdx !== -1 ? formatDateValue(row[dateIdx]) : "",
-            Published: true
+            Published: true,
+            Photo: rawPhoto
           });
         }
       }
@@ -94,6 +94,7 @@ function doGet(e) {
 
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({
+      success: false,
       status: "error",
       message: error.toString()
     })).setMimeType(ContentService.MimeType.JSON);
@@ -102,6 +103,7 @@ function doGet(e) {
 
 /**
  * POST : Reçoit un nouvel avis depuis le formulaire web et l'enregistre avec Published = false
+ * Gère également l'enregistrement optionnel de la photo dans Google Drive.
  */
 function doPost(e) {
   try {
@@ -116,6 +118,7 @@ function doPost(e) {
 
     if (!postDataString) {
       return ContentService.createTextOutput(JSON.stringify({
+        success: false,
         status: "error",
         message: "Aucune donnée reçue."
       })).setMimeType(ContentService.MimeType.JSON);
@@ -132,6 +135,7 @@ function doPost(e) {
 
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({
+      success: false,
       status: "error",
       message: error.toString()
     })).setMimeType(ContentService.MimeType.JSON);
@@ -139,90 +143,193 @@ function doPost(e) {
 }
 
 /**
- * Fonction centrale d'enregistrement d'un avis dans Google Sheets
+ * Fonction centrale d'enregistrement d'un avis dans Google Sheets et Google Drive
  */
 function handleAddReview(sheet, data) {
-  // Extraction et validation des données
-  var name = String(data.Name || data.name || "").trim();
-  var city = String(data.City || data.city || "").trim();
-  var trip = String(data.Trip || data.trip || "").trim();
-  var comment = String(data.Comment || data.comment || "").trim();
-  var ratingRaw = data.Rating !== undefined ? data.Rating : data.rating;
-  var rating = parseInt(ratingRaw, 10);
-  var date = data.Date || data.date || new Date().toISOString();
+  try {
+    // 1. Extraction et validation des champs obligatoires
+    var name = String(data.Name || data.name || "").trim();
+    var city = String(data.City || data.city || "").trim();
+    var trip = String(data.Trip || data.trip || "").trim();
+    var comment = String(data.Comment || data.comment || "").trim();
+    var ratingRaw = data.Rating !== undefined ? data.Rating : data.rating;
+    var rating = parseInt(ratingRaw, 10);
+    var date = data.Date || data.date || new Date().toISOString();
 
-  if (!name) {
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "error",
-      message: "Le nom est obligatoire."
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-  if (!city) {
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "error",
-      message: "La ville est obligatoire."
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-  if (!trip) {
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "error",
-      message: "Le voyage effectué est obligatoire."
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-  if (isNaN(rating) || rating < 1 || rating > 5) {
-    rating = 5;
-  }
-  if (!comment || comment.length < 10) {
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "error",
-      message: "Le commentaire doit contenir au moins 10 caractères."
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
+    if (!name) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        message: "Le nom est obligatoire."
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (!city) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        message: "La ville est obligatoire."
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (!trip) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        message: "Le voyage effectué est obligatoire."
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    if (isNaN(rating) || rating < 1 || rating > 5) {
+      rating = 5;
+    }
+    if (!comment || comment.length < 10) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        message: "Le commentaire doit contenir au moins 10 caractères."
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
 
-  // SÉCURITÉ ABSOLUE : Published est TOUJOURS false côté serveur
-  var published = false;
+    // 2. Traitement de la photo optionnelle (Google Drive)
+    var photoUrl = "";
+    var photoRaw = data.Photo || data.photo || "";
 
-  // Déterminer les colonnes existantes dans Google Sheets
-  var lastCol = Math.max(1, sheet.getLastColumn());
-  var headerRow = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-  var headers = headerRow.map(function (h) { return String(h).trim(); });
+    if (photoRaw && typeof photoRaw === "string" && photoRaw.length > 20) {
+      try {
+        var photoBase64 = "";
+        var mimeType = "image/jpeg";
+        var ext = "jpg";
 
-  var newRow = [];
+        // Détection format Base64 (Data URI ou brut)
+        if (photoRaw.indexOf("data:") === 0) {
+          var parts = photoRaw.split(",");
+          var header = parts[0];
+          photoBase64 = parts[1] || "";
+          var mimeMatch = header.match(/:(.*?);/);
+          if (mimeMatch && mimeMatch[1]) {
+            mimeType = mimeMatch[1].toLowerCase();
+          }
+        } else {
+          photoBase64 = photoRaw;
+        }
 
-  if (headers.length > 0 && headers[0] !== "") {
-    for (var col = 0; col < headers.length; col++) {
-      var colName = headers[col].toLowerCase();
-      if (colName === "name" || colName === "nom") {
-        newRow.push(name);
-      } else if (colName === "city" || colName === "ville") {
-        newRow.push(city);
-      } else if (colName === "trip" || colName === "voyage" || colName === "sejour") {
-        newRow.push(trip);
-      } else if (colName === "rating" || colName === "note" || colName === "etoiles") {
-        newRow.push(rating);
-      } else if (colName === "comment" || colName === "avis" || colName === "commentaire") {
-        newRow.push(comment);
-      } else if (colName === "date") {
-        newRow.push(date);
-      } else if (colName === "published" || colName === "publie" || colName === "publié" || colName === "actif") {
-        newRow.push(published);
-      } else {
-        newRow.push("");
+        // Extension selon MIME
+        if (mimeType.indexOf("png") !== -1) {
+          ext = "png";
+        } else if (mimeType.indexOf("webp") !== -1) {
+          ext = "webp";
+        } else {
+          ext = "jpg";
+          mimeType = "image/jpeg";
+        }
+
+        // Décodage Base64
+        var decodedBytes = Utilities.base64Decode(photoBase64);
+
+        // Vérification de la taille (5 Mo max = 5 * 1024 * 1024 octets)
+        if (decodedBytes.length > 5 * 1024 * 1024) {
+          return ContentService.createTextOutput(JSON.stringify({
+            success: false,
+            message: "La photo dépasse la taille maximale autorisée de 5 Mo."
+          })).setMimeType(ContentService.MimeType.JSON);
+        }
+
+        // Nom du fichier propre : avis_Nom_Date.jpg
+        var cleanName = name.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase().slice(0, 20);
+        var dateFormatted = Utilities.formatDate(new Date(), "GMT", "yyyyMMdd_HHmmss");
+        var fileName = "avis_" + cleanName + "_" + dateFormatted + "." + ext;
+
+        var blob = Utilities.newBlob(decodedBytes, mimeType, fileName);
+
+        // Dossier dédié Google Drive : « Smart Orga - Avis Clients »
+        var folderName = "Smart Orga - Avis Clients";
+        var folders = DriveApp.getFoldersByName(folderName);
+        var folder;
+        if (folders.hasNext()) {
+          folder = folders.next();
+        } else {
+          folder = DriveApp.createFolder(folderName);
+        }
+
+        // Création du fichier dans le dossier
+        var file = folder.createFile(blob);
+
+        // Rendre le fichier accessible en lecture publique
+        try {
+          file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        } catch (permErr) {
+          // Ignore si restreint par les règles du domaine
+        }
+
+        // Génération de l'URL publique directe (haute performance, adaptée au web)
+        var fileId = file.getId();
+        photoUrl = "https://lh3.googleusercontent.com/d/" + fileId;
+
+      } catch (photoErr) {
+        // En cas d'erreur sur l'image, on enregistre quand même l'avis sans photo
+        Logger.log("Erreur traitement photo: " + photoErr.toString());
+        photoUrl = "";
       }
     }
-  } else {
-    // Si la feuille était vide
-    sheet.appendRow(["Name", "City", "Trip", "Rating", "Comment", "Date", "Published"]);
-    newRow = [name, city, trip, rating, comment, date, published];
+
+    // 3. SÉCURITÉ ABSOLUE : Published est TOUJOURS strictement false côté serveur
+    var published = false;
+
+    // 4. Enregistrement dans Google Sheets
+    var lastCol = Math.max(1, sheet.getLastColumn());
+    var headerRow = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+    var headers = headerRow.map(function (h) { return String(h).trim(); });
+
+    // Si la colonne "Photo" n'existe pas encore dans la feuille, on l'ajoute automatiquement
+    var photoColIdx = findHeaderIndex(headers, ["photo", "image", "photourl", "imageurl"]);
+    if (photoColIdx === -1 && headers.length > 0 && headers[0] !== "") {
+      sheet.getRange(1, headers.length + 1).setValue("Photo");
+      headers.push("Photo");
+      photoColIdx = headers.length - 1;
+    }
+
+    var newRow = [];
+
+    if (headers.length > 0 && headers[0] !== "") {
+      for (var col = 0; col < headers.length; col++) {
+        var colName = headers[col].toLowerCase();
+        if (colName === "name" || colName === "nom") {
+          newRow.push(name);
+        } else if (colName === "city" || colName === "ville") {
+          newRow.push(city);
+        } else if (colName === "trip" || colName === "voyage" || colName === "sejour") {
+          newRow.push(trip);
+        } else if (colName === "rating" || colName === "note" || colName === "etoiles") {
+          newRow.push(rating);
+        } else if (colName === "comment" || colName === "avis" || colName === "commentaire") {
+          newRow.push(comment);
+        } else if (colName === "date") {
+          newRow.push(date);
+        } else if (colName === "published" || colName === "publie" || colName === "publié" || colName === "actif") {
+          newRow.push(published);
+        } else if (colName === "photo" || colName === "image" || colName === "photourl" || colName === "imageurl") {
+          newRow.push(photoUrl);
+        } else {
+          newRow.push("");
+        }
+      }
+    } else {
+      // Si la feuille était complètement vide
+      sheet.appendRow(["Name", "City", "Trip", "Rating", "Comment", "Date", "Published", "Photo"]);
+      newRow = [name, city, trip, rating, comment, date, published, photoUrl];
+    }
+
+    sheet.appendRow(newRow);
+
+    // 5. Réponse JSON finale
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      status: "success",
+      message: "Avis reçu avec succès.",
+      photoUrl: photoUrl
+    })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      status: "error",
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
   }
-
-  // Ajout de la ligne dans la feuille
-  sheet.appendRow(newRow);
-
-  return ContentService.createTextOutput(JSON.stringify({
-    status: "success",
-    message: "Merci pour votre avis ! Votre témoignage sera publié après validation par notre équipe Smart Orga."
-  })).setMimeType(ContentService.MimeType.JSON);
 }
 
 /**
