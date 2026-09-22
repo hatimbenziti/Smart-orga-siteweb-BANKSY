@@ -1,6 +1,6 @@
 /**
  * Service to fetch verified client reviews from Google Sheets via Google Apps Script API.
- * End-point: https://script.google.com/macros/s/AKfycbz3GlXVDYHFy4j1f8KH7fAU7OminzilDz-5A5HUWpra6TxgiYXgm0ePXIqjzhyqmVvUcA/exec
+ * End-point: https://script.google.com/macros/s/AKfycbwQ2WCjexaE9N3eX26qpKTSOb3f5mgnLXc-_cL0vpyDi-fA_qNCALINpNS5clY-uXQ9zw/exec
  */
 
 export interface GoogleSheetReviewRaw {
@@ -25,7 +25,7 @@ export interface ClientReview {
   published: boolean;
 }
 
-const GOOGLE_SCRIPT_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbz3GlXVDYHFy4j1f8KH7fAU7OminzilDz-5A5HUWpra6TxgiYXgm0ePXIqjzhyqmVvUcA/exec';
+const GOOGLE_SCRIPT_REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbwQ2WCjexaE9N3eX26qpKTSOb3f5mgnLXc-_cL0vpyDi-fA_qNCALINpNS5clY-uXQ9zw/exec';
 const CACHE_STORAGE_KEY = 'smartorga_client_reviews_cache_v1';
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes TTL
 

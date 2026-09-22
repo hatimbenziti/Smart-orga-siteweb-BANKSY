@@ -19,7 +19,7 @@
  * 8. Cliquez sur le bouton bleu DÉPLOYER.
  * 
  * L'URL reste strictement la même :
- * https://script.google.com/macros/s/AKfycbz3GlXVDYHFy4j1f8KH7fAU7OminzilDz-5A5HUWpra6TxgiYXgm0ePXIqjzhyqmVvUcA/exec
+ * https://script.google.com/macros/s/AKfycbwQ2WCjexaE9N3eX26qpKTSOb3f5mgnLXc-_cL0vpyDi-fA_qNCALINpNS5clY-uXQ9zw/exec
  */
 
 /**
