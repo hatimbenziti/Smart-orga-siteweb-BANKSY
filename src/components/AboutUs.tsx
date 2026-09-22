@@ -146,35 +146,46 @@ export const AboutUs: React.FC = () => {
           ))}
         </div>
 
-        {/* Mobile Member Full Details Modal */}
+        {/* Mobile Member Full Details Modal - Premium Profile Card */}
         {selectedMember && (
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="team-member-modal-name"
-            className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 sm:hidden animate-in fade-in duration-200"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:hidden bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200"
             onClick={() => setSelectedMember(null)}
           >
             <div
-              className="relative bg-white rounded-3xl max-w-sm w-full shadow-2xl p-6 border border-slate-100 animate-in zoom-in-95 duration-200"
+              className="relative w-[90%] max-w-[400px] max-h-[80vh] bg-white rounded-[26px] shadow-2xl shadow-slate-950/20 border border-slate-100 flex flex-col overflow-hidden animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-3 duration-200 ease-out"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Discreet Close Button "×" */}
-              <button
-                type="button"
-                onClick={() => setSelectedMember(null)}
-                className={`absolute top-3.5 ${
-                  isRTL ? 'left-3.5' : 'right-3.5'
-                } w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer`}
-                aria-label={t.modalClose}
-              >
-                <X className="w-4 h-4" />
-              </button>
+              {/* 1. Upper Visual Banner with soft abstract blue/green gradient & travel detail */}
+              <div className="relative h-16 bg-gradient-to-r from-blue-600/10 via-sky-500/10 to-emerald-600/10 shrink-0 overflow-hidden border-b border-slate-100/80">
+                <div className="absolute inset-0 pointer-events-none opacity-40">
+                  <svg className="w-full h-full text-blue-600/30" viewBox="0 0 360 80" fill="none" preserveAspectRatio="none">
+                    <path d="M-20 25 C60 65 140 10 220 50 C290 80 340 30 380 45" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+                    <circle cx="280" cy="32" r="14" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" />
+                    <circle cx="280" cy="32" r="2.5" fill="currentColor" />
+                  </svg>
+                </div>
 
-              {/* Modal Content */}
-              <div className="flex flex-col items-center text-center">
-                {/* Profile Photo */}
-                <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-slate-100 shadow-sm shrink-0 mb-3.5">
+                {/* Close Button: small circular button in top corner */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedMember(null)}
+                  className={`absolute top-2.5 ${
+                    isRTL ? 'left-2.5' : 'right-2.5'
+                  } w-7 h-7 rounded-full bg-white/95 hover:bg-white text-slate-500 hover:text-slate-800 shadow-xs border border-slate-200/80 flex items-center justify-center transition-colors cursor-pointer z-20`}
+                  aria-label={t.modalClose}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* 2. Fixed Profile Identification Header - Compact vertical cadence */}
+              <div className="flex flex-col items-center text-center px-5 pt-0 pb-1.5 shrink-0 relative">
+                {/* Photo: ~84px, centered, overlapping upper visual area */}
+                <div className="-mt-10 w-[84px] h-[84px] rounded-full overflow-hidden ring-4 ring-white shadow-md shadow-slate-900/10 border border-slate-200/60 bg-white shrink-0 relative z-10">
                   <img
                     src={selectedMember.photo}
                     alt={selectedMember.name}
@@ -183,34 +194,36 @@ export const AboutUs: React.FC = () => {
                   />
                 </div>
 
-                {/* Name */}
+                {/* Name: Bold and prominent */}
                 <h3
                   id="team-member-modal-name"
-                  className="text-lg font-bold text-slate-900 leading-snug"
+                  className="text-lg font-bold text-slate-900 tracking-tight mt-1.5 leading-tight"
                 >
                   {selectedMember.name}
                 </h3>
 
-                {/* Role */}
-                <p className="text-xs font-semibold text-blue-600 mt-1">
+                {/* Job Title: Smaller, using Smart Orga blue */}
+                <p className="text-xs font-semibold text-blue-600 tracking-wide mt-0.5">
                   {selectedMember.role}
                 </p>
 
-                {/* Specialty Tag (Domain/label professionnel) */}
-                <div className="mt-2.5">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200/80">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                {/* Professional Badge: Streamlined pill on a single line where possible */}
+                <div className="mt-1.5 max-w-full">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50/70 text-blue-900 border border-blue-100/80 shadow-2xs leading-normal">
+                    <MapPin className="w-3 h-3 text-blue-600 shrink-0" />
                     <span>{selectedMember.specialty}</span>
                   </span>
                 </div>
 
-                {/* Divider */}
-                <div className="w-full border-t border-slate-100 my-4" />
+                {/* Subtle Horizontal Divider */}
+                <div className="w-12 h-0.5 bg-slate-200/80 rounded-full mt-2.5 mb-0.5" />
+              </div>
 
-                {/* Complete Description (Desktop text) */}
+              {/* 3. Scrollable Description Area */}
+              <div className="flex-1 overflow-y-auto px-5 pb-5 pt-1 min-h-0">
                 <p
-                  className={`text-xs text-slate-600 leading-relaxed ${
-                    isRTL ? 'text-right' : 'text-left'
+                  className={`text-xs text-slate-600 leading-relaxed font-normal ${
+                    isRTL ? 'text-right' : 'text-center'
                   }`}
                 >
                   {selectedMember.bio}
@@ -264,8 +277,8 @@ export const AboutUs: React.FC = () => {
           ))}
         </div>
 
-        {/* Bottom Values & Engagements */}
-        <div className="pt-6 border-t border-slate-100">
+        {/* Bottom Values & Engagements - Desktop only, hidden on mobile */}
+        <div className="hidden sm:block pt-6 border-t border-slate-100">
           <div className="text-center mb-8">
             <h3 className="text-lg sm:text-xl font-bold text-slate-900">
               {t.aboutValuesTitle}
