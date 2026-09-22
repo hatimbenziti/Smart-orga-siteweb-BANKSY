@@ -147,7 +147,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
             >
               <div className={`inline-flex flex-col items-end ${isRTL ? 'items-start text-left -rotate-2' : 'text-right -rotate-2'}`}>
                 <span className="font-script text-[#153450] text-[13px] sm:text-[15px] font-semibold tracking-wide drop-shadow-xs leading-none whitespace-nowrap">
-                  Le Maroc vous attend !
+                  {isRTL ? 'المغرب في انتظاركم' : 'Le Maroc vous attend !'}
                 </span>
                 {/* Elegant subtle blue brush swoosh underneath */}
                 <svg 
@@ -170,13 +170,23 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
               </div>
 
               {/* 1. Titre principal ("Voyagez en groupe...") */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 tracking-tight leading-[1.16] max-w-xl mt-1.5 sm:mt-0">
-                {t.heroTitlePrefix}{' '}
-                <span className="inline-block text-blue-600">
-                  {t.heroTitleHighlight}
-                </span>{' '}
-                {t.heroTitleSuffix}
-              </h1>
+              {isRTL ? (
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 leading-[1.38] sm:leading-[1.42] max-w-xl mt-1.5 sm:mt-0 tracking-normal">
+                  <span className="block">{t.heroTitlePrefix}</span>
+                  <span className="block text-blue-600 my-0.5 sm:my-1">
+                    {t.heroTitleHighlight}
+                  </span>
+                  <span className="block">{t.heroTitleSuffix}</span>
+                </h1>
+              ) : (
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 tracking-tight leading-[1.16] max-w-xl mt-1.5 sm:mt-0">
+                  {t.heroTitlePrefix}{' '}
+                  <span className="inline-block text-blue-600">
+                    {t.heroTitleHighlight}
+                  </span>{' '}
+                  {t.heroTitleSuffix}
+                </h1>
+              )}
 
               {/* Tagline Mobile (Destinations Authentiques — Expériences Inoubliables) - Medium / 500 */}
               <div className="md:hidden pt-1.5 space-y-0.5">
@@ -194,24 +204,36 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                 {/* 1. Nature & Aventure */}
                 <div className="flex flex-col items-center text-center px-1">
                   <Mountain className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
-                  <span className="text-[8px] font-medium uppercase leading-tight text-slate-800 tracking-wide">
-                    NATURE<br />& AVENTURE
+                  <span className={`text-[8px] font-medium uppercase leading-tight text-slate-800 ${isRTL ? 'tracking-normal' : 'tracking-wide'}`}>
+                    {isRTL ? (
+                      <>الطبيعة<br />والمغامرة</>
+                    ) : (
+                      <>NATURE<br />& AVENTURE</>
+                    )}
                   </span>
                 </div>
 
                 {/* 2. Voyages en groupe */}
                 <div className="flex flex-col items-center text-center px-1 border-x border-slate-300/80">
                   <Users className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
-                  <span className="text-[8px] font-medium uppercase leading-tight text-slate-800 tracking-wide">
-                    VOYAGES<br />EN GROUPE
+                  <span className={`text-[8px] font-medium uppercase leading-tight text-slate-800 ${isRTL ? 'tracking-normal' : 'tracking-wide'}`}>
+                    {isRTL ? (
+                      <>رحلات<br />جماعية</>
+                    ) : (
+                      <>VOYAGES<br />EN GROUPE</>
+                    )}
                   </span>
                 </div>
 
                 {/* 3. Découverte & Culture */}
                 <div className="flex flex-col items-center text-center px-1">
                   <Palmtree className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
-                  <span className="text-[8px] font-medium uppercase leading-tight text-slate-800 tracking-wide">
-                    DÉCOUVERTE<br />& CULTURE
+                  <span className={`text-[8px] font-medium uppercase leading-tight text-slate-800 ${isRTL ? 'tracking-normal' : 'tracking-wide'}`}>
+                    {isRTL ? (
+                      <>اكتشاف وثقافة<br />وتراث</>
+                    ) : (
+                      <>DÉCOUVERTE<br />& CULTURE</>
+                    )}
                   </span>
                 </div>
               </div>
@@ -242,15 +264,24 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
             </div>
 
             {/* Bottom-Left Decorative Slogan: "Plus qu’un voyage, une histoire à partager !" (Mobile < 768px only) */}
-            <div className="md:hidden mt-1 mb-8 sm:mb-0 pl-1 z-20 pointer-events-none select-none w-[58%] min-w-[180px] max-w-[225px]">
+            <div className={`md:hidden mt-1 mb-8 sm:mb-0 ${isRTL ? 'pr-1' : 'pl-1'} z-20 pointer-events-none select-none w-[58%] min-w-[180px] max-w-[225px]`}>
               <div className="inline-flex flex-col items-start -rotate-1">
                 <div className="font-script text-[#153450] text-[12px] sm:text-[13px] font-semibold leading-[1.25] tracking-wide drop-shadow-xs">
-                  <div>Plus qu’un voyage,</div>
-                  <div>une histoire à partager !</div>
+                  {isRTL ? (
+                    <>
+                      <div>أكثر من مجرد رحلة</div>
+                      <div>حكاية نشاركها معًا</div>
+                    </>
+                  ) : (
+                    <>
+                      <div>Plus qu’un voyage,</div>
+                      <div>une histoire à partager !</div>
+                    </>
+                  )}
                 </div>
                 {/* Subtle blue swoosh / underline curve underneath */}
                 <svg 
-                  className="h-1.5 w-20 text-[#20547d]/80 mt-1" 
+                  className={`h-1.5 w-20 text-[#20547d]/80 mt-1 ${isRTL ? 'scale-x-[-1]' : ''}`} 
                   viewBox="0 0 100 10" 
                   fill="none" 
                   xmlns="http://www.w3.org/2000/svg"
