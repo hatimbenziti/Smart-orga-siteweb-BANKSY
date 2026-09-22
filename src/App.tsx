@@ -5,6 +5,7 @@ import { Hero } from './components/Hero';
 import { SearchFilters } from './components/SearchFilters';
 import { TripCard } from './components/TripCard';
 import { AboutUs } from './components/AboutUs';
+import { Reviews } from './components/Reviews';
 import { WhyUs } from './components/WhyUs';
 import { InstagramGallery } from './components/InstagramGallery';
 import { FAQ } from './components/FAQ';
@@ -336,6 +337,9 @@ export default function App() {
 
         {/* Qui Sommes-Nous (About Us) Section */}
         <AboutUs />
+
+        {/* Avis Clients (Client Reviews) Section */}
+        <Reviews />
 
         {/* Instagram Gallery */}
         <InstagramGallery />

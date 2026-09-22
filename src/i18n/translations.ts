@@ -137,10 +137,10 @@ export const TRANSLATIONS = {
     why6Desc: "Une équipe réactive à votre écoute pour préparer vos bagages, vérifier vos horaires et vous assister.",
 
     // Reviews
-    reviewsBadge: "Retours d'Expérience",
-    reviewsTitle: "Ce que disent nos voyageurs",
-    reviewsSubtitle: "Des milliers de sourires partagés à travers le Maroc. Découvrez les impressions authentiques de notre communauté.",
-    reviewsAvg: "Sur plus de 450 avis Google & Facebook",
+    reviewsBadge: "AVIS CLIENTS",
+    reviewsTitle: "Ils ont voyagé avec nous",
+    reviewsSubtitle: "Découvrez les expériences de notre communauté de voyageurs",
+    reviewsAvg: "Avis vérifiés de nos voyageurs",
 
     // FAQ
     faqBadge: "Tout Ce Que Vous Devez Savoir",
@@ -373,10 +373,10 @@ export const TRANSLATIONS = {
     why6Desc: "فريقنا رهن إشارتكم للإجابة عن استفساراتكم وطلباتكم.",
 
     // Reviews
-    reviewsBadge: "تجارب حقيقية",
-    reviewsTitle: "ماذا يقول المسافرون عنا",
-    reviewsSubtitle: "آلاف الذكريات والابتسامات في كل رحلة. إليكم جانباً من تقييمات مسافرينا الكرام.",
-    reviewsAvg: "أكثر من 450 تقييم ممتاز على جوجل وفيسبوك",
+    reviewsBadge: "آراء العملاء",
+    reviewsTitle: "سافروا معنا وشاركونا تجاربهم",
+    reviewsSubtitle: "اكتشفوا تجارب وآراء مجتمع مسافري سمارت أورغا",
+    reviewsAvg: "تقييمات موثقة من مسافرينا",
 
     // FAQ
     faqBadge: "كل ما تحتاج معرفته",
@@ -609,10 +609,10 @@ export const TRANSLATIONS = {
     why6Desc: "A responsive team ready to assist you with packing tips, schedules, and any travel question.",
 
     // Reviews
-    reviewsBadge: "Traveler Feedback",
-    reviewsTitle: "What Our Travelers Say",
-    reviewsSubtitle: "Thousands of smiles shared across Morocco. Read real impressions from our travelers.",
-    reviewsAvg: "Over 450 verified 5-star reviews on Google & Facebook",
+    reviewsBadge: "CLIENT REVIEWS",
+    reviewsTitle: "They Traveled With Us",
+    reviewsSubtitle: "Discover the experiences of our travel community",
+    reviewsAvg: "Verified reviews from our travelers",
 
     // FAQ
     faqBadge: "Everything You Need to Know",
