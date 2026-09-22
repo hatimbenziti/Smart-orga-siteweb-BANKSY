@@ -45,9 +45,9 @@ export const WhyUs: React.FC = () => {
   ];
 
   return (
-    <section id="pourquoi-nous" className="py-16 bg-white border-t border-b border-slate-100 scroll-mt-20">
+    <section id="pourquoi-nous" className="py-10 md:py-16 bg-white border-t border-b border-slate-100 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
+        <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-12 space-y-3">
           <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">
             {t.whyBadge}
           </span>
@@ -59,21 +59,21 @@ export const WhyUs: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 md:gap-6">
           {advantages.map((adv, index) => {
             const Icon = adv.icon;
             return (
               <div
                 key={index}
-                className="p-6 rounded-2xl bg-slate-50/70 border border-slate-200/70 hover:border-blue-200 hover:bg-white hover:shadow-md transition-all duration-300 space-y-3"
+                className="rounded-xl md:rounded-2xl bg-slate-50/70 border border-slate-200/70 hover:border-blue-200 hover:bg-white hover:shadow-md transition-all duration-300 p-3 sm:p-4 md:p-6 space-y-2 md:space-y-3 flex flex-col justify-start"
               >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${adv.color}`}>
-                  <Icon className="w-6 h-6" />
+                <div className={`w-8 h-8 sm:w-9 sm:h-9 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center shrink-0 ${adv.color}`}>
+                  <Icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-6 md:h-6" />
                 </div>
-                <h3 className="text-base font-bold text-slate-900">
+                <h3 className="text-xs sm:text-sm md:text-base font-bold text-slate-900 leading-snug">
                   {adv.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                <p className="text-[11px] sm:text-xs md:text-sm text-slate-600 leading-relaxed">
                   {adv.description}
                 </p>
               </div>

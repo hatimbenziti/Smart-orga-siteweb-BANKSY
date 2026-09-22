@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { MapPin, Compass, ShieldCheck, HeartHandshake, Leaf } from 'lucide-react';
+import { MapPin, Compass, ShieldCheck, HeartHandshake, Leaf, ChevronRight, ChevronLeft } from 'lucide-react';
 
 export const AboutUs: React.FC = () => {
   const { language, t, isRTL } = useLanguage();
@@ -64,8 +64,8 @@ export const AboutUs: React.FC = () => {
   ];
 
   return (
-    <section id="qui-sommes-nous" className="py-16 sm:py-24 bg-white border-b border-slate-100 scroll-mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+    <section id="qui-sommes-nous" className="py-12 sm:py-24 bg-white border-b border-slate-100 scroll-mt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-16">
         
         {/* Header - Matching Image 2 */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
@@ -80,8 +80,51 @@ export const AboutUs: React.FC = () => {
           </p>
         </div>
 
-        {/* Team Grid - 4 Column Cards on Desktop */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        {/* Mobile Team View (< sm) - Horizontal Compact Cards */}
+        <div className="sm:hidden space-y-3">
+          {teamMembers.map((member) => (
+            <div
+              key={member.id}
+              className="bg-white rounded-2xl border border-slate-200/90 p-3.5 shadow-xs hover:border-blue-200 transition-all flex items-center gap-3.5 group"
+            >
+              {/* Circular Avatar (64px) */}
+              <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 ring-2 ring-slate-100 group-hover:ring-blue-100 shadow-xs">
+                <img
+                  src={member.photo}
+                  alt={member.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+
+              {/* Text Information */}
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+                  {member.name}
+                </h3>
+                <p className="text-xs font-semibold text-blue-600 mt-0.5 truncate">
+                  {member.role}
+                </p>
+                <p className="text-[11px] text-slate-600 leading-relaxed mt-1 line-clamp-2">
+                  {member.bio}
+                </p>
+              </div>
+
+              {/* Subtle Arrow Indicator */}
+              <div className="shrink-0 text-slate-300 group-hover:text-blue-500 transition-colors">
+                {isRTL ? (
+                  <ChevronLeft className="w-4 h-4 text-slate-400" />
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Team Grid (sm and up) - 4 Column Cards (Strictly unchanged) */}
+        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {teamMembers.map((member) => (
             <div
               key={member.id}
