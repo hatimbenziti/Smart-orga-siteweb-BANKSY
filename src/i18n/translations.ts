@@ -258,7 +258,7 @@ export const TRANSLATIONS = {
     heroBadge: "سافروا براحة واطمئنان",
     heroTitlePrefix: "لأن أجمل الذكريات تبدأ بخطوة… دعونا نخطوها معًا",
     heroTitleHighlight: "لا نبحث عن رحلة عابرة",
-    heroTitleSuffix: "بل عن لحظة تستحق أن تبقى",
+    heroTitleSuffix: "بل عن لحظة تستحق أن تحكى",
     heroTagline1: "وجهات أصيلة، وتجارب تبقى في الذاكرة",
     heroTagline2: "",
     heroPillarNature: "طبيعة ومغامرات",
@@ -267,8 +267,8 @@ export const TRANSLATIONS = {
     heroSubtitle: "اكتشفوا أروع الرحلات المنظمة في مختلف ربوع المغرب: الكثبان الصحراوية، قمم الجبال، الشواطئ الساحرة، المدن العتيقة ومغامرات لا تُنسى. برامج متكاملة تنطلق من الدار البيضاء والرباط مع نقل سياحي مريح وإقامات متميزة.",
     heroBtnDiscover: "استكشف رحلاتنا",
     heroBtnPopular: "رحلاتكم المفضلة",
-    heroStatTravelers: "مسافر سعيد",
-    heroStatRating: "تقييمات موثقة",
+    heroStatTravelers: "مسافرًا سافروا معنا",
+    heroStatRating: "تقييمات موثوقة",
     heroStatAuth: "مغرب أصيل",
     heroExploreBy: "استكشف حسب التجربة:",
     heroNextDepartures: "رحلات جديدة نهاية كل أسبوع",
@@ -283,14 +283,14 @@ export const TRANSLATIONS = {
     regionImperial: "المدن العريقة",
 
     // Search & Filters
-    sejoursBadge: "رحلاتنا السياحية المنظمة",
+    sejoursBadge: "رحلاتنا السياحية",
     sejoursTitle: "جهّزوا حقائبكم، نحن نتكفل بكل شيء",
     sejoursSubtitle: "انطلاقات أسبوعية من الدار البيضاء، الرباط ومراكش. اختاروا وجهتكم المفضلة واحجزوا مقاعدكم فوراً عبر تطبيق واتساب.",
     filterSearchLabel: "البحث بكلمة دلالية",
     filterSearchPlaceholder: "مثال: الصحراء، الشلالات، ركوب الأمواج...",
     filterDestLabel: "الوجهة / المنطقة",
     filterDestAll: "جميع الوجهات",
-    filterBudgetLabel: "أقصى ميزانية",
+    filterBudgetLabel: "الميزانية",
     filterBudgetUnlimited: "غير محدود",
     filterByPrice: "تصفية حسب السعر",
     filterTitle: "التصنيفات:",
@@ -303,7 +303,7 @@ export const TRANSLATIONS = {
     catEtranger: "رحلات خارج المغرب",
     catWeekly: "رحلات نهاية الأسبوع",
     catUpcoming: "رحلات قادمة",
-    resultsFound: "رحلة متوفرة",
+    resultsFound: "رحلات متوفرة",
     filterReset: "إعادة الضبط",
     emptyTripsTitle: "لا توجد رحلات مطابقة لمعايير البحث",
     emptyTripsDesc: "يرجى تعديل الميزانية، تغيير كلمات البحث أو إعادة ضبط الفلاتر لاكتشاف عروضنا.",
@@ -330,7 +330,7 @@ export const TRANSLATIONS = {
     teamMember1Specialty: "إدارة وتنظيم الرحلات",
 
     teamMember2Name: "شيماء وردي",
-    teamMember2Role: "مؤسسة مشاركة وتجربة المسافرين",
+    teamMember2Role: "مؤسسة مشاركة ومكلفة بالتواصل",
     teamMember2Bio: "تهتم شيماء براحة المسافرين وجودة تجربتهم قبل وأثناء الرحلة، وتحرص على اختيار التفاصيل التي تجعل كل إقامة أكثر راحة ومتعة، مع اهتمام خاص بحسن الاستقبال ومرافقة المسافرين.",
     teamMember2Specialty: "تجربة المسافرين والإقامة",
 
@@ -340,7 +340,7 @@ export const TRANSLATIONS = {
     teamMember3Specialty: "التصميم البصري والتصوير",
 
     teamMember4Name: "وصال بلشقر",
-    teamMember4Role: "منشطة ومرافقة المسافرين",
+    teamMember4Role: "منشطة ومرافقة للمسافرين",
     teamMember4Bio: "تتميز وصال بحيويتها وروحها الإيجابية، وتساهم في خلق أجواء ممتعة وتفاعلية خلال الرحلات. تحرص على مرافقة المسافرين وإضفاء طابع مميز يجعل كل رحلة تجربة مليئة بالفرح والذكريات.",
     teamMember4Specialty: "التنشيط وتجربة المسافرين",
     aboutValuesTitle: "قيمنا الأربعة الأساسية",
@@ -391,7 +391,7 @@ export const TRANSLATIONS = {
     // Instagram Gallery
     instaBadge: "@SMART_ORGA • معرض إنستغرام",
     instaTitle: "لحظات لا تُنسى من رحلاتنا",
-    instaSubtitle: "تابعوا مغامراتنا اليومية وصور المسافرين في الوقت الحقيقي على وسائل التواصل الاجتماعي.",
+    instaSubtitle: "تابعوا مغامراتنا اليومية وصور المسافرين على وسائل التواصل الاجتماعي.",
     instaFollowBtn: "تابعونا على إنستغرام @smart_orga",
 
     // Sur-Mesure Banner

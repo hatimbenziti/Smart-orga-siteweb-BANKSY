@@ -311,8 +311,16 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                   <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                     <Users className="w-4 h-4" />
                   </div>
-                  <div>
-                    <div className="font-extrabold text-slate-900 text-base sm:text-lg">4 500+</div>
+                  <div className="text-start">
+                    <div className="font-extrabold text-slate-900 text-base sm:text-lg">
+                      {isRTL ? (
+                        <span dir="ltr" className="inline-block tabular-nums">
+                          +4500
+                        </span>
+                      ) : (
+                        '4 500+'
+                      )}
+                    </div>
                     <div className="text-xs text-slate-500 font-medium">{t.heroStatTravelers}</div>
                   </div>
                 </div>
@@ -321,8 +329,12 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                   <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                     <Award className="w-4 h-4" />
                   </div>
-                  <div>
-                    <div className="font-extrabold text-slate-900 text-base sm:text-lg">4.9 / 5</div>
+                  <div className="text-start">
+                    <div className="font-extrabold text-slate-900 text-base sm:text-lg">
+                      <span dir="ltr" className="inline-block tabular-nums">
+                        4.9 / 5
+                      </span>
+                    </div>
                     <div className="text-xs text-slate-500 font-medium">{t.heroStatRating}</div>
                   </div>
                 </div>
