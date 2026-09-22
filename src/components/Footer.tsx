@@ -156,18 +156,18 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTag }) => {
               </li>
               <li>
                 <button
-                  onClick={() => scrollTo('qui-sommes-nous')}
-                  className="hover:text-blue-600 transition-colors cursor-pointer"
-                >
-                  {t.navQuiSommesNous}
-                </button>
-              </li>
-              <li>
-                <button
                   onClick={() => scrollTo('pourquoi-nous')}
                   className="hover:text-blue-600 transition-colors cursor-pointer"
                 >
                   {t.navPourquoiNous}
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => scrollTo('qui-sommes-nous')}
+                  className="hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  {t.navQuiSommesNous}
                 </button>
               </li>
               <li>

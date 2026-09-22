@@ -533,12 +533,23 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
 
                   {/* Real Mobile Hero Content: Badge -> Headline (Haut) */}
                   <div className="relative z-20 space-y-2 mt-2">
+                    
+                    {/* Top-Right Decorative Slogan Mockup: "Le Maroc vous attend !" */}
+                    <div className="absolute top-0 right-0 z-30 pointer-events-none select-none text-right -rotate-2">
+                      <span className="font-script text-[#153450] text-[9px] font-semibold tracking-wide block leading-none">
+                        Le Maroc vous attend !
+                      </span>
+                      <svg className="h-1.5 w-14 text-[#20547d]/85 mt-0.5 ml-auto" viewBox="0 0 100 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 8C26 2.5 74 2.5 97 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                      </svg>
+                    </div>
+
                     <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50/90 backdrop-blur-xs border border-blue-200/80 text-blue-700 text-[9px] font-bold tracking-wide uppercase shadow-xs">
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping"></span>
                       <span>VOYAGEZ EN TOUTE QUIÉTUDE</span>
                     </div>
 
-                    <h1 className="text-sm font-extrabold text-slate-900 leading-tight mt-1">
+                    <h1 className="text-sm font-extrabold text-slate-900 leading-tight mt-1 max-w-[70%]">
                       Voyagez en groupe et{' '}
                       <span className="text-blue-600">
                         Créez des souvenirs
@@ -581,7 +592,7 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
                   </div>
 
                   {/* Action buttons (Bas gauche compacts et rehaussés) */}
-                  <div className="relative z-20 flex flex-col items-start gap-1 mt-2.5 mb-7 pt-0">
+                  <div className="relative z-20 flex flex-col items-start gap-1 mt-2.5 mb-2 pt-0">
                     <div className="w-[62%] py-1.5 px-2.5 rounded-lg bg-blue-600 text-white font-bold text-[10px] text-center shadow-xs flex items-center justify-center gap-1">
                       <span className="truncate">Découvrir nos séjours</span>
                       <span>→</span>
@@ -590,6 +601,17 @@ export const HeroMobileAdminModal: React.FC<HeroMobileAdminModalProps> = ({ isOp
                     <div className="w-[62%] py-1.5 px-2.5 rounded-lg bg-white/95 backdrop-blur-xs text-slate-800 border border-slate-200 font-bold text-[10px] text-center shadow-xs flex items-center justify-center gap-1">
                       <Sparkles className="w-2.5 h-2.5 text-amber-500 shrink-0" />
                       <span className="truncate">Voyages Populaires</span>
+                    </div>
+
+                    {/* Bottom-Left Decorative Slogan Mockup */}
+                    <div className="pt-1 pl-0.5 w-[62%] -rotate-1 pointer-events-none select-none">
+                      <div className="font-script text-[#153450] text-[8px] font-semibold leading-[1.2] tracking-wide">
+                        <div>Plus qu’un voyage,</div>
+                        <div>une histoire à partager !</div>
+                      </div>
+                      <svg className="h-1 w-12 text-[#20547d]/80 mt-0.5" viewBox="0 0 100 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 5.5C28 1.5 68 1.5 98 6.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                      </svg>
                     </div>
                   </div>
 

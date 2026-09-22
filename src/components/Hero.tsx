@@ -137,7 +137,30 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
           {/* 1. Zone Texte (Left Column on Desktop, Top Column on Mobile) */}
-          <div className="lg:col-span-7 flex flex-col justify-between min-h-[410px] sm:min-h-0 space-y-3.5 sm:space-y-6">
+          <div className="lg:col-span-7 flex flex-col justify-between min-h-[410px] sm:min-h-0 space-y-3.5 sm:space-y-6 relative">
+            
+            {/* Top-Right Decorative Slogan: "Le Maroc vous attend !" (Mobile < 768px only) */}
+            <div 
+              className={`md:hidden absolute z-20 pointer-events-none select-none ${
+                isRTL ? 'left-1 sm:left-4' : 'right-1 sm:right-4'
+              } top-1 sm:top-2 text-right`}
+            >
+              <div className={`inline-flex flex-col items-end ${isRTL ? 'items-start text-left -rotate-2' : 'text-right -rotate-2'}`}>
+                <span className="font-script text-[#153450] text-[13px] sm:text-[15px] font-semibold tracking-wide drop-shadow-xs leading-none whitespace-nowrap">
+                  Le Maroc vous attend !
+                </span>
+                {/* Elegant subtle blue brush swoosh underneath */}
+                <svg 
+                  className={`h-2 w-20 sm:w-24 text-[#20547d]/85 mt-0.5 ${isRTL ? 'mr-auto scale-x-[-1]' : 'ml-auto'}`} 
+                  viewBox="0 0 100 12" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M3 8C26 2.5 74 2.5 97 8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+                </svg>
+              </div>
+            </div>
+
             {/* Top Block : Badge + Titre principal + Tagline & Piliers mobile */}
             <div className="space-y-3 sm:space-y-4 pt-1 sm:pt-0">
               {/* Top Badge */}
@@ -200,7 +223,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
             </div>
 
             {/* 2. Boutons d'action - Rehaussés de 20-30px plus proches des 3 éléments */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 mt-3.5 sm:mt-auto mb-16 sm:mb-0 pt-0 sm:pt-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 mt-3.5 sm:mt-auto mb-2 sm:mb-0 pt-0 sm:pt-2">
               <button
                 onClick={onDiscoverClick}
                 className="w-[58%] min-w-[180px] max-w-[225px] sm:w-auto px-4 sm:px-7 py-2.5 sm:py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs sm:text-base shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer group"
@@ -216,6 +239,25 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                 <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 shrink-0" />
                 <span className="truncate">{t.heroBtnPopular}</span>
               </button>
+            </div>
+
+            {/* Bottom-Left Decorative Slogan: "Plus qu’un voyage, une histoire à partager !" (Mobile < 768px only) */}
+            <div className="md:hidden mt-1 mb-8 sm:mb-0 pl-1 z-20 pointer-events-none select-none w-[58%] min-w-[180px] max-w-[225px]">
+              <div className="inline-flex flex-col items-start -rotate-1">
+                <div className="font-script text-[#153450] text-[12px] sm:text-[13px] font-semibold leading-[1.25] tracking-wide drop-shadow-xs">
+                  <div>Plus qu’un voyage,</div>
+                  <div>une histoire à partager !</div>
+                </div>
+                {/* Subtle blue swoosh / underline curve underneath */}
+                <svg 
+                  className="h-1.5 w-20 text-[#20547d]/80 mt-1" 
+                  viewBox="0 0 100 10" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M2 5.5C28 1.5 68 1.5 98 6.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+                </svg>
+              </div>
             </div>
 
             {/* Desktop Only Extra Details: Micro-stats & Explore by tags */}

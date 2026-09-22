@@ -122,22 +122,16 @@ export const Navbar: React.FC<NavbarProps> = () => {
               {t.navSejours}
             </button>
             <button
-              onClick={() => scrollToSection('qui-sommes-nous')}
-              className="px-3 py-2 text-sm font-medium text-slate-700 hover:text-blue-600 rounded-lg transition-colors cursor-pointer"
-            >
-              {t.navQuiSommesNous}
-            </button>
-            <button
               onClick={() => scrollToSection('pourquoi-nous')}
               className="px-3 py-2 text-sm font-medium text-slate-700 hover:text-blue-600 rounded-lg transition-colors cursor-pointer"
             >
               {t.navPourquoiNous}
             </button>
             <button
-              onClick={() => scrollToSection('instagram')}
-              className="px-3 py-2 text-sm font-medium text-slate-700 hover:text-pink-600 rounded-lg transition-colors cursor-pointer"
+              onClick={() => scrollToSection('qui-sommes-nous')}
+              className="px-3 py-2 text-sm font-medium text-slate-700 hover:text-blue-600 rounded-lg transition-colors cursor-pointer"
             >
-              {t.navInstagram}
+              {t.navQuiSommesNous}
             </button>
             <button
               onClick={() => scrollToSection('faq')}
@@ -279,22 +273,16 @@ export const Navbar: React.FC<NavbarProps> = () => {
             {t.navSejours}
           </button>
           <button
-            onClick={() => scrollToSection('qui-sommes-nous')}
-            className={`w-full ${isRTL ? 'text-right' : 'text-left'} px-4 py-2.5 rounded-lg text-sm font-medium text-slate-800 hover:bg-slate-50`}
-          >
-            {t.navQuiSommesNous}
-          </button>
-          <button
             onClick={() => scrollToSection('pourquoi-nous')}
             className={`w-full ${isRTL ? 'text-right' : 'text-left'} px-4 py-2.5 rounded-lg text-sm font-medium text-slate-800 hover:bg-slate-50`}
           >
             {t.navPourquoiNous}
           </button>
           <button
-            onClick={() => scrollToSection('instagram')}
-            className={`w-full ${isRTL ? 'text-right' : 'text-left'} px-4 py-2.5 rounded-lg text-sm font-medium text-slate-800 hover:bg-slate-50 text-pink-600 font-semibold`}
+            onClick={() => scrollToSection('qui-sommes-nous')}
+            className={`w-full ${isRTL ? 'text-right' : 'text-left'} px-4 py-2.5 rounded-lg text-sm font-medium text-slate-800 hover:bg-slate-50`}
           >
-            {t.navInstagram}
+            {t.navQuiSommesNous}
           </button>
           <button
             onClick={() => scrollToSection('faq')}

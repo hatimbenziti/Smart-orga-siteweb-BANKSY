@@ -320,11 +320,11 @@ export default function App() {
           </div>
         </section>
 
-        {/* Qui Sommes-Nous (About Us) Section */}
-        <AboutUs />
-
         {/* Why Choose Us Section */}
         <WhyUs />
+
+        {/* Qui Sommes-Nous (About Us) Section */}
+        <AboutUs />
 
         {/* Instagram Gallery */}
         <InstagramGallery />
