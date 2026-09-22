@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { MapPin, Compass, ShieldCheck, HeartHandshake, Leaf, ChevronRight, ChevronLeft, X, Instagram } from 'lucide-react';
+import { Compass, ShieldCheck, HeartHandshake, Leaf, ChevronRight, ChevronLeft, X, Instagram } from 'lucide-react';
 
 interface TeamMember {
   id: number;
@@ -122,7 +122,7 @@ export const AboutUs: React.FC = () => {
               }}
               aria-haspopup="dialog"
             >
-              {/* Main Information Row: Avatar + Full Text Block + Independent Navigation Arrow */}
+              {/* Main Information Row: Avatar + Full Text Block + Dedicated Lateral Zone */}
               <div className="flex items-center gap-3.5">
                 {/* Circular Avatar */}
                 <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 ring-2 ring-slate-100 group-hover:ring-blue-100 shadow-xs">
@@ -135,7 +135,7 @@ export const AboutUs: React.FC = () => {
                   />
                 </div>
 
-                {/* Text Information - Full width priority, no truncating of role */}
+                {/* Text Information - Full width priority */}
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                     {member.name}
@@ -148,34 +148,28 @@ export const AboutUs: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Independent Arrow Indicator */}
-                <div className="shrink-0 text-slate-400 group-hover:text-blue-500 transition-colors">
-                  {isRTL ? (
-                    <ChevronLeft className="w-4 h-4" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4" />
-                  )}
-                </div>
-              </div>
+                {/* Dedicated Lateral Zone: Instagram Link & Navigation Arrow */}
+                <div className="shrink-0 flex flex-col items-center justify-between self-stretch py-0.5 gap-2">
+                  <a
+                    href={member.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    aria-label={`Instagram - ${member.name}`}
+                    className="w-7 h-7 rounded-full bg-slate-50 hover:bg-pink-50 border border-slate-200/80 hover:border-pink-200 text-pink-500 hover:text-pink-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer active:scale-95"
+                    title="Instagram"
+                  >
+                    <Instagram className="w-3.5 h-3.5 text-pink-500" />
+                  </a>
 
-              {/* Dedicated Discreet Bottom Zone: Specialty & Instagram Link */}
-              <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                <div className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 min-w-0">
-                  <MapPin className="w-3 h-3 text-blue-500 shrink-0" />
-                  <span className="truncate">{member.specialty}</span>
+                  <div className="text-slate-400 group-hover:text-blue-500 transition-colors">
+                    {isRTL ? (
+                      <ChevronLeft className="w-4 h-4" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4" />
+                    )}
+                  </div>
                 </div>
-
-                <a
-                  href={member.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  aria-label={`Instagram - ${member.name}`}
-                  className="w-7 h-7 rounded-full bg-slate-50 hover:bg-pink-50 border border-slate-200/80 hover:border-pink-200 text-pink-500 hover:text-pink-600 flex items-center justify-center transition-colors shadow-2xs shrink-0 cursor-pointer active:scale-95"
-                  title="Instagram"
-                >
-                  <Instagram className="w-3.5 h-3.5 text-pink-500" />
-                </a>
               </div>
             </div>
           ))}
@@ -242,26 +236,22 @@ export const AboutUs: React.FC = () => {
                   {selectedMember.role}
                 </p>
 
-                {/* Professional Badge & Instagram: Streamlined pill on a single line */}
-                <div className="mt-1.5 max-w-full flex items-center justify-center gap-2">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50/70 text-blue-900 border border-blue-100/80 shadow-2xs leading-normal">
-                    <MapPin className="w-3 h-3 text-blue-600 shrink-0" />
-                    <span>{selectedMember.specialty}</span>
-                  </span>
+                {/* Instagram Link (Mobile Popup) - Minimalist & Premium */}
+                <div className="mt-2.5 mb-1 flex items-center justify-center">
                   <a
                     href={selectedMember.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Instagram - ${selectedMember.name}`}
-                    className="w-7 h-7 rounded-full bg-slate-50 hover:bg-pink-50 border border-slate-200/80 hover:border-pink-200 text-pink-500 hover:text-pink-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
-                    title="Instagram"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50/90 hover:bg-pink-50/80 border border-slate-200/80 hover:border-pink-200 text-slate-700 hover:text-pink-600 transition-all duration-200 shadow-2xs cursor-pointer active:scale-95 group/ig"
                   >
-                    <Instagram className="w-3.5 h-3.5 text-pink-500" />
+                    <Instagram className="w-3.5 h-3.5 text-pink-500 group-hover/ig:scale-110 transition-transform" />
+                    <span className="text-[11px] font-medium tracking-wide">Instagram</span>
                   </a>
                 </div>
 
                 {/* Subtle Horizontal Divider */}
-                <div className="w-12 h-0.5 bg-slate-200/80 rounded-full mt-2.5 mb-0.5" />
+                <div className="w-10 h-0.5 bg-slate-200/70 rounded-full mt-2 mb-0.5" />
               </div>
 
               {/* 3. Scrollable Description Area */}
@@ -319,17 +309,9 @@ export const AboutUs: React.FC = () => {
               </p>
 
               {/* Bio */}
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-5 flex-1">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed flex-1">
                 {member.bio}
               </p>
-
-              {/* Specialty Tag */}
-              <div className="pt-3 border-t border-slate-100 w-full flex justify-center">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200/80">
-                  <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span>{member.specialty}</span>
-                </span>
-              </div>
             </div>
           ))}
         </div>

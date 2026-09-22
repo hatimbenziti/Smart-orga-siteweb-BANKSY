@@ -92,7 +92,7 @@ export const TRANSLATIONS = {
     teamMember1Bio: "Passionné par le voyage et la découverte, Salaheddine imagine et organise des expériences uniques à travers le Maroc. Il veille à chaque détail pour offrir aux voyageurs des séjours authentiques, bien organisés et riches en beaux souvenirs.",
     teamMember1Specialty: "Direction & Organisation des Voyages",
 
-    teamMember2Name: "Chaimaa Wardi",
+    teamMember2Name: "Chaimaa Ouardi",
     teamMember2Role: "Co-fondatrice & Expérience Voyageurs",
     teamMember2Bio: "Dévouée à votre bien-être avant et pendant le séjour. Elle sélectionne avec soin les riads d'exception et veille à chaque détail du voyage.",
     teamMember2Specialty: "Hébergements de Charme & Sur-Mesure",
@@ -566,7 +566,7 @@ export const TRANSLATIONS = {
     teamMember1Bio: "Passionate about travel and discovery, Salaheddine designs and organizes unique journeys across Morocco. He pays attention to every detail to offer travelers authentic, seamless, and memorable experiences.",
     teamMember1Specialty: "Leadership & Tour Operations",
 
-    teamMember2Name: "Chaimaa Wardi",
+    teamMember2Name: "Chaimaa Ouardi",
     teamMember2Role: "Co-Founder & Guest Experience",
     teamMember2Bio: "Dedicated to your well-being before and during your stay. She carefully handpicks exceptional riads and ensures every detail of your journey is seamless.",
     teamMember2Specialty: "Charming Stays & Custom Journeys",
