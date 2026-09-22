@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Star, Quote, ChevronLeft, ChevronRight, CheckCircle, MessageSquare, PenLine, Eye, X } from 'lucide-react';
+import { Star, Quote, ChevronLeft, ChevronRight, CheckCircle, MessageSquare, PenLine } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { fetchGoogleReviews, ClientReview } from '../services/reviewsService';
 import { ReviewModal } from './ReviewModal';
@@ -12,7 +12,6 @@ export const Reviews: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number>(3);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedPhoto, setSelectedPhoto] = useState<{ url: string; author: string; trip: string } | null>(null);
 
   // Touch coordinates for mobile swipe
   const touchStartX = useRef<number | null>(null);
@@ -318,55 +317,38 @@ export const Reviews: React.FC = () => {
                                   « {rev.comment} »
                                 </p>
                               </div>
-
-                              {/* Photo du voyageur (Affichée uniquement si présente) */}
-                              {rev.photo && (
-                                <div className="pt-2">
-                                  <div
-                                    onClick={() =>
-                                      setSelectedPhoto({
-                                        url: rev.photo!,
-                                        author: rev.name,
-                                        trip: rev.trip
-                                      })
-                                    }
-                                    className="relative overflow-hidden rounded-xl border border-slate-100/90 shadow-2xs group/photo cursor-pointer bg-slate-50"
-                                    title="Cliquer pour agrandir la photo"
-                                  >
-                                    <img
-                                      src={rev.photo}
-                                      alt={`Photo partagée par ${rev.name} - ${rev.trip}`}
-                                      className="w-full h-36 sm:h-40 object-cover rounded-xl group-hover/photo:scale-102 transition-transform duration-300"
-                                      loading="lazy"
-                                      onError={(e) => {
-                                        // En cas d'erreur de chargement, cacher le bloc photo
-                                        (e.currentTarget.parentElement as HTMLElement)?.style.setProperty(
-                                          'display',
-                                          'none'
-                                        );
-                                      }}
-                                    />
-                                    <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover/photo:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                                      <span className="px-2.5 py-1 rounded-full bg-slate-900/80 text-white text-[11px] font-medium flex items-center gap-1.5 shadow-md backdrop-blur-xs">
-                                        <Eye className="w-3.5 h-3.5" />
-                                        <span>Agrandir</span>
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
                             </div>
 
                             {/* Bottom Author Row */}
                             <div className="pt-5 mt-4 border-t border-slate-100/90 flex items-center gap-3.5">
-                              {/* Initials Avatar */}
-                              <div
-                                className={`w-11 h-11 rounded-full bg-gradient-to-tr ${getAvatarGradient(
-                                  rev.name
-                                )} flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs shrink-0 select-none`}
-                              >
-                                {getInitials(rev.name)}
-                              </div>
+                              {/* Avatar: Photo if available, otherwise Initial circle */}
+                              {rev.photo ? (
+                                <img
+                                  src={rev.photo}
+                                  alt={rev.name}
+                                  className="w-11 h-11 rounded-full object-cover shadow-xs shrink-0 border border-slate-200/80"
+                                  onError={(e) => {
+                                    // Fallback to initials gradient if photo fails to load
+                                    const parent = e.currentTarget.parentElement;
+                                    if (parent) {
+                                      const fallback = document.createElement('div');
+                                      fallback.className = `w-11 h-11 rounded-full bg-gradient-to-tr ${getAvatarGradient(
+                                        rev.name
+                                      )} flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs shrink-0 select-none`;
+                                      fallback.innerText = getInitials(rev.name);
+                                      parent.replaceChild(fallback, e.currentTarget);
+                                    }
+                                  }}
+                                />
+                              ) : (
+                                <div
+                                  className={`w-11 h-11 rounded-full bg-gradient-to-tr ${getAvatarGradient(
+                                    rev.name
+                                  )} flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs shrink-0 select-none`}
+                                >
+                                  {getInitials(rev.name)}
+                                </div>
+                              )}
 
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1.5">
@@ -441,47 +423,6 @@ export const Reviews: React.FC = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />
-
-        {/* Lightbox / Agrandissement Photo Voyageur */}
-        {selectedPhoto && (
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={`Photo de voyage - ${selectedPhoto.author}`}
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-200"
-            onClick={() => setSelectedPhoto(null)}
-          >
-            <div
-              className="relative max-w-2xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col animate-in zoom-in-95 duration-200"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                <div>
-                  <h4 className="text-sm font-bold text-slate-900">{selectedPhoto.author}</h4>
-                  <p className="text-xs text-blue-600 font-medium">{selectedPhoto.trip}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setSelectedPhoto(null)}
-                  className="w-8 h-8 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center cursor-pointer transition-colors"
-                  aria-label="Fermer"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Photo Display */}
-              <div className="bg-slate-950 flex items-center justify-center p-1 sm:p-2 max-h-[75vh]">
-                <img
-                  src={selectedPhoto.url}
-                  alt={`Photo de ${selectedPhoto.author}`}
-                  className="max-h-[70vh] w-auto max-w-full object-contain rounded-lg"
-                />
-              </div>
-            </div>
-          </div>
-        )}
 
       </div>
     </section>
