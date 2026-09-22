@@ -147,7 +147,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
             >
               <div className={`inline-flex flex-col items-end ${isRTL ? 'items-start text-left -rotate-2' : 'text-right -rotate-2'}`}>
                 <span className="font-script text-[#153450] text-[13px] sm:text-[15px] font-semibold tracking-wide drop-shadow-xs leading-none whitespace-nowrap">
-                  {isRTL ? 'المغرب في انتظاركم' : 'Le Maroc vous attend !'}
+                  {isRTL ? 'اكتشفوا المغرب معنا' : 'Le Maroc vous attend !'}
                 </span>
                 {/* Elegant subtle blue brush swoosh underneath */}
                 <svg 
@@ -171,9 +171,9 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
 
               {/* 1. Titre principal ("Voyagez en groupe...") */}
               {isRTL ? (
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-extrabold text-slate-900 leading-[1.38] sm:leading-[1.42] max-w-xl mt-1.5 sm:mt-0 tracking-normal">
+                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[3.15rem] font-extrabold text-slate-900 leading-[1.38] sm:leading-[1.42] max-w-xl mt-1.5 sm:mt-0 tracking-normal">
                   <span className="block">{t.heroTitlePrefix}</span>
-                  <span className="block text-blue-600 my-0.5 sm:my-1">
+                  <span className="block text-blue-600 my-1 sm:my-1.5">
                     {t.heroTitleHighlight}
                   </span>
                   <span className="block">{t.heroTitleSuffix}</span>
@@ -190,13 +190,21 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
 
               {/* Tagline Mobile (Destinations Authentiques — Expériences Inoubliables) - Medium / 500 */}
               <div className="md:hidden pt-1.5 space-y-0.5">
-                <div className="text-[10px] sm:text-[11px] font-medium tracking-[0.22em] text-slate-800 uppercase">
-                  {t.heroTagline1 || "DESTINATIONS AUTHENTIQUES"}
-                </div>
-                <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-medium tracking-[0.22em] text-slate-800 uppercase">
-                  <span className="w-5 h-[1.5px] bg-slate-700/80 inline-block shrink-0"></span>
-                  <span>{t.heroTagline2 || "EXPÉRIENCES INOUBLIABLES"}</span>
-                </div>
+                {isRTL ? (
+                  <div className="text-[10px] sm:text-[11px] font-medium tracking-normal text-slate-800">
+                    {t.heroTagline1}
+                  </div>
+                ) : (
+                  <>
+                    <div className="text-[10px] sm:text-[11px] font-medium tracking-[0.22em] text-slate-800 uppercase">
+                      {t.heroTagline1 || "DESTINATIONS AUTHENTIQUES"}
+                    </div>
+                    <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-medium tracking-[0.22em] text-slate-800 uppercase">
+                      <span className="w-5 h-[1.5px] bg-slate-700/80 inline-block shrink-0"></span>
+                      <span>{t.heroTagline2 || "EXPÉRIENCES INOUBLIABLES"}</span>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* 3 Piliers Expérience Mobile (Nature, Voyages en groupe, Découverte) - Compact & Groupé à gauche - Medium / 500 */}
@@ -206,7 +214,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                   <Mountain className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
                   <span className={`text-[8px] font-medium uppercase leading-tight text-slate-800 ${isRTL ? 'tracking-normal' : 'tracking-wide'}`}>
                     {isRTL ? (
-                      <>الطبيعة<br />والمغامرة</>
+                      <>طبيعة<br />ومغامرات</>
                     ) : (
                       <>NATURE<br />& AVENTURE</>
                     )}
@@ -218,7 +226,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                   <Users className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
                   <span className={`text-[8px] font-medium uppercase leading-tight text-slate-800 ${isRTL ? 'tracking-normal' : 'tracking-wide'}`}>
                     {isRTL ? (
-                      <>رحلات<br />جماعية</>
+                      <>رحلات<br />تجمعنا</>
                     ) : (
                       <>VOYAGES<br />EN GROUPE</>
                     )}
@@ -230,7 +238,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                   <Palmtree className="w-4 h-4 text-blue-700/90 mb-1" strokeWidth={1.4} />
                   <span className={`text-[8px] font-medium uppercase leading-tight text-slate-800 ${isRTL ? 'tracking-normal' : 'tracking-wide'}`}>
                     {isRTL ? (
-                      <>اكتشاف وثقافة<br />وتراث</>
+                      <>اكتشفوا ثقافة<br />المغرب وتراثه</>
                     ) : (
                       <>DÉCOUVERTE<br />& CULTURE</>
                     )}
@@ -269,8 +277,8 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                 <div className="font-script text-[#153450] text-[12px] sm:text-[13px] font-semibold leading-[1.25] tracking-wide drop-shadow-xs">
                   {isRTL ? (
                     <>
-                      <div>أكثر من مجرد رحلة</div>
-                      <div>حكاية نشاركها معًا</div>
+                      <div>ليست مجرد رحلة</div>
+                      <div>بل ذكريات نعيشها معًا</div>
                     </>
                   ) : (
                     <>
