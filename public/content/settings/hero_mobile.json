@@ -1,8 +1,10 @@
 {
-  "image": "/uploads/heroy-cloud.png",
-  "position": "center",
+  "image": "/uploads/hero-image.png",
+  "image_ar": "",
+  "flip_ar": true,
+  "position": "left",
   "fit": "cover",
   "overlayOpacity": 90,
-  "brightness": null,
+  "brightness": "normal",
   "enabled": true
 }

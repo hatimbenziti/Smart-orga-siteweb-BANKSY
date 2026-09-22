@@ -30,6 +30,14 @@ export const AboutUs: React.FC = () => {
       specialty: t.teamMember3Specialty,
       photo: '/assets/hatim.png',
     },
+    {
+      id: 4,
+      name: t.teamMember4Name,
+      role: t.teamMember4Role,
+      bio: t.teamMember4Bio,
+      specialty: t.teamMember4Specialty,
+      photo: '/assets/wissal.jpeg',
+    },
   ];
 
   const values = [
@@ -72,8 +80,8 @@ export const AboutUs: React.FC = () => {
           </p>
         </div>
 
-        {/* Team Grid - 3 Column Cards Matching Image 2 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        {/* Team Grid - 4 Column Cards on Desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {teamMembers.map((member) => (
             <div
               key={member.id}
