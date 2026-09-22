@@ -1,11 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { MapPin, Compass, ShieldCheck, HeartHandshake, Leaf, ChevronRight, ChevronLeft } from 'lucide-react';
+import { MapPin, Compass, ShieldCheck, HeartHandshake, Leaf, ChevronRight, ChevronLeft, X } from 'lucide-react';
+
+interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+  bio: string;
+  specialty: string;
+  photo: string;
+}
 
 export const AboutUs: React.FC = () => {
   const { language, t, isRTL } = useLanguage();
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
-  const teamMembers = [
+  useEffect(() => {
+    if (selectedMember) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [selectedMember]);
+
+  const teamMembers: TeamMember[] = [
     {
       id: 1,
       name: t.teamMember1Name,
@@ -83,9 +103,12 @@ export const AboutUs: React.FC = () => {
         {/* Mobile Team View (< sm) - Horizontal Compact Cards */}
         <div className="sm:hidden space-y-3">
           {teamMembers.map((member) => (
-            <div
+            <button
               key={member.id}
-              className="bg-white rounded-2xl border border-slate-200/90 p-3.5 shadow-xs hover:border-blue-200 transition-all flex items-center gap-3.5 group"
+              type="button"
+              onClick={() => setSelectedMember(member)}
+              className="w-full text-start bg-white rounded-2xl border border-slate-200/90 p-3.5 shadow-xs hover:border-blue-200 active:scale-[0.99] transition-all flex items-center gap-3.5 group cursor-pointer focus:outline-hidden"
+              aria-haspopup="dialog"
             >
               {/* Circular Avatar (64px) */}
               <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 ring-2 ring-slate-100 group-hover:ring-blue-100 shadow-xs">
@@ -112,16 +135,90 @@ export const AboutUs: React.FC = () => {
               </div>
 
               {/* Subtle Arrow Indicator */}
-              <div className="shrink-0 text-slate-300 group-hover:text-blue-500 transition-colors">
+              <div className="shrink-0 text-slate-400 group-hover:text-blue-500 transition-colors">
                 {isRTL ? (
-                  <ChevronLeft className="w-4 h-4 text-slate-400" />
+                  <ChevronLeft className="w-4 h-4" />
                 ) : (
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                  <ChevronRight className="w-4 h-4" />
                 )}
               </div>
-            </div>
+            </button>
           ))}
         </div>
+
+        {/* Mobile Member Full Details Modal */}
+        {selectedMember && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="team-member-modal-name"
+            className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 sm:hidden animate-in fade-in duration-200"
+            onClick={() => setSelectedMember(null)}
+          >
+            <div
+              className="relative bg-white rounded-3xl max-w-sm w-full shadow-2xl p-6 border border-slate-100 animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Discreet Close Button "×" */}
+              <button
+                type="button"
+                onClick={() => setSelectedMember(null)}
+                className={`absolute top-3.5 ${
+                  isRTL ? 'left-3.5' : 'right-3.5'
+                } w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer`}
+                aria-label={t.modalClose}
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              {/* Modal Content */}
+              <div className="flex flex-col items-center text-center">
+                {/* Profile Photo */}
+                <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-slate-100 shadow-sm shrink-0 mb-3.5">
+                  <img
+                    src={selectedMember.photo}
+                    alt={selectedMember.name}
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+
+                {/* Name */}
+                <h3
+                  id="team-member-modal-name"
+                  className="text-lg font-bold text-slate-900 leading-snug"
+                >
+                  {selectedMember.name}
+                </h3>
+
+                {/* Role */}
+                <p className="text-xs font-semibold text-blue-600 mt-1">
+                  {selectedMember.role}
+                </p>
+
+                {/* Specialty Tag (Domain/label professionnel) */}
+                <div className="mt-2.5">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200/80">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>{selectedMember.specialty}</span>
+                  </span>
+                </div>
+
+                {/* Divider */}
+                <div className="w-full border-t border-slate-100 my-4" />
+
+                {/* Complete Description (Desktop text) */}
+                <p
+                  className={`text-xs text-slate-600 leading-relaxed ${
+                    isRTL ? 'text-right' : 'text-left'
+                  }`}
+                >
+                  {selectedMember.bio}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Desktop Team Grid (sm and up) - 4 Column Cards (Strictly unchanged) */}
         <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
