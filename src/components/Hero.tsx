@@ -141,18 +141,18 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
             
             {/* Top Block : Bandeau supérieur (Badge + Slogan "Le Maroc vous attend !") + Titre principal + Tagline & Piliers mobile */}
             <div className="space-y-3 sm:space-y-4 pt-1 sm:pt-0">
-              {/* Petit bandeau supérieur réorganisé : Badge + Slogan avec espacement garanti évitant tout chevauchement avec l'icône de droite */}
-              <div className="flex items-center justify-between gap-2.5 w-full max-w-[74%] sm:max-w-[65%] md:max-w-none relative">
+              {/* Petit bandeau supérieur : Badge + Slogan avec positionnement responsive proportionnel et marge de sécurité */}
+              <div className="flex items-center justify-between gap-2.5 w-full max-w-[82%] min-[360px]:max-w-[84%] min-[390px]:max-w-[86%] min-[412px]:max-w-[87%] sm:max-w-[72%] md:max-w-none relative">
                 {/* Top Badge */}
                 <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[10.5px] sm:text-sm font-bold tracking-wide uppercase bg-blue-50/90 backdrop-blur-xs border border-blue-200/80 text-blue-700 shadow-xs shrink-0">
                   <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-600 animate-ping"></span>
                   <span>{t.heroBadge}</span>
                 </div>
 
-                {/* Slogan mobile décoratif : "Le Maroc vous attend !" (Mobile < 768px uniquement, avec marge suffisante évitant l'icône de droite) */}
+                {/* Slogan mobile décoratif : "Le Maroc vous attend !" (Mobile < 768px uniquement, décalé responsivement vers la droite avec marge de sécurité) */}
                 <div className="md:hidden pointer-events-none select-none text-right shrink-0">
                   <div className={`inline-flex flex-col items-end ${isRTL ? 'items-start text-left -rotate-2' : 'text-right -rotate-2'}`}>
-                    <span className="font-script text-[#153450] text-[11px] sm:text-[13px] font-semibold tracking-wide drop-shadow-xs leading-[1.15] text-right">
+                    <span className="font-script text-[#153450] text-[10px] min-[360px]:text-[11px] sm:text-[13px] font-semibold tracking-wide drop-shadow-xs leading-[1.15] text-right">
                       {isRTL ? (
                         <>
                           <span className="block">اكتشفوا المغرب</span>
@@ -167,7 +167,7 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                     </span>
                     {/* Elegant subtle blue brush swoosh underneath */}
                     <svg 
-                      className={`h-1.5 w-14 sm:w-16 text-[#20547d]/85 mt-0.5 ${isRTL ? 'mr-auto scale-x-[-1]' : 'ml-auto'}`} 
+                      className={`h-1.5 w-12 min-[360px]:w-14 sm:w-16 text-[#20547d]/85 mt-0.5 ${isRTL ? 'mr-auto scale-x-[-1]' : 'ml-auto'}`} 
                       viewBox="0 0 100 12" 
                       fill="none" 
                       xmlns="http://www.w3.org/2000/svg"
