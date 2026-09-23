@@ -207,7 +207,7 @@ export default function App() {
         />
 
         {/* Trips & Search Section */}
-        <section id="sejours" className="pt-1 pb-6 sm:py-16 scroll-mt-20">
+        <section id="sejours" className="pt-1 pb-3.5 sm:py-16 scroll-mt-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             {/* Section Header (Desktop only) */}

@@ -140,6 +140,15 @@ export const TRANSLATIONS = {
     why5Desc: "Des passionnés natifs des régions visitées pour vous faire découvrir les secrets et légendes du Maroc.",
     why6Title: "Support WhatsApp 7j/7",
     why6Desc: "Une équipe réactive à votre écoute pour préparer vos bagages, vérifier vos horaires et vous assister.",
+    // Why Us Mobile (4 compact cards)
+    whyMobile1Title: "Transport & Hébergement",
+    whyMobile1Desc: "Minibus et autocars récents et confortables. Hébergements contrôlés, chambres privatisées et bivouacs de qualité.",
+    whyMobile2Title: "Ambiance & Accompagnement",
+    whyMobile2Desc: "Une ambiance conviviale et des accompagnateurs passionnés pour vous faire découvrir les régions visitées.",
+    whyMobile3Title: "Tarifs 100% Transparents",
+    whyMobile3Desc: "Tout ce qui est inclus est clairement indiqué à l’avance. Zéro mauvaise surprise ou frais cachés.",
+    whyMobile4Title: "Support WhatsApp 7j/7",
+    whyMobile4Desc: "Une équipe réactive à votre écoute pour préparer votre voyage et vous assister.",
 
     // Reviews
     reviewsBadge: "AVIS CLIENTS",
@@ -382,6 +391,15 @@ export const TRANSLATIONS = {
     why5Desc: "فريق شغوف يرافقكم ويهتم بكل تفاصيل رحلتكم.",
     why6Title: "دعم وتواصل 7 أيام في الأسبوع",
     why6Desc: "فريقنا رهن إشارتكم للإجابة عن استفساراتكم وطلباتكم.",
+    // Why Us Mobile (4 compact cards)
+    whyMobile1Title: "النقل والإقامة",
+    whyMobile1Desc: "وسائل نقل مريحة وإقامات مختارة بعناية، مع غرف خاصة ومخيمات ذات جودة.",
+    whyMobile2Title: "أجواء ودية ومرافقة",
+    whyMobile2Desc: "أجواء ودية ومرافقون شغوفون بالسفر لمساعدتكم على اكتشاف المناطق التي نزورها.",
+    whyMobile3Title: "أسعار شفافة 100%",
+    whyMobile3Desc: "جميع الخدمات المشمولة موضحة مسبقًا، بدون مفاجآت أو تكاليف مخفية.",
+    whyMobile4Title: "دعم عبر واتساب 7/7",
+    whyMobile4Desc: "فريق متاح لمساعدتكم في تحضير رحلتكم والإجابة عن استفساراتكم.",
 
     // Reviews
     reviewsBadge: "آراء العملاء",
@@ -624,6 +642,15 @@ export const TRANSLATIONS = {
     why5Desc: "Native guides eager to reveal the hidden gems, folklore, and rich history of every destination.",
     why6Title: "7/7 WhatsApp Assistance",
     why6Desc: "A responsive team ready to assist you with packing tips, schedules, and any travel question.",
+    // Why Us Mobile (4 compact cards)
+    whyMobile1Title: "Transport & Accommodation",
+    whyMobile1Desc: "Comfortable transport and carefully selected accommodation, with private rooms and quality bivouacs.",
+    whyMobile2Title: "Friendly Atmosphere & Guidance",
+    whyMobile2Desc: "A friendly atmosphere and passionate guides to help you discover the regions we visit.",
+    whyMobile3Title: "100% Transparent Pricing",
+    whyMobile3Desc: "Everything included is clearly stated in advance. No hidden fees or unpleasant surprises.",
+    whyMobile4Title: "WhatsApp Support 7/7",
+    whyMobile4Desc: "A responsive team available to help you prepare your trip and assist you whenever needed.",
 
     // Reviews
     reviewsBadge: "CLIENT REVIEWS",

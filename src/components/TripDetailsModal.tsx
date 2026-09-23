@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Trip } from '../types';
-import { X, Check, Clock, Calendar, Users, MapPin, MessageCircle, ShieldCheck, FileText, AlertCircle, ChevronLeft, ChevronRight, Camera } from 'lucide-react';
+import { X, Check, Clock, Calendar, Users, MapPin, MessageCircle, ShieldCheck, FileText, AlertCircle, ChevronLeft, ChevronRight, Camera, ZoomIn } from 'lucide-react';
 import { createTripWhatsAppUrl } from '../utils/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
 import {
@@ -97,15 +97,17 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
   // Slider state and images list (main image + gallery)
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  // Dragging state for smooth mouse desktop swiping
+  // Dragging & touch state for smooth mouse desktop swiping and reliable mobile tap
   const isDraggingRef = useRef(false);
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
   const hasMovedRef = useRef(false);
+  const touchStartPosRef = useRef<{ x: number; y: number; time: number }>({ x: 0, y: 0, time: 0 });
 
   const allImages = useMemo(() => {
     const list: string[] = [];
@@ -165,19 +167,37 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   // Keyboard navigation (Arrow keys + Escape)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (fullscreenImage) {
+          setFullscreenImage(null);
+        } else {
+          onClose();
+        }
+        return;
+      }
+      if (fullscreenImage) return; // Don't slide behind lightbox
       if (e.key === 'ArrowRight') {
         if (isRTL) prevImage();
         else nextImage();
       } else if (e.key === 'ArrowLeft') {
         if (isRTL) nextImage();
         else prevImage();
-      } else if (e.key === 'Escape') {
-        onClose();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nextImage, prevImage, isRTL, onClose]);
+  }, [nextImage, prevImage, isRTL, onClose, fullscreenImage]);
+
+  // Lock scroll when fullscreen lightbox is active
+  useEffect(() => {
+    if (fullscreenImage) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [fullscreenImage]);
 
   // Track active slide index via IntersectionObserver
   useEffect(() => {
@@ -332,12 +352,31 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                     key={index}
                     ref={(el) => { slideRefs.current[index] = el; }}
                     data-slide-index={index}
-                    onClick={() => {
-                      if (!hasMovedRef.current && index !== activeImageIndex) {
-                        scrollToIndex(index);
+                    onTouchStart={(e) => {
+                      const touch = e.touches[0];
+                      touchStartPosRef.current = { x: touch.clientX, y: touch.clientY, time: Date.now() };
+                    }}
+                    onTouchEnd={(e) => {
+                      const touch = e.changedTouches[0];
+                      const deltaX = Math.abs(touch.clientX - touchStartPosRef.current.x);
+                      const deltaY = Math.abs(touch.clientY - touchStartPosRef.current.y);
+                      const duration = Date.now() - touchStartPosRef.current.time;
+                      // If it was a clean tap (minimal movement < 10px and duration < 350ms)
+                      if (deltaX < 10 && deltaY < 10 && duration < 350) {
+                        setFullscreenImage(imgUrl);
                       }
                     }}
-                    className="w-full shrink-0 snap-center relative rounded-2xl overflow-hidden aspect-video max-h-96 bg-slate-900 shadow-xs transition-all duration-300"
+                    onClick={() => {
+                      if (!hasMovedRef.current) {
+                        if (index !== activeImageIndex) {
+                          scrollToIndex(index);
+                        } else {
+                          // Tap on the active image opens fullscreen Lightbox
+                          setFullscreenImage(imgUrl);
+                        }
+                      }
+                    }}
+                    className="w-full shrink-0 snap-center relative rounded-2xl overflow-hidden aspect-video max-h-96 bg-slate-900 shadow-xs transition-all duration-300 cursor-pointer sm:cursor-grab group/slide"
                     style={{ aspectRatio: '16 / 9' }}
                   >
                     <img
@@ -348,6 +387,12 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                       referrerPolicy="no-referrer"
                       loading={index === 0 ? 'eager' : 'lazy'}
                     />
+
+                    {/* Subtle mobile hint overlay badge indicating tap to view full size poster */}
+                    <div className="sm:hidden absolute bottom-2.5 start-2.5 z-20 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-white text-[10.5px] font-medium shadow-sm pointer-events-none">
+                      <ZoomIn className="w-3 h-3 text-blue-300 shrink-0" />
+                      <span>{language === 'ar' ? 'تكبير الملصق' : language === 'en' ? 'Tap to view full' : 'Plein écran'}</span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -613,6 +658,53 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Image Lightbox (Tap on image in mobile modal opens poster details in full view) */}
+      {fullscreenImage && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image plein écran"
+          className="fixed inset-0 z-60 bg-black/90 sm:bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-2 sm:p-4 select-none animate-in fade-in duration-200"
+          onClick={() => setFullscreenImage(null)}
+        >
+          {/* Top Bar with Clear Close Button and Image Title */}
+          <div
+            className="absolute top-0 inset-x-0 z-70 flex items-center justify-between px-3 sm:px-6 py-3 bg-gradient-to-b from-black/80 to-transparent pointer-events-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-2 min-w-0 pr-2">
+              <span className="text-white/90 text-xs sm:text-sm font-semibold truncate drop-shadow-sm">
+                {title}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setFullscreenImage(null)}
+              className="p-2 sm:p-2.5 rounded-full bg-white/20 hover:bg-white/30 active:bg-white/40 text-white backdrop-blur-md transition-all cursor-pointer shadow-lg shrink-0 flex items-center justify-center"
+              aria-label={t.modalClose || 'Fermer'}
+            >
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
+            </button>
+          </div>
+
+          {/* Centered Image with object-fit: contain to preserve aspect ratio without cropping */}
+          <div
+            className="w-full h-full flex items-center justify-center p-2 pt-14 pb-4"
+            onClick={() => setFullscreenImage(null)}
+          >
+            <img
+              src={fullscreenImage}
+              alt={title}
+              className="max-w-full max-h-full object-contain pointer-events-auto select-none rounded-lg sm:rounded-xl shadow-2xl transition-transform duration-200"
+              style={{ maxHeight: '90vh', maxWidth: '100%', objectFit: 'contain' }}
+              onClick={(e) => e.stopPropagation()}
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
