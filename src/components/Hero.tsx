@@ -139,34 +139,43 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
           {/* 1. Zone Texte (Left Column on Desktop, Top Column on Mobile) */}
           <div className="lg:col-span-7 flex flex-col justify-between min-h-[410px] sm:min-h-0 space-y-3.5 sm:space-y-6 relative">
             
-            {/* Top-Right Decorative Slogan: "Le Maroc vous attend !" (Mobile < 768px only) */}
-            <div 
-              className={`md:hidden absolute z-20 pointer-events-none select-none ${
-                isRTL ? 'left-1 sm:left-4' : 'right-1 sm:right-4'
-              } top-1 sm:top-2 text-right`}
-            >
-              <div className={`inline-flex flex-col items-end ${isRTL ? 'items-start text-left -rotate-2' : 'text-right -rotate-2'}`}>
-                <span className="font-script text-[#153450] text-[13px] sm:text-[15px] font-semibold tracking-wide drop-shadow-xs leading-none whitespace-nowrap">
-                  {isRTL ? 'اكتشفوا المغرب معنا' : 'Le Maroc vous attend !'}
-                </span>
-                {/* Elegant subtle blue brush swoosh underneath */}
-                <svg 
-                  className={`h-2 w-20 sm:w-24 text-[#20547d]/85 mt-0.5 ${isRTL ? 'mr-auto scale-x-[-1]' : 'ml-auto'}`} 
-                  viewBox="0 0 100 12" 
-                  fill="none" 
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M3 8C26 2.5 74 2.5 97 8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-                </svg>
-              </div>
-            </div>
-
-            {/* Top Block : Badge + Titre principal + Tagline & Piliers mobile */}
+            {/* Top Block : Bandeau supérieur (Badge + Slogan "Le Maroc vous attend !") + Titre principal + Tagline & Piliers mobile */}
             <div className="space-y-3 sm:space-y-4 pt-1 sm:pt-0">
-              {/* Top Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold tracking-wide uppercase bg-blue-50/90 backdrop-blur-xs border border-blue-200/80 text-blue-700 shadow-xs">
-                <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
-                <span>{t.heroBadge}</span>
+              {/* Petit bandeau supérieur réorganisé : Badge + Slogan avec espacement garanti évitant tout chevauchement avec l'icône de droite */}
+              <div className="flex items-center justify-between gap-2.5 w-full max-w-[74%] sm:max-w-[65%] md:max-w-none relative">
+                {/* Top Badge */}
+                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[10.5px] sm:text-sm font-bold tracking-wide uppercase bg-blue-50/90 backdrop-blur-xs border border-blue-200/80 text-blue-700 shadow-xs shrink-0">
+                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-600 animate-ping"></span>
+                  <span>{t.heroBadge}</span>
+                </div>
+
+                {/* Slogan mobile décoratif : "Le Maroc vous attend !" (Mobile < 768px uniquement, avec marge suffisante évitant l'icône de droite) */}
+                <div className="md:hidden pointer-events-none select-none text-right shrink-0">
+                  <div className={`inline-flex flex-col items-end ${isRTL ? 'items-start text-left -rotate-2' : 'text-right -rotate-2'}`}>
+                    <span className="font-script text-[#153450] text-[11px] sm:text-[13px] font-semibold tracking-wide drop-shadow-xs leading-[1.15] text-right">
+                      {isRTL ? (
+                        <>
+                          <span className="block">اكتشفوا المغرب</span>
+                          <span className="block">معنا</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="block">Le Maroc</span>
+                          <span className="block">vous attend !</span>
+                        </>
+                      )}
+                    </span>
+                    {/* Elegant subtle blue brush swoosh underneath */}
+                    <svg 
+                      className={`h-1.5 w-14 sm:w-16 text-[#20547d]/85 mt-0.5 ${isRTL ? 'mr-auto scale-x-[-1]' : 'ml-auto'}`} 
+                      viewBox="0 0 100 12" 
+                      fill="none" 
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M3 8C26 2.5 74 2.5 97 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                </div>
               </div>
 
               {/* 1. Titre principal ("Voyagez en groupe...") */}

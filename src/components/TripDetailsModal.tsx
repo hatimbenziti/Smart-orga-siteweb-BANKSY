@@ -292,21 +292,21 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   const cleanedCancellation = rawCancellation.replace(/^Politique d'annulation\s*(\r?\n)+/i, '');
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
-      <div className="relative bg-white rounded-3xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6 animate-in fade-in duration-200">
+      <div className="relative bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full max-h-[94vh] sm:max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
         {/* Modal Header Bar with Close Button */}
-        <div className="sticky top-0 z-20 flex items-center justify-between px-6 py-4 bg-white/95 backdrop-blur-md border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wide">
-              {trip.region}
+        <div className="sticky top-0 z-20 flex items-center justify-between px-3.5 sm:px-6 py-3 sm:py-3.5 bg-white/95 backdrop-blur-md border-b border-slate-100 shrink-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="px-2.5 py-1 rounded-md bg-blue-50 text-blue-900 border border-blue-100/60 text-[11px] sm:text-xs font-bold uppercase tracking-wide truncate">
+              {trip.region || trip.category || 'Voyage'}
             </span>
-            <span className="text-xs text-slate-500 font-medium">
+            <span className="text-[11px] sm:text-xs text-slate-500 font-medium whitespace-nowrap">
               {duration}
             </span>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer shrink-0"
             aria-label={t.modalClose}
           >
             <X className="w-5 h-5" />
@@ -314,8 +314,8 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
-          {/* Image Slider / Horizontal Carousel with Peek Effect */}
+        <div className="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-3.5 sm:space-y-6 [scrollbar-width:thin] pb-6 sm:pb-8">
+          {/* Image Slider / Horizontal Carousel */}
           <div className="space-y-2.5">
             <div className="relative group select-none">
               {/* Scrollable Carousel Track */}
@@ -325,9 +325,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUpOrLeave}
                 onMouseLeave={handleMouseUpOrLeave}
-                className={`flex gap-3 sm:gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-1 cursor-grab active:cursor-grabbing ${
-                  hasMultipleImages ? 'pe-[15%] sm:pe-[15%]' : ''
-                } [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
+                className="flex gap-2 sm:gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-0.5 cursor-grab active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden w-full"
               >
                 {allImages.map((imgUrl, index) => (
                   <div
@@ -339,11 +337,8 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                         scrollToIndex(index);
                       }
                     }}
-                    className={`shrink-0 snap-start relative rounded-2xl overflow-hidden aspect-[16/10] sm:aspect-[16/9] max-h-80 bg-slate-950 shadow-md transition-all duration-300 ${
-                      hasMultipleImages
-                        ? 'w-[82%] sm:w-[85%]'
-                        : 'w-full'
-                    }`}
+                    className="w-full shrink-0 snap-center relative rounded-2xl overflow-hidden aspect-square sm:aspect-[16/9] max-h-[460px] sm:max-h-96 bg-slate-900 shadow-xs transition-all duration-300"
+                    style={{ width: '100%' }}
                   >
                     <img
                       src={imgUrl}
@@ -352,20 +347,6 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                       referrerPolicy="no-referrer"
                       loading={index === 0 ? 'eager' : 'lazy'}
                     />
-
-                    {/* Dark Gradient Overlay for title and badge legibility - Desktop only */}
-                    <div className="hidden sm:block absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent pointer-events-none" />
-
-                    {/* Destination & Title (Pinned at Bottom of each card on desktop only) */}
-                    <div className="hidden sm:block absolute bottom-3.5 sm:bottom-4 start-4 end-4 text-white z-10 pointer-events-none">
-                      <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-200 mb-1">
-                        <MapPin className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                        <span>{destination}</span>
-                      </div>
-                      <h2 className="text-lg sm:text-xl md:text-2xl font-extrabold text-white leading-snug drop-shadow-sm line-clamp-2">
-                        {title}
-                      </h2>
-                    </div>
                   </div>
                 ))}
               </div>
@@ -374,8 +355,8 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
               {hasMultipleImages && (
                 <>
                   {/* Photo Counter Badge (Top End) */}
-                  <div className="absolute top-3 end-3 sm:end-4 z-30 flex items-center gap-1.5 bg-black/65 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-semibold shadow-md pointer-events-none">
-                    <Camera className="w-3.5 h-3.5 text-blue-300 shrink-0" />
+                  <div className="absolute top-2.5 end-2.5 sm:top-3 sm:end-4 z-30 flex items-center gap-1.5 bg-black/65 backdrop-blur-md px-2.5 py-1 rounded-full text-white text-[11px] sm:text-xs font-semibold shadow-md pointer-events-none">
+                    <Camera className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-300 shrink-0" />
                     <span>{activeImageIndex + 1} / {allImages.length}</span>
                   </div>
 
@@ -383,20 +364,20 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                   <button
                     type="button"
                     onClick={isRTL ? nextImage : prevImage}
-                    className="absolute start-2 sm:start-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/55 hover:bg-black/85 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-lg opacity-90 hover:opacity-100 hover:scale-105 active:scale-95"
+                    className="absolute start-2 sm:start-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/55 hover:bg-black/85 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-lg opacity-90 hover:opacity-100 hover:scale-105 active:scale-95"
                     aria-label="Photo précédente"
                   >
-                    <ChevronLeft className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
+                    <ChevronLeft className={`w-4 h-4 sm:w-5 sm:h-5 ${isRTL ? 'rotate-180' : ''}`} />
                   </button>
 
                   {/* Next Button */}
                   <button
                     type="button"
                     onClick={isRTL ? prevImage : nextImage}
-                    className="absolute end-2 sm:end-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/55 hover:bg-black/85 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-lg opacity-90 hover:opacity-100 hover:scale-105 active:scale-95"
+                    className="absolute end-2 sm:end-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/55 hover:bg-black/85 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-lg opacity-90 hover:opacity-100 hover:scale-105 active:scale-95"
                     aria-label="Photo suivante"
                   >
-                    <ChevronRight className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
+                    <ChevronRight className={`w-4 h-4 sm:w-5 sm:h-5 ${isRTL ? 'rotate-180' : ''}`} />
                   </button>
                 </>
               )}
@@ -411,7 +392,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                     ref={(el) => { thumbnailRefs.current[idx] = el; }}
                     type="button"
                     onClick={() => scrollToIndex(idx)}
-                    className={`relative shrink-0 w-16 h-12 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                    className={`relative shrink-0 w-14 sm:w-16 h-10 sm:h-12 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
                       idx === activeImageIndex
                         ? 'border-blue-600 ring-2 ring-blue-500/30 scale-102 opacity-100 shadow-xs'
                         : 'border-transparent opacity-60 hover:opacity-100 hover:scale-102'
@@ -430,53 +411,60 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
             )}
           </div>
 
-          {/* Mobile Dedicated Title & Destination (Displayed cleanly below image on mobile) */}
-          <div className="sm:hidden space-y-1">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+          {/* Localisation & Titre Complet (Sous l'image, sans coupure ni masque) */}
+          <div className="space-y-1 sm:space-y-1.5 pt-0.5">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 tracking-wide uppercase">
               <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
               <span className="break-words whitespace-normal">{destination}</span>
             </div>
-            <h2 className="text-lg font-bold text-slate-900 leading-snug break-words whitespace-normal">
+            <h2 className="text-base sm:text-xl font-extrabold text-slate-900 leading-snug break-words whitespace-normal">
               {title}
             </h2>
           </div>
 
-          {/* Quick Info Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 bg-slate-50/80 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/80 text-xs sm:text-sm shadow-xs">
-            <div className="bg-white px-2.5 py-2 sm:p-3 rounded-lg sm:rounded-xl border border-slate-100 flex flex-col justify-between shadow-2xs">
-              <span className="text-slate-400 block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
+          {/* Quick Info Grid : 2 colonnes x 2 lignes sur mobile, 4 colonnes sur desktop */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+            {/* Durée */}
+            <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between">
+              <span className="text-slate-400 block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mb-1">
                 {language === 'ar' ? 'المدة' : 'Durée'}
               </span>
-              <div className="flex items-center gap-1.5 font-bold text-slate-800 mt-0.5 sm:mt-1">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs sm:text-sm min-w-0">
                 <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 shrink-0" />
-                <span className="text-xs sm:text-sm break-words whitespace-normal">{duration}</span>
+                <span className="break-words whitespace-normal">{duration}</span>
               </div>
             </div>
-            <div className="bg-white px-2.5 py-2 sm:p-3 rounded-lg sm:rounded-xl border border-slate-100 flex flex-col justify-between shadow-2xs">
-              <span className="text-slate-400 block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
+
+            {/* Prochain départ */}
+            <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between">
+              <span className="text-slate-400 block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mb-1">
                 {language === 'ar' ? 'الانطلاق' : 'Prochain départ'}
               </span>
-              <div className="flex items-start sm:items-center gap-1.5 font-bold text-slate-800 mt-0.5 sm:mt-1 min-w-0">
-                <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0 mt-0.5 sm:mt-0" />
-                <span className="text-xs sm:text-sm break-words whitespace-normal leading-snug">{nextDate}</span>
+              <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs sm:text-sm min-w-0">
+                <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 shrink-0" />
+                <span className="break-words whitespace-normal leading-tight">{nextDate}</span>
               </div>
             </div>
-            <div className="bg-white px-2.5 py-2 sm:p-3 rounded-lg sm:rounded-xl border border-slate-100 flex flex-col justify-between shadow-2xs">
-              <span className="text-slate-400 block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
+
+            {/* Taille groupe */}
+            <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between">
+              <span className="text-slate-400 block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mb-1">
                 {language === 'ar' ? 'حجم المجموعة' : 'Taille groupe'}
               </span>
-              <div className="flex items-center gap-1.5 font-bold text-slate-800 mt-0.5 sm:mt-1">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs sm:text-sm min-w-0">
                 <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 shrink-0" />
-                <span className="text-xs sm:text-sm break-words whitespace-normal">{trip.groupSize}</span>
+                <span className="break-words whitespace-normal">{trip.groupSize}</span>
               </div>
             </div>
-            <div className="bg-white px-2.5 py-2 sm:p-3 rounded-lg sm:rounded-xl border border-slate-100 flex flex-col justify-between shadow-2xs">
-              <span className="text-slate-400 block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
+
+            {/* Villes départ */}
+            <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 sm:p-3 shadow-2xs flex flex-col justify-between">
+              <span className="text-slate-400 block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mb-1">
                 {language === 'ar' ? 'مدن الانطلاق' : 'Villes départ'}
               </span>
-              <div className="flex items-start gap-1.5 font-bold text-slate-800 mt-0.5 sm:mt-1 min-w-0">
+              <div className="flex items-start gap-1.5 font-bold text-slate-800 text-xs sm:text-sm min-w-0">
                 <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-500 shrink-0 mt-0.5" />
-                <span className="text-xs sm:text-sm leading-snug break-words whitespace-normal">
+                <span className="break-words whitespace-normal leading-tight">
                   {trip.departureCities.join(' • ')}
                 </span>
               </div>
@@ -484,22 +472,22 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
           </div>
 
           {/* Programme Complet du Voyage */}
-          <div className="space-y-3">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-2 min-w-0">
-                <FileText className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug break-words whitespace-normal">
+          <div className="space-y-2.5 sm:space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 shrink-0" />
+                <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug break-words whitespace-normal">
                   {t.modalProgramTitle || (language === 'ar' ? 'البرنامج الكامل للرحلة' : 'Programme complet du voyage')}
                 </h3>
               </div>
-              <span className="shrink-0 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200/70 px-2.5 sm:px-3 py-1 rounded-full whitespace-nowrap self-start">
+              <span className="shrink-0 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200/70 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full whitespace-nowrap">
                 {duration}
               </span>
             </div>
 
-            <div className="bg-slate-50/90 rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs">
+            <div className="bg-slate-50/70 rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 shadow-2xs">
               {programContent ? (
-                <div className="text-slate-700 text-xs sm:text-sm leading-relaxed space-y-3">
+                <div className="text-slate-700 text-xs sm:text-sm leading-relaxed space-y-2.5">
                   <ReactMarkdown
                     components={{
                       h1: ({ node, ...props }) => <h3 className="text-base sm:text-lg font-bold text-slate-900 mt-4 mb-2 first:mt-0" {...props} />,
@@ -508,9 +496,9 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                         <h4 className="text-sm sm:text-base font-bold text-blue-900 mt-4 mb-2 first:mt-0 flex items-center gap-2 bg-blue-100/60 text-blue-900 px-3.5 py-2 rounded-xl border-s-4 border-blue-600 shadow-xs" {...props} />
                       ),
                       h4: ({ node, ...props }) => <h5 className="text-xs sm:text-sm font-bold text-slate-800 mt-3 mb-1.5" {...props} />,
-                      p: ({ node, ...props }) => <p className="text-slate-600 leading-relaxed mb-3 last:mb-0" {...props} />,
-                      ul: ({ node, ...props }) => <ul className="list-disc ps-5 space-y-1.5 my-2.5 text-slate-600" {...props} />,
-                      ol: ({ node, ...props }) => <ol className="list-decimal ps-5 space-y-1.5 my-2.5 text-slate-600" {...props} />,
+                      p: ({ node, ...props }) => <p className="text-slate-700 leading-relaxed mb-2.5 last:mb-0 whitespace-pre-line break-words" {...props} />,
+                      ul: ({ node, ...props }) => <ul className="list-disc ps-5 space-y-1.5 my-2 text-slate-700" {...props} />,
+                      ol: ({ node, ...props }) => <ol className="list-decimal ps-5 space-y-1.5 my-2 text-slate-700" {...props} />,
                       li: ({ node, ...props }) => <li className="ps-0.5" {...props} />,
                       strong: ({ node, ...props }) => <strong className="font-bold text-slate-900" {...props} />,
                     }}
@@ -528,18 +516,18 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
           {/* Included / Not Included */}
           {(hasIncluded || hasExcluded) && (
-            <div className={`grid gap-4 pt-1 ${hasIncluded && hasExcluded ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
+            <div className={`grid gap-3 pt-1 ${hasIncluded && hasExcluded ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
               {hasIncluded && (
-                <div className="bg-emerald-50/70 p-4 sm:p-5 rounded-2xl border border-emerald-100 space-y-2.5 w-full">
-                  <h4 className="text-sm font-bold text-emerald-900 flex items-center gap-1.5">
+                <div className="bg-emerald-50/70 p-3.5 sm:p-5 rounded-2xl border border-emerald-100 space-y-2 w-full">
+                  <h4 className="text-xs sm:text-sm font-bold text-emerald-900 flex items-center gap-1.5">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span>{t.modalIncludedTitle}</span>
                   </h4>
-                  <ul className="space-y-2 text-xs text-emerald-800">
+                  <ul className="space-y-1.5 text-xs text-emerald-800">
                     {includedItems.map((inc, i) => (
                       <li key={i} className="flex items-start gap-2 leading-relaxed">
                         <span className="text-emerald-600 font-bold leading-none mt-1 shrink-0">•</span>
-                        <span className="flex-1">{inc}</span>
+                        <span className="flex-1 break-words">{inc}</span>
                       </li>
                     ))}
                   </ul>
@@ -547,16 +535,16 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
               )}
 
               {hasExcluded && (
-                <div className="bg-rose-50/60 p-4 sm:p-5 rounded-2xl border border-rose-100 space-y-2.5 w-full">
-                  <h4 className="text-sm font-bold text-rose-900 flex items-center gap-1.5">
+                <div className="bg-rose-50/60 p-3.5 sm:p-5 rounded-2xl border border-rose-100 space-y-2 w-full">
+                  <h4 className="text-xs sm:text-sm font-bold text-rose-900 flex items-center gap-1.5">
                     <X className="w-4 h-4 text-rose-600 shrink-0" />
                     <span>{t.modalNotIncludedTitle}</span>
                   </h4>
-                  <ul className="space-y-2 text-xs text-rose-800">
+                  <ul className="space-y-1.5 text-xs text-rose-800">
                     {excludedItems.map((notInc, i) => (
                       <li key={i} className="flex items-start gap-2 leading-relaxed">
                         <span className="text-rose-600 font-bold leading-none mt-1 shrink-0">•</span>
-                        <span className="flex-1">{notInc}</span>
+                        <span className="flex-1 break-words">{notInc}</span>
                       </li>
                     ))}
                   </ul>
@@ -566,46 +554,48 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
           )}
 
           {/* Politique d'annulation */}
-          <div className="bg-amber-50/50 p-4 sm:p-5 rounded-2xl border border-amber-200/70 space-y-2.5">
-            <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-amber-50/50 p-3.5 sm:p-5 rounded-2xl border border-amber-200/70 space-y-2">
+            <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
               <span>{t.modalCancellationTitle || "Politique d'annulation"}</span>
             </h4>
-            <div className="text-xs text-slate-700 leading-relaxed space-y-2 whitespace-pre-line">
+            <div className="text-xs text-slate-700 leading-relaxed space-y-1.5 whitespace-pre-line break-words">
               {cleanedCancellation}
             </div>
           </div>
 
           {/* Reassurance */}
-          <div className="flex items-center gap-3 p-3.5 bg-blue-50/60 rounded-xl border border-blue-100 text-xs text-blue-900">
-            <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0" />
-            <span>{t.modalGuarantee}</span>
+          <div className="flex items-center gap-2.5 p-3 bg-blue-50/60 rounded-xl border border-blue-100 text-xs text-blue-900">
+            <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 shrink-0" />
+            <span className="leading-snug">{t.modalGuarantee}</span>
           </div>
         </div>
 
-        {/* Modal Fixed Footer CTA */}
-        <div className="sticky bottom-0 z-20 px-6 py-4 bg-white border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <span className="text-xs text-slate-500 font-medium block">{t.modalTotalPrice}</span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-extrabold text-slate-900">
-                {trip.priceMAD.toLocaleString()} <span className="text-sm font-semibold">MAD</span>
+        {/* Modal Fixed Footer CTA (Sticky Bottom Bar) */}
+        <div className="sticky bottom-0 z-30 px-3.5 sm:px-6 py-3 sm:py-3.5 bg-white/98 backdrop-blur-md border-t border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] shrink-0">
+          <div className="min-w-0">
+            <span className="text-[11px] sm:text-xs text-slate-500 font-medium block leading-tight">
+              {t.modalTotalPrice || (language === 'ar' ? 'السعر الإجمالي للشخص' : 'Tarif total par personne')}
+            </span>
+            <div className="flex items-baseline gap-2 mt-0.5">
+              <span className="text-2xl font-black text-slate-900 tracking-tight">
+                {trip.priceMAD.toLocaleString()} <span className="text-xs sm:text-sm font-bold">MAD</span>
               </span>
               {trip.originalPriceMAD && (
-                <span className="text-xs text-slate-400 line-through">
+                <span className="text-xs sm:text-sm text-slate-400 line-through font-normal">
                   {trip.originalPriceMAD.toLocaleString()} MAD
                 </span>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto">
             <button
               onClick={() => {
                 onClose();
                 onBook(trip);
               }}
-              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs sm:text-sm transition-colors cursor-pointer"
+              className="px-3.5 sm:px-4 py-2.5 sm:py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 font-semibold text-xs sm:text-sm transition-colors cursor-pointer shrink-0 text-center"
             >
               {t.cardCustomize}
             </button>
@@ -614,10 +604,10 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
               href={directWhatsAppUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-4 sm:px-5 py-2.5 sm:py-2.5 rounded-xl bg-[#00a859] hover:bg-[#008f4c] active:bg-[#007a41] text-white font-bold text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-2 flex-1 sm:flex-initial cursor-pointer text-center whitespace-nowrap"
             >
-              <MessageCircle className="w-4 h-4 fill-current" />
-              <span>{t.modalBookWA}</span>
+              <MessageCircle className="w-4 h-4 fill-current shrink-0" />
+              <span>{t.modalBookWA || (language === 'ar' ? 'الحجز عبر واتساب' : 'Réserver sur WhatsApp')}</span>
             </a>
           </div>
         </div>
