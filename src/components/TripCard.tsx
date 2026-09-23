@@ -31,10 +31,11 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col group">
-      {/* Image container */}
+      {/* Image container - strictly 16:9 horizontal ratio */}
       <div
         onClick={() => onOpenDetails(trip)}
-        className="relative aspect-[16/10] overflow-hidden bg-slate-100 cursor-pointer"
+        className="card-trip-image-container relative w-full aspect-video overflow-hidden bg-slate-100 cursor-pointer"
+        style={{ aspectRatio: '16 / 9' }}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {
@@ -47,7 +48,8 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onOpenDetails, onOpenB
         <img
           src={trip.image}
           alt={title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+          className="card-trip-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+          style={{ aspectRatio: '16 / 9', objectFit: 'cover' }}
           loading="lazy"
           referrerPolicy="no-referrer"
         />

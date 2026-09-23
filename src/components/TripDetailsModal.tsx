@@ -337,13 +337,14 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                         scrollToIndex(index);
                       }
                     }}
-                    className="w-full shrink-0 snap-center relative rounded-2xl overflow-hidden aspect-square sm:aspect-[16/9] max-h-[460px] sm:max-h-96 bg-slate-900 shadow-xs transition-all duration-300"
-                    style={{ width: '100%' }}
+                    className="w-full shrink-0 snap-center relative rounded-2xl overflow-hidden aspect-video max-h-96 bg-slate-900 shadow-xs transition-all duration-300"
+                    style={{ aspectRatio: '16 / 9' }}
                   >
                     <img
                       src={imgUrl}
                       alt={`${title} - photo ${index + 1}`}
                       className="w-full h-full object-cover pointer-events-none select-none"
+                      style={{ aspectRatio: '16 / 9', objectFit: 'cover' }}
                       referrerPolicy="no-referrer"
                       loading={index === 0 ? 'eager' : 'lazy'}
                     />
