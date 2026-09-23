@@ -63,6 +63,15 @@ export const AboutUs: React.FC = () => {
       photo: '/assets/wissal.jpeg',
       instagram: 'https://www.instagram.com/wissal_belachqer?stkn=MWVhMjByd3BjNnZxOQ==',
     },
+    {
+      id: 5,
+      name: t.teamMember5Name,
+      role: t.teamMember5Role,
+      bio: t.teamMember5Bio,
+      specialty: t.teamMember5Specialty,
+      photo: '/assets/REDA.png',
+      instagram: 'https://www.instagram.com/redachabal?stkn=MWQ2YnVzYzE3dmxibg==',
+    },
   ];
 
   const values = [
@@ -150,19 +159,21 @@ export const AboutUs: React.FC = () => {
 
                 {/* Dedicated Lateral Zone: Instagram Link & Navigation Arrow */}
                 <div className="shrink-0 flex flex-col items-center justify-between self-stretch py-0.5 gap-2">
-                  <a
-                    href={member.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    aria-label={`Instagram - ${member.name}`}
-                    className="w-7 h-7 rounded-full bg-slate-50 hover:bg-pink-50 border border-slate-200/80 hover:border-pink-200 text-pink-500 hover:text-pink-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer active:scale-95"
-                    title="Instagram"
-                  >
-                    <Instagram className="w-3.5 h-3.5 text-pink-500" />
-                  </a>
+                  {member.instagram ? (
+                    <a
+                      href={member.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      aria-label={`Instagram - ${member.name}`}
+                      className="w-7 h-7 rounded-full bg-slate-50 hover:bg-pink-50 border border-slate-200/80 hover:border-pink-200 text-pink-500 hover:text-pink-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer active:scale-95"
+                      title="Instagram"
+                    >
+                      <Instagram className="w-3.5 h-3.5 text-pink-500" />
+                    </a>
+                  ) : null}
 
-                  <div className="text-slate-400 group-hover:text-blue-500 transition-colors">
+                  <div className="text-slate-400 group-hover:text-blue-500 transition-colors my-auto">
                     {isRTL ? (
                       <ChevronLeft className="w-4 h-4" />
                     ) : (
@@ -237,18 +248,20 @@ export const AboutUs: React.FC = () => {
                 </p>
 
                 {/* Instagram Link (Mobile Popup) - Minimalist & Premium */}
-                <div className="mt-2.5 mb-1 flex items-center justify-center">
-                  <a
-                    href={selectedMember.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Instagram - ${selectedMember.name}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50/90 hover:bg-pink-50/80 border border-slate-200/80 hover:border-pink-200 text-slate-700 hover:text-pink-600 transition-all duration-200 shadow-2xs cursor-pointer active:scale-95 group/ig"
-                  >
-                    <Instagram className="w-3.5 h-3.5 text-pink-500 group-hover/ig:scale-110 transition-transform" />
-                    <span className="text-[11px] font-medium tracking-wide">Instagram</span>
-                  </a>
-                </div>
+                {selectedMember.instagram ? (
+                  <div className="mt-2.5 mb-1 flex items-center justify-center">
+                    <a
+                      href={selectedMember.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Instagram - ${selectedMember.name}`}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50/90 hover:bg-pink-50/80 border border-slate-200/80 hover:border-pink-200 text-slate-700 hover:text-pink-600 transition-all duration-200 shadow-2xs cursor-pointer active:scale-95 group/ig"
+                    >
+                      <Instagram className="w-3.5 h-3.5 text-pink-500 group-hover/ig:scale-110 transition-transform" />
+                      <span className="text-[11px] font-medium tracking-wide">Instagram</span>
+                    </a>
+                  </div>
+                ) : null}
 
                 {/* Subtle Horizontal Divider */}
                 <div className="w-10 h-0.5 bg-slate-200/70 rounded-full mt-2 mb-0.5" />
@@ -268,24 +281,26 @@ export const AboutUs: React.FC = () => {
           </div>
         )}
 
-        {/* Desktop Team Grid (sm and up) - 4 Column Cards (Strictly unchanged) */}
-        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        {/* Desktop Team Grid (sm and up) */}
+        <div className="hidden sm:grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6 sm:gap-8">
           {teamMembers.map((member) => (
             <div
               key={member.id}
               className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-6 sm:p-8 text-center shadow-xs hover:shadow-xl hover:border-blue-200 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center group relative"
             >
               {/* Instagram link icon */}
-              <a
-                href={member.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Instagram - ${member.name}`}
-                className="absolute top-4 right-4 rtl:right-auto rtl:left-4 w-8 h-8 rounded-full bg-slate-50 hover:bg-pink-50 border border-slate-200/80 hover:border-pink-200 text-pink-500 hover:text-pink-600 flex items-center justify-center transition-all duration-200 shadow-2xs hover:shadow-xs cursor-pointer z-10 group/insta"
-                title="Instagram"
-              >
-                <Instagram className="w-4 h-4 text-pink-500 group-hover/insta:scale-110 transition-transform" />
-              </a>
+              {member.instagram ? (
+                <a
+                  href={member.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Instagram - ${member.name}`}
+                  className="absolute top-4 right-4 rtl:right-auto rtl:left-4 w-8 h-8 rounded-full bg-slate-50 hover:bg-pink-50 border border-slate-200/80 hover:border-pink-200 text-pink-500 hover:text-pink-600 flex items-center justify-center transition-all duration-200 shadow-2xs hover:shadow-xs cursor-pointer z-10 group/insta"
+                  title="Instagram"
+                >
+                  <Instagram className="w-4 h-4 text-pink-500 group-hover/insta:scale-110 transition-transform" />
+                </a>
+              ) : null}
 
               {/* Circular Avatar */}
               <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden mb-5 ring-4 ring-slate-100 group-hover:ring-blue-100 shadow-sm transition-all shrink-0">
