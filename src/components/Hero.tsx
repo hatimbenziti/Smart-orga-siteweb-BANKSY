@@ -149,8 +149,12 @@ export const Hero: React.FC<HeroProps> = ({ onSelectTag, onDiscoverClick, onPopu
                   <span>{t.heroBadge}</span>
                 </div>
 
-                {/* Slogan mobile décoratif : "Le Maroc vous attend !" (Mobile < 768px uniquement, décalé responsivement vers la droite avec marge de sécurité) */}
-                <div className="md:hidden pointer-events-none select-none text-right shrink-0">
+                {/* Slogan mobile décoratif : "Le Maroc vous attend !" (Mobile < 768px uniquement, décalé visiblement vers la droite de 25 à 32px de manière responsive) */}
+                <div className={`md:hidden pointer-events-none select-none text-right shrink-0 ${
+                  isRTL
+                    ? '-translate-x-4 min-[360px]:-translate-x-6 min-[390px]:-translate-x-7 sm:-translate-x-8'
+                    : 'translate-x-4 min-[360px]:translate-x-6 min-[390px]:translate-x-7 sm:translate-x-8'
+                }`}>
                   <div className={`inline-flex flex-col items-end ${isRTL ? 'items-start text-left -rotate-2' : 'text-right -rotate-2'}`}>
                     <span className="font-script text-[#153450] text-[10px] min-[360px]:text-[11px] sm:text-[13px] font-semibold tracking-wide drop-shadow-xs leading-[1.15] text-right">
                       {isRTL ? (
