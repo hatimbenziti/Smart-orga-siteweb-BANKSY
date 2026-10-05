@@ -109,8 +109,8 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   const scrollLeftRef = useRef(0);
   const hasMovedRef = useRef(false);
   const openedLightboxAtRef = useRef(0);
-  const lightboxTrackRef = useRef<HTMLDivElement>(null);
   const isLightboxDraggingRef = useRef(false);
+  const lightboxThumbRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [lightboxDragX, setLightboxDragX] = useState<number>(0);
   const [isLightboxDragging, setIsLightboxDragging] = useState<boolean>(false);
   const swipeOccurredRef = useRef<boolean>(false);
@@ -173,32 +173,20 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   const nextLightboxImage = useCallback(() => {
     setFullscreenIndex((prev) => {
       if (prev === null) return null;
-      // At boundary: stay on last image, never wrap or close on swipe
       if (prev >= allImages.length - 1) return prev;
-      const nextIdx = prev + 1;
-      if (lightboxTrackRef.current) {
-        lightboxTrackRef.current.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
-        void lightboxTrackRef.current.offsetWidth;
-        lightboxTrackRef.current.style.transform = `translate3d(-${(nextIdx / allImages.length) * 100}%, 0, 0)`;
-      }
-      return nextIdx;
+      return prev + 1;
     });
+    setLightboxDragX(0);
   }, [allImages.length]);
 
   const prevLightboxImage = useCallback(() => {
     setFullscreenIndex((prev) => {
       if (prev === null) return null;
-      // At boundary: stay on first image, never wrap or close on swipe
       if (prev <= 0) return 0;
-      const prevIdx = prev - 1;
-      if (lightboxTrackRef.current) {
-        lightboxTrackRef.current.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
-        void lightboxTrackRef.current.offsetWidth;
-        lightboxTrackRef.current.style.transform = `translate3d(-${(prevIdx / allImages.length) * 100}%, 0, 0)`;
-      }
-      return prevIdx;
+      return prev - 1;
     });
-  }, [allImages.length]);
+    setLightboxDragX(0);
+  }, []);
 
   const handleLightboxTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length !== 1) return;
@@ -211,9 +199,6 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
     };
     isLightboxDraggingRef.current = true;
     setIsLightboxDragging(true);
-    if (lightboxTrackRef.current) {
-      lightboxTrackRef.current.style.transition = 'none';
-    }
   };
 
   const handleLightboxTouchMove = (e: React.TouchEvent) => {
@@ -235,11 +220,6 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
       }
 
       setLightboxDragX(effectiveX);
-      if (lightboxTrackRef.current) {
-        lightboxTrackRef.current.style.transition = 'none';
-        const basePercent = (fullscreenIndex / allImages.length) * 100;
-        lightboxTrackRef.current.style.transform = `translate3d(calc(-${basePercent}% + ${effectiveX}px), 0, 0)`;
-      }
     }
   };
 
@@ -247,11 +227,6 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
     isLightboxDraggingRef.current = false;
     setIsLightboxDragging(false);
     if (e.changedTouches.length !== 1 || fullscreenIndex === null) {
-      if (lightboxTrackRef.current && fullscreenIndex !== null) {
-        lightboxTrackRef.current.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
-        void lightboxTrackRef.current.offsetWidth;
-        lightboxTrackRef.current.style.transform = `translate3d(-${(fullscreenIndex / allImages.length) * 100}%, 0, 0)`;
-      }
       setLightboxDragX(0);
       return;
     }
@@ -292,12 +267,6 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
       }
     }
 
-    // Smoothly animate the multi-slide track to targetIndex with native spring physics
-    if (lightboxTrackRef.current) {
-      lightboxTrackRef.current.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
-      void lightboxTrackRef.current.offsetWidth;
-      lightboxTrackRef.current.style.transform = `translate3d(-${(targetIndex / allImages.length) * 100}%, 0, 0)`;
-    }
     setFullscreenIndex(targetIndex);
     setLightboxDragX(0);
   };
@@ -305,13 +274,19 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   const handleLightboxTouchCancel = () => {
     isLightboxDraggingRef.current = false;
     setIsLightboxDragging(false);
-    if (lightboxTrackRef.current && fullscreenIndex !== null) {
-      lightboxTrackRef.current.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
-      void lightboxTrackRef.current.offsetWidth;
-      lightboxTrackRef.current.style.transform = `translate3d(-${(fullscreenIndex / allImages.length) * 100}%, 0, 0)`;
-    }
     setLightboxDragX(0);
   };
+
+  // Auto-scroll active thumbnail into view in Lightbox
+  useEffect(() => {
+    if (fullscreenIndex !== null && lightboxThumbRefs.current[fullscreenIndex]) {
+      lightboxThumbRefs.current[fullscreenIndex]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      });
+    }
+  }, [fullscreenIndex]);
 
   const handleBackdropClick = useCallback((e: React.MouseEvent) => {
     // If a swipe gesture just took place, do NOT close the lightbox
@@ -867,16 +842,12 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
           role="dialog"
           aria-modal="true"
           aria-label="Image plein écran"
-          className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-2 sm:p-4 select-none animate-in fade-in duration-200 overflow-hidden"
+          className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex flex-col select-none animate-in fade-in duration-200 overflow-hidden"
           onClick={handleBackdropClick}
-          onTouchStart={handleLightboxTouchStart}
-          onTouchMove={handleLightboxTouchMove}
-          onTouchEnd={handleLightboxTouchEnd}
-          onTouchCancel={handleLightboxTouchCancel}
         >
           {/* Top Bar with Clear Close Button, Image Title, and Dynamic Position Counter */}
           <div
-            className="absolute top-0 inset-x-0 z-[10000] flex items-center justify-between px-3.5 sm:px-6 py-3 bg-gradient-to-b from-black/85 via-black/50 to-transparent pointer-events-auto"
+            className="w-full shrink-0 z-30 flex items-center justify-between px-3.5 sm:px-6 py-3 bg-gradient-to-b from-black/90 via-black/60 to-transparent pointer-events-auto"
             onClick={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
             onTouchMove={(e) => e.stopPropagation()}
@@ -925,7 +896,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                   prevLightboxImage();
                 }}
                 disabled={fullscreenIndex === 0}
-                className={`absolute start-2 sm:start-4 top-1/2 -translate-y-1/2 z-[10000] w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/80 active:bg-black/95 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-xl ${
+                className={`absolute start-2 sm:start-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/80 active:bg-black/95 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-xl ${
                   fullscreenIndex === 0 ? 'opacity-25 pointer-events-none' : 'opacity-90 hover:opacity-100 hover:scale-105 active:scale-95'
                 }`}
                 aria-label="Image précédente"
@@ -946,7 +917,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                   nextLightboxImage();
                 }}
                 disabled={fullscreenIndex === allImages.length - 1}
-                className={`absolute end-2 sm:end-4 top-1/2 -translate-y-1/2 z-[10000] w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/80 active:bg-black/95 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-xl ${
+                className={`absolute end-2 sm:end-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/80 active:bg-black/95 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-xl ${
                   fullscreenIndex === allImages.length - 1 ? 'opacity-25 pointer-events-none' : 'opacity-90 hover:opacity-100 hover:scale-105 active:scale-95'
                 }`}
                 aria-label="Image suivante"
@@ -956,32 +927,31 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
             </>
           )}
 
-          {/* Centered Multi-Slide Interactive Track (Fluid native drag & swipe) */}
+          {/* Main Interactive Swipe Zone (Always Visible at Center) */}
           <div
-            className="w-full h-full flex items-center overflow-hidden pointer-events-none select-none"
+            className="flex-1 w-full min-h-0 relative flex items-center justify-center overflow-hidden select-none"
             style={{ touchAction: 'pan-y' }}
+            onTouchStart={handleLightboxTouchStart}
+            onTouchMove={handleLightboxTouchMove}
+            onTouchEnd={handleLightboxTouchEnd}
+            onTouchCancel={handleLightboxTouchCancel}
           >
-            <div
-              ref={lightboxTrackRef}
-              className="flex h-full select-none"
-              style={{
-                width: `${allImages.length * 100}%`,
-                transform: `translate3d(-${((fullscreenIndex ?? 0) / allImages.length) * 100}%, 0, 0)`,
-                transition: isLightboxDragging ? 'none' : 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)',
-                willChange: 'transform',
-                touchAction: 'pan-y'
-              }}
-            >
-              {allImages.map((imgUrl, index) => (
+            {allImages.map((imgUrl, index) => {
+              const offsetIndex = index - fullscreenIndex;
+              const isVisible = Math.abs(offsetIndex) <= 1;
+
+              return (
                 <div
                   key={index}
-                  className="h-full flex items-center justify-center p-2 sm:p-4 pt-14 pb-12 select-none pointer-events-auto"
+                  className="absolute inset-0 flex items-center justify-center p-2 sm:p-4 select-none"
                   style={{
-                    width: `${100 / allImages.length}%`,
-                    flexShrink: 0
+                    transform: `translate3d(calc(${offsetIndex * 100}% + ${lightboxDragX}px), 0, 0)`,
+                    transition: isLightboxDragging ? 'none' : 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)',
+                    visibility: isVisible ? 'visible' : 'hidden',
+                    willChange: 'transform'
                   }}
                   onClick={(e) => {
-                    // Tap on the dark letterbox background outside the image closes the lightbox
+                    // Tap on dark letterbox background outside the image closes the lightbox
                     if (e.target === e.currentTarget) {
                       handleBackdropClick(e);
                     }
@@ -993,31 +963,58 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                     draggable={false}
                     className="max-w-full max-h-full object-contain pointer-events-auto select-none rounded-lg sm:rounded-xl shadow-2xl"
                     style={{
-                      maxHeight: '85vh',
+                      maxHeight: '100%',
                       maxWidth: '100%',
                       objectFit: 'contain',
                       userSelect: 'none',
                       WebkitUserSelect: 'none',
-                      WebkitTouchCallout: 'none',
-                      touchAction: 'pan-y'
+                      WebkitTouchCallout: 'none'
                     }}
                     onClick={(e) => {
                       // Tap on the image itself must never close the lightbox
                       e.stopPropagation();
                     }}
                     referrerPolicy="no-referrer"
-                    loading={Math.abs(index - (fullscreenIndex ?? 0)) <= 1 ? 'eager' : 'lazy'}
+                    loading={Math.abs(offsetIndex) <= 1 ? 'eager' : 'lazy'}
                   />
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
-          {/* Bottom Position Counter Pill */}
-          {allImages.length > 1 && (
-            <div className="absolute bottom-3 sm:bottom-4 inset-x-0 flex items-center justify-center pointer-events-none z-[10000]">
-              <div className="px-3.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-white/95 text-xs font-semibold shadow-md tracking-wider">
-                {fullscreenIndex + 1} / {allImages.length}
+          {/* Bottom Thumbnails Navigation Strip */}
+          {hasMultipleImages && (
+            <div
+              className="w-full shrink-0 z-30 px-3 py-2.5 bg-gradient-to-t from-black/90 via-black/60 to-transparent flex items-center justify-center select-none"
+              onClick={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-2 overflow-x-auto max-w-full py-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {allImages.map((imgUrl, idx) => (
+                  <button
+                    key={idx}
+                    ref={(el) => { lightboxThumbRefs.current[idx] = el; }}
+                    type="button"
+                    onClick={() => {
+                      setLightboxDragX(0);
+                      setFullscreenIndex(idx);
+                    }}
+                    className={`relative shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+                      idx === fullscreenIndex
+                        ? 'border-blue-500 ring-2 ring-blue-400/50 scale-105 opacity-100 shadow-md'
+                        : 'border-white/20 opacity-50 hover:opacity-85 active:opacity-100'
+                    }`}
+                    aria-label={`Image ${idx + 1}`}
+                  >
+                    <img
+                      src={imgUrl}
+                      alt=""
+                      className="w-full h-full object-cover pointer-events-none"
+                      referrerPolicy="no-referrer"
+                    />
+                  </button>
+                ))}
               </div>
             </div>
           )}
