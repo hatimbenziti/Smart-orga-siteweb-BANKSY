@@ -109,6 +109,8 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   const scrollLeftRef = useRef(0);
   const hasMovedRef = useRef(false);
   const openedLightboxAtRef = useRef(0);
+  const lightboxTrackRef = useRef<HTMLDivElement>(null);
+  const isLightboxDraggingRef = useRef(false);
   const [lightboxDragX, setLightboxDragX] = useState<number>(0);
   const [isLightboxDragging, setIsLightboxDragging] = useState<boolean>(false);
   const swipeOccurredRef = useRef<boolean>(false);
@@ -153,6 +155,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
     openedLightboxAtRef.current = Date.now();
     setLightboxDragX(0);
     setIsLightboxDragging(false);
+    isLightboxDraggingRef.current = false;
     swipeOccurredRef.current = false;
     const clamped = Math.max(0, Math.min(index, allImages.length - 1));
     setFullscreenIndex(clamped);
@@ -172,7 +175,13 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
       if (prev === null) return null;
       // At boundary: stay on last image, never wrap or close on swipe
       if (prev >= allImages.length - 1) return prev;
-      return prev + 1;
+      const nextIdx = prev + 1;
+      if (lightboxTrackRef.current) {
+        lightboxTrackRef.current.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
+        void lightboxTrackRef.current.offsetWidth;
+        lightboxTrackRef.current.style.transform = `translate3d(-${(nextIdx / allImages.length) * 100}%, 0, 0)`;
+      }
+      return nextIdx;
     });
   }, [allImages.length]);
 
@@ -181,9 +190,15 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
       if (prev === null) return null;
       // At boundary: stay on first image, never wrap or close on swipe
       if (prev <= 0) return 0;
-      return prev - 1;
+      const prevIdx = prev - 1;
+      if (lightboxTrackRef.current) {
+        lightboxTrackRef.current.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
+        void lightboxTrackRef.current.offsetWidth;
+        lightboxTrackRef.current.style.transform = `translate3d(-${(prevIdx / allImages.length) * 100}%, 0, 0)`;
+      }
+      return prevIdx;
     });
-  }, []);
+  }, [allImages.length]);
 
   const handleLightboxTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length !== 1) return;
@@ -194,33 +209,49 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
       startY: touch.clientY,
       startTime: Date.now()
     };
+    isLightboxDraggingRef.current = true;
     setIsLightboxDragging(true);
+    if (lightboxTrackRef.current) {
+      lightboxTrackRef.current.style.transition = 'none';
+    }
   };
 
   const handleLightboxTouchMove = (e: React.TouchEvent) => {
-    if (e.touches.length !== 1 || !isLightboxDragging) return;
+    if (e.touches.length !== 1 || !isLightboxDraggingRef.current || fullscreenIndex === null) return;
     const touch = e.touches[0];
     const deltaX = touch.clientX - lightboxTouchRef.current.startX;
     const deltaY = touch.clientY - lightboxTouchRef.current.startY;
 
     // Recognize horizontal swipe attempt
-    if (Math.abs(deltaX) > 8 && Math.abs(deltaX) > Math.abs(deltaY) * 0.8) {
+    if (Math.abs(deltaX) > 6 && Math.abs(deltaX) > Math.abs(deltaY) * 0.7) {
       swipeOccurredRef.current = true;
 
       // Apply rubber-band resistance at edges (first image swiping right, or last image swiping left)
       let effectiveX = deltaX;
       if (fullscreenIndex === 0 && deltaX > 0) {
-        effectiveX = deltaX * 0.22;
+        effectiveX = deltaX * 0.25;
       } else if (fullscreenIndex === allImages.length - 1 && deltaX < 0) {
-        effectiveX = deltaX * 0.22;
+        effectiveX = deltaX * 0.25;
       }
+
       setLightboxDragX(effectiveX);
+      if (lightboxTrackRef.current) {
+        lightboxTrackRef.current.style.transition = 'none';
+        const basePercent = (fullscreenIndex / allImages.length) * 100;
+        lightboxTrackRef.current.style.transform = `translate3d(calc(-${basePercent}% + ${effectiveX}px), 0, 0)`;
+      }
     }
   };
 
   const handleLightboxTouchEnd = (e: React.TouchEvent) => {
+    isLightboxDraggingRef.current = false;
     setIsLightboxDragging(false);
-    if (e.changedTouches.length !== 1) {
+    if (e.changedTouches.length !== 1 || fullscreenIndex === null) {
+      if (lightboxTrackRef.current && fullscreenIndex !== null) {
+        lightboxTrackRef.current.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
+        void lightboxTrackRef.current.offsetWidth;
+        lightboxTrackRef.current.style.transform = `translate3d(-${(fullscreenIndex / allImages.length) * 100}%, 0, 0)`;
+      }
       setLightboxDragX(0);
       return;
     }
@@ -238,30 +269,47 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
       if (swipeTimerRef.current) clearTimeout(swipeTimerRef.current);
       swipeTimerRef.current = setTimeout(() => {
         swipeOccurredRef.current = false;
-      }, 400);
+      }, 450);
     }
 
-    // Swipe criteria:
-    // - Distance >= 40px, OR quick flick (>= 22px in < 320ms)
-    // - Dominantly horizontal (absX > absY * 1.1)
-    const isHorizontalSwipe = (absX >= 40 || (absX >= 22 && duration < 320)) && absX > absY * 1.1;
+    // Dynamic swipe criteria:
+    // - Distance >= 50px, OR quick flick (>= 25px in < 280ms)
+    // - Dominantly horizontal (absX > absY * 1.05)
+    const isHorizontalSwipe = (absX >= 50 || (absX >= 25 && duration < 280)) && absX > absY * 1.05;
 
+    let targetIndex = fullscreenIndex;
     if (isHorizontalSwipe) {
       if (deltaX < 0) {
-        // Swipe left -> Next image (stays at last image if at end)
-        nextLightboxImage();
+        // Swiping left -> Next image (stays at last image if at end)
+        if (fullscreenIndex < allImages.length - 1) {
+          targetIndex = fullscreenIndex + 1;
+        }
       } else {
-        // Swipe right -> Previous image (stays at first image if at start)
-        prevLightboxImage();
+        // Swiping right -> Previous image (stays at first image if at start)
+        if (fullscreenIndex > 0) {
+          targetIndex = fullscreenIndex - 1;
+        }
       }
     }
 
-    // Always snap back to center smoothly
+    // Smoothly animate the multi-slide track to targetIndex with native spring physics
+    if (lightboxTrackRef.current) {
+      lightboxTrackRef.current.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
+      void lightboxTrackRef.current.offsetWidth;
+      lightboxTrackRef.current.style.transform = `translate3d(-${(targetIndex / allImages.length) * 100}%, 0, 0)`;
+    }
+    setFullscreenIndex(targetIndex);
     setLightboxDragX(0);
   };
 
   const handleLightboxTouchCancel = () => {
+    isLightboxDraggingRef.current = false;
     setIsLightboxDragging(false);
+    if (lightboxTrackRef.current && fullscreenIndex !== null) {
+      lightboxTrackRef.current.style.transition = 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)';
+      void lightboxTrackRef.current.offsetWidth;
+      lightboxTrackRef.current.style.transform = `translate3d(-${(fullscreenIndex / allImages.length) * 100}%, 0, 0)`;
+    }
     setLightboxDragX(0);
   };
 
@@ -908,39 +956,60 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
             </>
           )}
 
-          {/* Centered Image with object-fit: contain to preserve aspect ratio without cropping */}
+          {/* Centered Multi-Slide Interactive Track (Fluid native drag & swipe) */}
           <div
-            className="w-full h-full flex items-center justify-center p-2 pt-14 pb-12 pointer-events-none overflow-hidden select-none"
+            className="w-full h-full flex items-center overflow-hidden pointer-events-none select-none"
+            style={{ touchAction: 'pan-y' }}
           >
             <div
-              className="relative max-w-full max-h-full flex items-center justify-center pointer-events-auto select-none"
+              ref={lightboxTrackRef}
+              className="flex h-full select-none"
               style={{
-                transform: `translateX(${lightboxDragX}px)`,
-                transition: isLightboxDragging ? 'none' : 'transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1)',
-                touchAction: 'pan-y',
-                userSelect: 'none',
-                WebkitUserSelect: 'none'
+                width: `${allImages.length * 100}%`,
+                transform: `translate3d(-${((fullscreenIndex ?? 0) / allImages.length) * 100}%, 0, 0)`,
+                transition: isLightboxDragging ? 'none' : 'transform 0.32s cubic-bezier(0.25, 1, 0.5, 1)',
+                willChange: 'transform',
+                touchAction: 'pan-y'
               }}
-              onClick={(e) => e.stopPropagation()}
             >
-              <img
-                key={fullscreenIndex}
-                src={allImages[fullscreenIndex]}
-                alt={`${title} - image ${fullscreenIndex + 1}`}
-                draggable={false}
-                className="max-w-full max-h-full object-contain pointer-events-auto select-none rounded-lg sm:rounded-xl shadow-2xl transition-opacity duration-200"
-                style={{
-                  maxHeight: '85vh',
-                  maxWidth: '100%',
-                  objectFit: 'contain',
-                  userSelect: 'none',
-                  WebkitUserSelect: 'none',
-                  WebkitTouchCallout: 'none',
-                  touchAction: 'pan-y'
-                }}
-                onClick={(e) => e.stopPropagation()}
-                referrerPolicy="no-referrer"
-              />
+              {allImages.map((imgUrl, index) => (
+                <div
+                  key={index}
+                  className="h-full flex items-center justify-center p-2 sm:p-4 pt-14 pb-12 select-none pointer-events-auto"
+                  style={{
+                    width: `${100 / allImages.length}%`,
+                    flexShrink: 0
+                  }}
+                  onClick={(e) => {
+                    // Tap on the dark letterbox background outside the image closes the lightbox
+                    if (e.target === e.currentTarget) {
+                      handleBackdropClick(e);
+                    }
+                  }}
+                >
+                  <img
+                    src={imgUrl}
+                    alt={`${title} - image ${index + 1}`}
+                    draggable={false}
+                    className="max-w-full max-h-full object-contain pointer-events-auto select-none rounded-lg sm:rounded-xl shadow-2xl"
+                    style={{
+                      maxHeight: '85vh',
+                      maxWidth: '100%',
+                      objectFit: 'contain',
+                      userSelect: 'none',
+                      WebkitUserSelect: 'none',
+                      WebkitTouchCallout: 'none',
+                      touchAction: 'pan-y'
+                    }}
+                    onClick={(e) => {
+                      // Tap on the image itself must never close the lightbox
+                      e.stopPropagation();
+                    }}
+                    referrerPolicy="no-referrer"
+                    loading={Math.abs(index - (fullscreenIndex ?? 0)) <= 1 ? 'eager' : 'lazy'}
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
