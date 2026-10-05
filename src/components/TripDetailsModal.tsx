@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import ReactMarkdown from 'react-markdown';
 import { Trip } from '../types';
 import { X, Check, Clock, Calendar, Users, MapPin, MessageCircle, ShieldCheck, FileText, AlertCircle, ChevronLeft, ChevronRight, Camera, ZoomIn } from 'lucide-react';
@@ -102,17 +103,11 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  // Dragging & touch state for smooth mouse desktop swiping and reliable mobile tap
+  // Desktop mouse drag tracking & lightbox state
   const isDraggingRef = useRef(false);
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
   const hasMovedRef = useRef(false);
-  const touchStartPosRef = useRef<{ x: number; y: number; time: number; moved: boolean }>({
-    x: 0,
-    y: 0,
-    time: 0,
-    moved: false
-  });
   const openedLightboxAtRef = useRef(0);
 
   const openLightbox = useCallback((url: string) => {
@@ -120,11 +115,20 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
     setFullscreenImage(url);
   }, []);
 
-  const closeLightbox = useCallback(() => {
-    // Prevent synthetic ghost clicks on mobile from immediately closing lightbox upon opening
-    if (Date.now() - openedLightboxAtRef.current < 400) {
+  const handleSlideClick = useCallback((url: string) => {
+    // If desktop user was dragging the carousel, ignore the click
+    if (hasMovedRef.current) {
+      hasMovedRef.current = false;
       return;
     }
+    openLightbox(url);
+  }, [openLightbox]);
+
+  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
+    // Only close if user clicked directly on the dark backdrop itself
+    if (e.target !== e.currentTarget) return;
+    // Critical safety: never close within 500ms of opening (prevents any accidental or synthetic close)
+    if (Date.now() - openedLightboxAtRef.current < 500) return;
     setFullscreenImage(null);
   }, []);
 
@@ -264,6 +268,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
   // Mouse drag handlers on desktop
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return;
     if (!carouselRef.current) return;
     isDraggingRef.current = true;
     hasMovedRef.current = false;
@@ -364,6 +369,9 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUpOrLeave}
                 onMouseLeave={handleMouseUpOrLeave}
+                onTouchStart={() => {
+                  hasMovedRef.current = false;
+                }}
                 className="flex gap-2 sm:gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-0.5 cursor-grab active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden w-full"
               >
                 {allImages.map((imgUrl, index) => (
@@ -371,37 +379,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                     key={index}
                     ref={(el) => { slideRefs.current[index] = el; }}
                     data-slide-index={index}
-                    onTouchStart={(e) => {
-                      const touch = e.touches[0];
-                      touchStartPosRef.current = {
-                        x: touch.clientX,
-                        y: touch.clientY,
-                        time: Date.now(),
-                        moved: false
-                      };
-                      hasMovedRef.current = false;
-                    }}
-                    onTouchMove={(e) => {
-                      const touch = e.touches[0];
-                      const deltaX = Math.abs(touch.clientX - touchStartPosRef.current.x);
-                      const deltaY = Math.abs(touch.clientY - touchStartPosRef.current.y);
-                      if (deltaX > 10 || deltaY > 10) {
-                        touchStartPosRef.current.moved = true;
-                        hasMovedRef.current = true;
-                      }
-                    }}
-                    onTouchEnd={() => {
-                      const duration = Date.now() - touchStartPosRef.current.time;
-                      // Clean tap on mobile (movement <= 10px and duration < 600ms)
-                      if (!touchStartPosRef.current.moved && duration < 600) {
-                        openLightbox(imgUrl);
-                      }
-                    }}
-                    onClick={() => {
-                      if (!hasMovedRef.current) {
-                        openLightbox(imgUrl);
-                      }
-                    }}
+                    onClick={() => handleSlideClick(imgUrl)}
                     className="w-full shrink-0 snap-center relative rounded-2xl overflow-hidden aspect-video max-h-96 bg-slate-900 shadow-xs transition-all duration-300 cursor-pointer sm:cursor-grab group/slide"
                     style={{ aspectRatio: '16 / 9' }}
                   >
@@ -419,11 +397,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        openLightbox(imgUrl);
-                      }}
-                      onTouchEnd={(e) => {
-                        e.stopPropagation();
-                        openLightbox(imgUrl);
+                        handleSlideClick(imgUrl);
                       }}
                       className="sm:hidden absolute bottom-2.5 start-2.5 z-20 flex items-center gap-1.5 bg-black/60 hover:bg-black/80 active:bg-black/90 backdrop-blur-md px-2.5 py-1 rounded-full text-white text-[10.5px] font-medium shadow-sm cursor-pointer transition-colors"
                       aria-label={language === 'ar' ? 'تكبير الملصق' : language === 'en' ? 'Tap to view full' : 'Plein écran'}
@@ -697,18 +671,18 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
         </div>
       </div>
 
-      {/* Fullscreen Image Lightbox (Tap on image in mobile modal opens poster details in full view) */}
-      {fullscreenImage && (
+      {/* Fullscreen Image Lightbox (Mounted at root level via portal to avoid parent clipping/scroll traps) */}
+      {fullscreenImage && typeof document !== 'undefined' && createPortal(
         <div
           role="dialog"
           aria-modal="true"
           aria-label="Image plein écran"
-          className="fixed inset-0 z-60 bg-black/90 sm:bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-2 sm:p-4 select-none animate-in fade-in duration-200"
-          onClick={closeLightbox}
+          className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-2 sm:p-4 select-none animate-in fade-in duration-200"
+          onClick={handleBackdropClick}
         >
           {/* Top Bar with Clear Close Button and Image Title */}
           <div
-            className="absolute top-0 inset-x-0 z-70 flex items-center justify-between px-3 sm:px-6 py-3 bg-gradient-to-b from-black/80 to-transparent pointer-events-auto"
+            className="absolute top-0 inset-x-0 z-[10000] flex items-center justify-between px-3 sm:px-6 py-3 bg-gradient-to-b from-black/80 to-transparent pointer-events-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-2 min-w-0 pr-2">
@@ -719,7 +693,10 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
             <button
               type="button"
-              onClick={() => setFullscreenImage(null)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setFullscreenImage(null);
+              }}
               className="p-2 sm:p-2.5 rounded-full bg-white/20 hover:bg-white/30 active:bg-white/40 text-white backdrop-blur-md transition-all cursor-pointer shadow-lg shrink-0 flex items-center justify-center"
               aria-label={t.modalClose || 'Fermer'}
             >
@@ -729,8 +706,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
           {/* Centered Image with object-fit: contain to preserve aspect ratio without cropping */}
           <div
-            className="w-full h-full flex items-center justify-center p-2 pt-14 pb-4"
-            onClick={closeLightbox}
+            className="w-full h-full flex items-center justify-center p-2 pt-14 pb-4 pointer-events-none"
           >
             <img
               src={fullscreenImage}
@@ -741,7 +717,8 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
               referrerPolicy="no-referrer"
             />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
