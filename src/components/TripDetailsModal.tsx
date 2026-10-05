@@ -107,7 +107,26 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
   const hasMovedRef = useRef(false);
-  const touchStartPosRef = useRef<{ x: number; y: number; time: number }>({ x: 0, y: 0, time: 0 });
+  const touchStartPosRef = useRef<{ x: number; y: number; time: number; moved: boolean }>({
+    x: 0,
+    y: 0,
+    time: 0,
+    moved: false
+  });
+  const openedLightboxAtRef = useRef(0);
+
+  const openLightbox = useCallback((url: string) => {
+    openedLightboxAtRef.current = Date.now();
+    setFullscreenImage(url);
+  }, []);
+
+  const closeLightbox = useCallback(() => {
+    // Prevent synthetic ghost clicks on mobile from immediately closing lightbox upon opening
+    if (Date.now() - openedLightboxAtRef.current < 400) {
+      return;
+    }
+    setFullscreenImage(null);
+  }, []);
 
   const allImages = useMemo(() => {
     const list: string[] = [];
@@ -354,26 +373,33 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                     data-slide-index={index}
                     onTouchStart={(e) => {
                       const touch = e.touches[0];
-                      touchStartPosRef.current = { x: touch.clientX, y: touch.clientY, time: Date.now() };
+                      touchStartPosRef.current = {
+                        x: touch.clientX,
+                        y: touch.clientY,
+                        time: Date.now(),
+                        moved: false
+                      };
+                      hasMovedRef.current = false;
                     }}
-                    onTouchEnd={(e) => {
-                      const touch = e.changedTouches[0];
+                    onTouchMove={(e) => {
+                      const touch = e.touches[0];
                       const deltaX = Math.abs(touch.clientX - touchStartPosRef.current.x);
                       const deltaY = Math.abs(touch.clientY - touchStartPosRef.current.y);
+                      if (deltaX > 10 || deltaY > 10) {
+                        touchStartPosRef.current.moved = true;
+                        hasMovedRef.current = true;
+                      }
+                    }}
+                    onTouchEnd={() => {
                       const duration = Date.now() - touchStartPosRef.current.time;
-                      // If it was a clean tap (minimal movement < 10px and duration < 350ms)
-                      if (deltaX < 10 && deltaY < 10 && duration < 350) {
-                        setFullscreenImage(imgUrl);
+                      // Clean tap on mobile (movement <= 10px and duration < 600ms)
+                      if (!touchStartPosRef.current.moved && duration < 600) {
+                        openLightbox(imgUrl);
                       }
                     }}
                     onClick={() => {
                       if (!hasMovedRef.current) {
-                        if (index !== activeImageIndex) {
-                          scrollToIndex(index);
-                        } else {
-                          // Tap on the active image opens fullscreen Lightbox
-                          setFullscreenImage(imgUrl);
-                        }
+                        openLightbox(imgUrl);
                       }
                     }}
                     className="w-full shrink-0 snap-center relative rounded-2xl overflow-hidden aspect-video max-h-96 bg-slate-900 shadow-xs transition-all duration-300 cursor-pointer sm:cursor-grab group/slide"
@@ -388,11 +414,23 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                       loading={index === 0 ? 'eager' : 'lazy'}
                     />
 
-                    {/* Subtle mobile hint overlay badge indicating tap to view full size poster */}
-                    <div className="sm:hidden absolute bottom-2.5 start-2.5 z-20 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-white text-[10.5px] font-medium shadow-sm pointer-events-none">
+                    {/* Mobile hint button indicating tap to view full size poster */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openLightbox(imgUrl);
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation();
+                        openLightbox(imgUrl);
+                      }}
+                      className="sm:hidden absolute bottom-2.5 start-2.5 z-20 flex items-center gap-1.5 bg-black/60 hover:bg-black/80 active:bg-black/90 backdrop-blur-md px-2.5 py-1 rounded-full text-white text-[10.5px] font-medium shadow-sm cursor-pointer transition-colors"
+                      aria-label={language === 'ar' ? 'تكبير الملصق' : language === 'en' ? 'Tap to view full' : 'Plein écran'}
+                    >
                       <ZoomIn className="w-3 h-3 text-blue-300 shrink-0" />
                       <span>{language === 'ar' ? 'تكبير الملصق' : language === 'en' ? 'Tap to view full' : 'Plein écran'}</span>
-                    </div>
+                    </button>
                   </div>
                 ))}
               </div>
@@ -666,7 +704,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
           aria-modal="true"
           aria-label="Image plein écran"
           className="fixed inset-0 z-60 bg-black/90 sm:bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-2 sm:p-4 select-none animate-in fade-in duration-200"
-          onClick={() => setFullscreenImage(null)}
+          onClick={closeLightbox}
         >
           {/* Top Bar with Clear Close Button and Image Title */}
           <div
@@ -692,7 +730,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
           {/* Centered Image with object-fit: contain to preserve aspect ratio without cropping */}
           <div
             className="w-full h-full flex items-center justify-center p-2 pt-14 pb-4"
-            onClick={() => setFullscreenImage(null)}
+            onClick={closeLightbox}
           >
             <img
               src={fullscreenImage}
