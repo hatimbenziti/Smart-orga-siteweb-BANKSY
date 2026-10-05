@@ -98,7 +98,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
 
   // Slider state and images list (main image + gallery)
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -109,32 +109,19 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   const scrollLeftRef = useRef(0);
   const hasMovedRef = useRef(false);
   const openedLightboxAtRef = useRef(0);
-
-  const openLightbox = useCallback((url: string) => {
-    openedLightboxAtRef.current = Date.now();
-    setFullscreenImage(url);
-  }, []);
-
-  const handleSlideClick = useCallback((url: string) => {
-    // If desktop user was dragging the carousel, ignore the click
-    if (hasMovedRef.current) {
-      hasMovedRef.current = false;
-      return;
-    }
-    openLightbox(url);
-  }, [openLightbox]);
-
-  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
-    // Only close if user clicked directly on the dark backdrop itself
-    if (e.target !== e.currentTarget) return;
-    // Critical safety: never close within 500ms of opening (prevents any accidental or synthetic close)
-    if (Date.now() - openedLightboxAtRef.current < 500) return;
-    setFullscreenImage(null);
-  }, []);
+  const [lightboxDragX, setLightboxDragX] = useState<number>(0);
+  const [isLightboxDragging, setIsLightboxDragging] = useState<boolean>(false);
+  const swipeOccurredRef = useRef<boolean>(false);
+  const swipeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lightboxTouchRef = useRef<{ startX: number; startY: number; startTime: number }>({
+    startX: 0,
+    startY: 0,
+    startTime: 0
+  });
 
   const allImages = useMemo(() => {
     const list: string[] = [];
-    if (trip.image) list.push(trip.image);
+    if (trip.image && trip.image.trim()) list.push(trip.image.trim());
     if (Array.isArray(trip.gallery)) {
       trip.gallery.forEach((item: any) => {
         const url = typeof item === 'string'
@@ -145,10 +132,151 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
         }
       });
     }
+    // Also include any images or photos arrays if present in data
+    const extraList = (trip as any).images || (trip as any).photos;
+    if (Array.isArray(extraList)) {
+      extraList.forEach((item: any) => {
+        const url = typeof item === 'string'
+          ? item
+          : (item && typeof item === 'object' ? (item.image || item.photo || item.url) : '');
+        if (url && typeof url === 'string' && url.trim() && !list.includes(url.trim())) {
+          list.push(url.trim());
+        }
+      });
+    }
     return list.length > 0 ? list : (trip.image ? [trip.image] : []);
-  }, [trip.image, trip.gallery]);
+  }, [trip]);
 
   const hasMultipleImages = allImages.length > 1;
+
+  const openLightbox = useCallback((index: number) => {
+    openedLightboxAtRef.current = Date.now();
+    setLightboxDragX(0);
+    setIsLightboxDragging(false);
+    swipeOccurredRef.current = false;
+    const clamped = Math.max(0, Math.min(index, allImages.length - 1));
+    setFullscreenIndex(clamped);
+  }, [allImages.length]);
+
+  const handleSlideClick = useCallback((index: number) => {
+    // If desktop user was dragging the carousel, ignore the click
+    if (hasMovedRef.current) {
+      hasMovedRef.current = false;
+      return;
+    }
+    openLightbox(index);
+  }, [openLightbox]);
+
+  const nextLightboxImage = useCallback(() => {
+    setFullscreenIndex((prev) => {
+      if (prev === null) return null;
+      // At boundary: stay on last image, never wrap or close on swipe
+      if (prev >= allImages.length - 1) return prev;
+      return prev + 1;
+    });
+  }, [allImages.length]);
+
+  const prevLightboxImage = useCallback(() => {
+    setFullscreenIndex((prev) => {
+      if (prev === null) return null;
+      // At boundary: stay on first image, never wrap or close on swipe
+      if (prev <= 0) return 0;
+      return prev - 1;
+    });
+  }, []);
+
+  const handleLightboxTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    swipeOccurredRef.current = false;
+    lightboxTouchRef.current = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      startTime: Date.now()
+    };
+    setIsLightboxDragging(true);
+  };
+
+  const handleLightboxTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1 || !isLightboxDragging) return;
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - lightboxTouchRef.current.startX;
+    const deltaY = touch.clientY - lightboxTouchRef.current.startY;
+
+    // Recognize horizontal swipe attempt
+    if (Math.abs(deltaX) > 8 && Math.abs(deltaX) > Math.abs(deltaY) * 0.8) {
+      swipeOccurredRef.current = true;
+
+      // Apply rubber-band resistance at edges (first image swiping right, or last image swiping left)
+      let effectiveX = deltaX;
+      if (fullscreenIndex === 0 && deltaX > 0) {
+        effectiveX = deltaX * 0.22;
+      } else if (fullscreenIndex === allImages.length - 1 && deltaX < 0) {
+        effectiveX = deltaX * 0.22;
+      }
+      setLightboxDragX(effectiveX);
+    }
+  };
+
+  const handleLightboxTouchEnd = (e: React.TouchEvent) => {
+    setIsLightboxDragging(false);
+    if (e.changedTouches.length !== 1) {
+      setLightboxDragX(0);
+      return;
+    }
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - lightboxTouchRef.current.startX;
+    const deltaY = touch.clientY - lightboxTouchRef.current.startY;
+    const duration = Date.now() - lightboxTouchRef.current.startTime;
+
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+
+    // If movement was noticeable, mark swipe occurred to prevent accidental backdrop close
+    if (absX > 15) {
+      swipeOccurredRef.current = true;
+      if (swipeTimerRef.current) clearTimeout(swipeTimerRef.current);
+      swipeTimerRef.current = setTimeout(() => {
+        swipeOccurredRef.current = false;
+      }, 400);
+    }
+
+    // Swipe criteria:
+    // - Distance >= 40px, OR quick flick (>= 22px in < 320ms)
+    // - Dominantly horizontal (absX > absY * 1.1)
+    const isHorizontalSwipe = (absX >= 40 || (absX >= 22 && duration < 320)) && absX > absY * 1.1;
+
+    if (isHorizontalSwipe) {
+      if (deltaX < 0) {
+        // Swipe left -> Next image (stays at last image if at end)
+        nextLightboxImage();
+      } else {
+        // Swipe right -> Previous image (stays at first image if at start)
+        prevLightboxImage();
+      }
+    }
+
+    // Always snap back to center smoothly
+    setLightboxDragX(0);
+  };
+
+  const handleLightboxTouchCancel = () => {
+    setIsLightboxDragging(false);
+    setLightboxDragX(0);
+  };
+
+  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
+    // If a swipe gesture just took place, do NOT close the lightbox
+    if (swipeOccurredRef.current) {
+      swipeOccurredRef.current = false;
+      return;
+    }
+    // Only close if user clicked directly on the dark backdrop itself
+    if (e.target !== e.currentTarget) return;
+    // Critical safety: never close within 500ms of opening (prevents any accidental or synthetic close)
+    if (Date.now() - openedLightboxAtRef.current < 500) return;
+    setFullscreenIndex(null);
+  }, []);
 
   // Scroll to a specific slide index smoothly
   const scrollToIndex = useCallback((index: number) => {
@@ -191,14 +319,21 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (fullscreenImage) {
-          setFullscreenImage(null);
+        if (fullscreenIndex !== null) {
+          setFullscreenIndex(null);
         } else {
           onClose();
         }
         return;
       }
-      if (fullscreenImage) return; // Don't slide behind lightbox
+      if (fullscreenIndex !== null) {
+        if (e.key === 'ArrowRight') {
+          nextLightboxImage();
+        } else if (e.key === 'ArrowLeft') {
+          prevLightboxImage();
+        }
+        return;
+      }
       if (e.key === 'ArrowRight') {
         if (isRTL) prevImage();
         else nextImage();
@@ -209,18 +344,25 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nextImage, prevImage, isRTL, onClose, fullscreenImage]);
+  }, [nextImage, prevImage, nextLightboxImage, prevLightboxImage, isRTL, onClose, fullscreenIndex]);
 
   // Lock scroll when fullscreen lightbox is active
   useEffect(() => {
-    if (fullscreenImage) {
+    if (fullscreenIndex !== null) {
       const prevOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       return () => {
         document.body.style.overflow = prevOverflow;
       };
     }
-  }, [fullscreenImage]);
+  }, [fullscreenIndex]);
+
+  // Sync modal carousel position when navigating in lightbox
+  useEffect(() => {
+    if (fullscreenIndex !== null) {
+      scrollToIndex(fullscreenIndex);
+    }
+  }, [fullscreenIndex, scrollToIndex]);
 
   // Track active slide index via IntersectionObserver
   useEffect(() => {
@@ -379,7 +521,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                     key={index}
                     ref={(el) => { slideRefs.current[index] = el; }}
                     data-slide-index={index}
-                    onClick={() => handleSlideClick(imgUrl)}
+                    onClick={() => handleSlideClick(index)}
                     className="w-full shrink-0 snap-center relative rounded-2xl overflow-hidden aspect-video max-h-96 bg-slate-900 shadow-xs transition-all duration-300 cursor-pointer sm:cursor-grab group/slide"
                     style={{ aspectRatio: '16 / 9' }}
                   >
@@ -397,7 +539,7 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleSlideClick(imgUrl);
+                        handleSlideClick(index);
                       }}
                       className="sm:hidden absolute bottom-2.5 start-2.5 z-20 flex items-center gap-1.5 bg-black/60 hover:bg-black/80 active:bg-black/90 backdrop-blur-md px-2.5 py-1 rounded-full text-white text-[10.5px] font-medium shadow-sm cursor-pointer transition-colors"
                       aria-label={language === 'ar' ? 'تكبير الملصق' : language === 'en' ? 'Tap to view full' : 'Plein écran'}
@@ -672,22 +814,32 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
       </div>
 
       {/* Fullscreen Image Lightbox (Mounted at root level via portal to avoid parent clipping/scroll traps) */}
-      {fullscreenImage && typeof document !== 'undefined' && createPortal(
+      {fullscreenIndex !== null && allImages[fullscreenIndex] && typeof document !== 'undefined' && createPortal(
         <div
           role="dialog"
           aria-modal="true"
           aria-label="Image plein écran"
-          className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-2 sm:p-4 select-none animate-in fade-in duration-200"
+          className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-2 sm:p-4 select-none animate-in fade-in duration-200 overflow-hidden"
           onClick={handleBackdropClick}
+          onTouchStart={handleLightboxTouchStart}
+          onTouchMove={handleLightboxTouchMove}
+          onTouchEnd={handleLightboxTouchEnd}
+          onTouchCancel={handleLightboxTouchCancel}
         >
-          {/* Top Bar with Clear Close Button and Image Title */}
+          {/* Top Bar with Clear Close Button, Image Title, and Dynamic Position Counter */}
           <div
-            className="absolute top-0 inset-x-0 z-[10000] flex items-center justify-between px-3 sm:px-6 py-3 bg-gradient-to-b from-black/80 to-transparent pointer-events-auto"
+            className="absolute top-0 inset-x-0 z-[10000] flex items-center justify-between px-3.5 sm:px-6 py-3 bg-gradient-to-b from-black/85 via-black/50 to-transparent pointer-events-auto"
             onClick={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center gap-2 min-w-0 pr-2">
-              <span className="text-white/90 text-xs sm:text-sm font-semibold truncate drop-shadow-sm">
+            <div className="flex items-center gap-2.5 min-w-0 pr-2">
+              <span className="text-white/95 text-xs sm:text-sm font-semibold truncate drop-shadow-sm max-w-[180px] sm:max-w-md">
                 {title}
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] sm:text-xs font-bold tracking-wide shrink-0 shadow-xs">
+                {fullscreenIndex + 1} / {allImages.length}
               </span>
             </div>
 
@@ -695,7 +847,12 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                setFullscreenImage(null);
+                setFullscreenIndex(null);
+              }}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => {
+                e.stopPropagation();
+                setFullscreenIndex(null);
               }}
               className="p-2 sm:p-2.5 rounded-full bg-white/20 hover:bg-white/30 active:bg-white/40 text-white backdrop-blur-md transition-all cursor-pointer shadow-lg shrink-0 flex items-center justify-center"
               aria-label={t.modalClose || 'Fermer'}
@@ -704,19 +861,97 @@ export const TripDetailsModal: React.FC<TripDetailsModalProps> = ({ trip, onClos
             </button>
           </div>
 
+          {/* Previous / Next Arrow Buttons (If more than 1 image in the trip) */}
+          {allImages.length > 1 && (
+            <>
+              {/* Previous button */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevLightboxImage();
+                }}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                  prevLightboxImage();
+                }}
+                disabled={fullscreenIndex === 0}
+                className={`absolute start-2 sm:start-4 top-1/2 -translate-y-1/2 z-[10000] w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/80 active:bg-black/95 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-xl ${
+                  fullscreenIndex === 0 ? 'opacity-25 pointer-events-none' : 'opacity-90 hover:opacity-100 hover:scale-105 active:scale-95'
+                }`}
+                aria-label="Image précédente"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+
+              {/* Next button */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextLightboxImage();
+                }}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                  nextLightboxImage();
+                }}
+                disabled={fullscreenIndex === allImages.length - 1}
+                className={`absolute end-2 sm:end-4 top-1/2 -translate-y-1/2 z-[10000] w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/80 active:bg-black/95 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-xl ${
+                  fullscreenIndex === allImages.length - 1 ? 'opacity-25 pointer-events-none' : 'opacity-90 hover:opacity-100 hover:scale-105 active:scale-95'
+                }`}
+                aria-label="Image suivante"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </>
+          )}
+
           {/* Centered Image with object-fit: contain to preserve aspect ratio without cropping */}
           <div
-            className="w-full h-full flex items-center justify-center p-2 pt-14 pb-4 pointer-events-none"
+            className="w-full h-full flex items-center justify-center p-2 pt-14 pb-12 pointer-events-none overflow-hidden select-none"
           >
-            <img
-              src={fullscreenImage}
-              alt={title}
-              className="max-w-full max-h-full object-contain pointer-events-auto select-none rounded-lg sm:rounded-xl shadow-2xl transition-transform duration-200"
-              style={{ maxHeight: '90vh', maxWidth: '100%', objectFit: 'contain' }}
+            <div
+              className="relative max-w-full max-h-full flex items-center justify-center pointer-events-auto select-none"
+              style={{
+                transform: `translateX(${lightboxDragX}px)`,
+                transition: isLightboxDragging ? 'none' : 'transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                touchAction: 'pan-y',
+                userSelect: 'none',
+                WebkitUserSelect: 'none'
+              }}
               onClick={(e) => e.stopPropagation()}
-              referrerPolicy="no-referrer"
-            />
+            >
+              <img
+                key={fullscreenIndex}
+                src={allImages[fullscreenIndex]}
+                alt={`${title} - image ${fullscreenIndex + 1}`}
+                draggable={false}
+                className="max-w-full max-h-full object-contain pointer-events-auto select-none rounded-lg sm:rounded-xl shadow-2xl transition-opacity duration-200"
+                style={{
+                  maxHeight: '85vh',
+                  maxWidth: '100%',
+                  objectFit: 'contain',
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  WebkitTouchCallout: 'none',
+                  touchAction: 'pan-y'
+                }}
+                onClick={(e) => e.stopPropagation()}
+                referrerPolicy="no-referrer"
+              />
+            </div>
           </div>
+
+          {/* Bottom Position Counter Pill */}
+          {allImages.length > 1 && (
+            <div className="absolute bottom-3 sm:bottom-4 inset-x-0 flex items-center justify-center pointer-events-none z-[10000]">
+              <div className="px-3.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-white/95 text-xs font-semibold shadow-md tracking-wider">
+                {fullscreenIndex + 1} / {allImages.length}
+              </div>
+            </div>
+          )}
         </div>,
         document.body
       )}
